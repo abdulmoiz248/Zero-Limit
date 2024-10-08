@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 
 import CatCarousel from '@/components/CategoriesCarousel';
@@ -8,7 +8,7 @@ import ContinuousCarousel from '@/components/Featured'
 import JoinUs from '@/components/JoinUs';
 import ReviewSection from '@/components/ReviewUs';
 import MarqueeDemo from '@/components/Reviews'
-
+import ZeroCard from '@/components/ZeroCard';
 import ZeroLimitPage from '@/components/Tiger';
 
 export default function Home() {
@@ -18,8 +18,8 @@ export default function Home() {
 
   return (
     <>
-      
-     <ZeroLimitPage></ZeroLimitPage>
+      {/* <ZeroCard/> */}
+    <ZeroLimitPage></ZeroLimitPage>
     <CatCarousel />
     <ContinuousCarousel/>
     <JoinUs/>

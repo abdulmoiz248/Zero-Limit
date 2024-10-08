@@ -1,12 +1,12 @@
 "use client";
-
+import HeaderContent from './TigerContent';
 import React, { useRef, useEffect, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Mesh } from "three";
 
 // Model component for the seated lion
-function SeatedLion({ color, position }: { color: string, position: [number, number, number] }) {
+function SeatedLion({ color, position }: { color: string; position: [number, number, number] }) {
   const { scene } = useGLTF("/3dModels/lion.glb");
   const ref = useRef<Mesh>(null);
 
@@ -32,26 +32,13 @@ function SeatedLion({ color, position }: { color: string, position: [number, num
 
 // Main component
 export default function ZeroLimitPage() {
-  const [cameraPosition, setCameraPosition] = useState([15, 5, 20]); // Default camera position
-
-  useEffect(() => {
-    const updateCameraPosition = () => {
-      // Adjust the x-axis and overall position for mobile screens
-      setCameraPosition(window.innerWidth < 768 ? [20, 2, 10] : [15, 5, 20]);
-    };
-
-    updateCameraPosition(); // Initial check
-
-    // Update position on resize
-    window.addEventListener("resize", updateCameraPosition);
-    return () => window.removeEventListener("resize", updateCameraPosition); // Clean up
-  }, []);
+  const [cameraPosition] = useState([15, 5, 20]); // Original camera position, no changes
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-gray-900">
       <Canvas className="w-full h-full">
-        {/* Use the state for camera position */}
-        <PerspectiveCamera makeDefault position={cameraPosition} fov={50} />
+        {/* Use the original camera position */}
+        <PerspectiveCamera makeDefault position={cameraPosition as any} fov={50} />
 
         <ambientLight intensity={0.5} />
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
@@ -64,14 +51,7 @@ export default function ZeroLimitPage() {
         <OrbitControls enableZoom={false} enablePan={false} />
       </Canvas>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4">
-        <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-8xl font-bold mb-4 text-shadow-lg">
-          Zero Limit
-        </h1>
-        <p className="text-sm sm:text-lg md:text-xl lg:text-2xl max-w-sm sm:max-w-md md:max-w-lg lg:max-w-4xl text-center text-shadow">
-          Unleash your wild side with Zero Limit Clothing. Embrace your strength and style with our unique collections designed for those who dare to stand out.
-        </p>
-      </div>
+      <HeaderContent/>
     </div>
   );
 }
