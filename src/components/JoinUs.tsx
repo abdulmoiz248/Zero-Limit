@@ -5,10 +5,10 @@ import { motion } from 'framer-motion';
 import Alert from '@/components/Alert';
 
 const JoinUs = () => {
-  let [email, setEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const openModal = () => setModalOpen(true);
+ // const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
   const submit = async () => {
@@ -16,7 +16,7 @@ const JoinUs = () => {
       return;
     }
     try {
-      let res = await axios.post('api/subscribe', { email });
+      const res = await axios.post('api/subscribe', { email });
       if (res.data.success) setModalOpen(true);
     } catch (error) {
       console.error(error);

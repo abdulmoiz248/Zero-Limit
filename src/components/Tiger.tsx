@@ -38,7 +38,7 @@ export default function ZeroLimitPage() {
     <div className="relative h-screen w-full overflow-hidden bg-gray-900">
       <Canvas className="w-full h-full">
         {/* Use the original camera position */}
-        <PerspectiveCamera makeDefault position={cameraPosition as any} fov={50} />
+        <PerspectiveCamera makeDefault position={[cameraPosition[0],cameraPosition[1],cameraPosition[2]]} fov={50} />
 
         <ambientLight intensity={0.5} />
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />

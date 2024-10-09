@@ -24,7 +24,8 @@ export async function GET(){
         categories,
         success:true
        },{status:200})
-   } catch (error) {
+   } catch (error:unknown) {
+    console.log(error);
      return   NextResponse.json({
        message:"Error loading Categories",
        success:false

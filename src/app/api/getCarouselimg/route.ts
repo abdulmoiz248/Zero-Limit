@@ -22,7 +22,8 @@ export async function GET(){
         images,
         success:true
        },{status:200})
-   } catch (error) {
+   } catch (error:unknown) {
+    console.log(error);
      return   NextResponse.json({
        message:"Error loading images",
        success:false

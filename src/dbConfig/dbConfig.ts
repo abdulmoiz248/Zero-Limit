@@ -18,8 +18,8 @@ export default async function connect(){
         await mongoose.connect(process.env.MONGODB_URI!);
         connection.isConnected = true;
         console.log("Connected to DB");
-    } catch (error:any) {
-        console.log(error.message);
+    } catch (error:unknown) {
+        console.log(error);
         return;
     }
     

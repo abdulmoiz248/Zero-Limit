@@ -23,7 +23,8 @@ export async function GET(){
         products,
         success:true
        },{status:200})
-   } catch (error) {
+   } catch (error:unknown) {
+      console.log(error);
      return   NextResponse.json({
        message:"Error loading featured products",
        success:false

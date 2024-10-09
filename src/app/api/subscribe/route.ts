@@ -29,10 +29,8 @@ export async function POST(req: Request) {
             success: true,
             message: "Member added successfully",
         }, { status: 200 });
-    } catch (error) {
-        
-
-       
+    } catch (error:unknown) {
+        console.log(error);
         return NextResponse.json({
             success: false,
             message: "Failed to add member",
