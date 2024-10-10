@@ -1,9 +1,12 @@
+'use client'
 import React from 'react';
 import { LiaLuggageCartSolid } from "react-icons/lia";
 import { CgProfile } from "react-icons/cg";
 import Logo from '@/components/Logo';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
+  let router=useRouter();
   return (
     <>
       {/* Main Header */}
@@ -13,7 +16,7 @@ export default function Header() {
           <div className="hidden md:block flex-1" />
 
           {/* Logo - Centered */}
-          <a rel="noopener noreferrer" href="#" aria-label="Back to homepage" className="flex items-center p-2">
+          <a rel="noopener noreferrer" href="/" aria-label="Back to homepage" className="flex items-center p-2">
             <Logo />
           </a>
 
@@ -25,12 +28,16 @@ export default function Header() {
                 href="#"
                 className="flex items-center transition-colors duration-300 hover:text-white"
               >
-                <CgProfile size={30} color='#F5EEDC' />
+                <CgProfile size={30}  onClick={  ()=>{
+              router.push('/Profile');
+            }} color='#F5EEDC' />
               </a>
             </li>
             <li className="flex">
               <a rel="noopener noreferrer" href="#" className="flex items-center hover:text-white">
-                <LiaLuggageCartSolid size={30} color='#F5EEDC' />
+                <LiaLuggageCartSolid size={30} color='#F5EEDC' onClick={  ()=>{
+              router.push('/Cart');
+            }} />
               </a>
             </li>
           </ul>
@@ -44,14 +51,20 @@ export default function Header() {
           href="#"
           className="flex items-center hover:text-white"
         >
-          <CgProfile size={30} color='#000000' />
+          <CgProfile  onClick={  ()=>{
+              router.push('/Cart');
+            }}  size={30} color='#000000' />
         </a>
         <a
           rel="noopener noreferrer"
           href="#"
           className="flex items-center hover:text-white"
         >
-          <LiaLuggageCartSolid size={30} color='#000000' />
+          <LiaLuggageCartSolid size={30} color='#000000' onClick={
+            ()=>{
+              router.push('/Cart');
+            }
+          } />
         </a>
       </div>
     </>

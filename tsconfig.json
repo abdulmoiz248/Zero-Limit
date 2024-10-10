@@ -22,5 +22,6 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/page.jsx", "src/components/3dModel.tsx", "src/components/Tiger.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  
 }

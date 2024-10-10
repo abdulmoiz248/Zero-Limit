@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-
+import LionLoader from '@/components/LionLoader'
 
 import CatCarousel from '@/components/CategoriesCarousel';
 import ContinuousCarousel from '@/components/Featured'
@@ -18,14 +18,16 @@ export default function Home() {
 
   return (
     <>
-      {/* <ZeroCard/> */}
+      {/* <ZeroCard/>
     <ZeroLimitPage></ZeroLimitPage>
     <CatCarousel />
     <ContinuousCarousel/>
     <JoinUs/>
     <MarqueeDemo/>
     <ReviewSection/>
-  
+   */}
+
+   <LionLoader/>
     </>
   
   
