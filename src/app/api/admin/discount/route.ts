@@ -5,9 +5,9 @@ export async function POST(req: Request) {
     try {
         // Extract data from the request body
         const { productId, discount } = await req.json();
-
+         
         // Validate inputs
-        if (!productId || typeof discount !== 'number') {
+        if (!productId) {
             return Response.json({
                 message: 'Invalid input: productId and discount are required.',
                 success: false,
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         // Update the discount status and percentage
         if (discount !== 0) {
             product.discount = true;
-            product.discountPercent = discount;
+            product.discountPercent = Number(discount);
         } else {
             product.discount = false;
             product.discountPercent = 0;

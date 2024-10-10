@@ -2,7 +2,7 @@ import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface Product extends Document {
   name: string;
-  link: string;
+  link: string[]; // Corrected to just 'link' (array of strings)
   categoryId: Types.ObjectId;
   price: number;
   featured: boolean;
@@ -12,7 +12,6 @@ export interface Product extends Document {
   description: string;
   ratings: number;
   numReviews: number;
- 
 }
 
 const ProductSchema = new Schema<Product>({
@@ -20,8 +19,8 @@ const ProductSchema = new Schema<Product>({
     type: String,
     required: true,
   },
-  link: {
-    type: String,
+  link: { // Corrected to 'link' without brackets
+    type: [String], // Define as an array of strings
     required: true,
   },
   categoryId: {
@@ -32,6 +31,7 @@ const ProductSchema = new Schema<Product>({
   price: {
     type: Number,
     required: true,
+    min: 0, // Optional: You can enforce non-negative price
   },
   featured: {
     type: Boolean,
@@ -44,27 +44,29 @@ const ProductSchema = new Schema<Product>({
   discountPercent: {
     type: Number,
     default: 0,
+    min: 0, // Ensures discount percent is not negative
+    max: 100, // Optional: You can enforce maximum discount percentage
   },
   quantity: {
     type: Number,
     required: true,
-    min: 0,
+    min: 0, // Ensure quantity is not negative
   },
   description: {
     type: String,
     required: true,
   },
-   ratings: {
+  ratings: {
     type: Number,
-    default: 0,
+    default: 5,
     min: 0,
     max: 5,
   },
   numReviews: {
     type: Number,
     default: 0,
+    min: 0, // Optional: Ensure the number of reviews is non-negative
   },
-   
 });
 
 const ProductModel = mongoose.models.Product || mongoose.model<Product>('Product', ProductSchema);

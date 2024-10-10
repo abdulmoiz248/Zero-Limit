@@ -18,14 +18,13 @@ export default function Home() {
 
   return (
     <>
-      {/* <ZeroCard/>
-    <ZeroLimitPage></ZeroLimitPage>
-    <CatCarousel />
-    <ContinuousCarousel/>
+    {/* <ZeroLimitPage></ZeroLimitPage> */}
+    {/* <CatCarousel /> */}
+    {/* <ContinuousCarousel/>
     <JoinUs/>
     <MarqueeDemo/>
-    <ReviewSection/>
-   */}
+    <ReviewSection/> */}
+  
 
    <LionLoader/>
     </>

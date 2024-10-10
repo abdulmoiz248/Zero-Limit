@@ -3,18 +3,17 @@ import { useState, useEffect } from 'react';
 
 export default function AddProductModal({ isOpen, onClose, onSubmit }) {
   const [productName, setProductName] = useState('');
-  const [photo, setPhoto] = useState(null);
+  const [photos, setPhotos] = useState([]); // Updated to hold multiple photos
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [description, setDescription] = useState('');
 
- 
   useEffect(() => {
     if (isOpen) {
       setProductName('');
-      setPhoto(null);
+      setPhotos([]);
       setDescription('');
       setQuantity('');
       setSelectedCategory('');
@@ -42,7 +41,12 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
     e.preventDefault();
     const formData = new FormData();
     formData.append('productName', productName);
-    formData.append('photo', photo);
+    
+    // Append all selected photos to formData
+    photos.forEach((photo) => {
+      formData.append('photo', photo);
+    });
+
     formData.append('category', selectedCategory);
     formData.append('price', price);
     formData.append('quantity', quantity);
@@ -53,7 +57,7 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
 
   // Handle photo input change
   const handlePhotoChange = (e) => {
-    setPhoto(e.target.files[0]);
+    setPhotos([...e.target.files]); // Set selected files to state
   };
 
   if (!isOpen) return null; // Return null if modal is not open
@@ -80,16 +84,17 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
               />
             </div>
 
-            {/* Upload Photo */}
+            {/* Upload Photos */}
             <div className="mb-4">
-              <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-2">
-                Upload Photo
+              <label htmlFor="photos" className="block text-sm font-medium text-gray-700 mb-2">
+                Upload Photos
               </label>
               <input
                 type="file"
-                id="photo"
+                id="photos"
                 accept="image/*"
                 onChange={handlePhotoChange}
+                multiple // Allow multiple file selection
                 required
                 className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer shadow-sm focus:ring-blue-500 focus:border-blue-500"
               />
