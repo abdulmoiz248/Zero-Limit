@@ -9,7 +9,7 @@ export async function GET(){
    try {
     
       const products=await ProductModel.find({featured:true});
-   
+    
     if(!products){
         return   NextResponse.json({
             message:"Error loading products",

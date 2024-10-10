@@ -3,6 +3,7 @@ import ProductModel from "@/Models/Product";
 import { promises as fs } from 'fs';
 import path from 'path';
 
+
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
@@ -72,3 +73,47 @@ export async function POST(req: Request) {
     );
   }
 }
+
+
+export async function GET(req: Request) {
+  try {
+  
+    const url = new URL(req.url);
+    
+   
+    const categoryId = url.searchParams.get("categoryId");
+
+    if (!categoryId) {
+      return new Response(
+        JSON.stringify({ message: "Category ID is required", success: false }),
+        { status: 400 }
+      );
+    }
+
+    
+    await connect();
+
+    const products = await ProductModel.find({ categoryId })
+    if (!products.length) {
+      return new Response(
+        JSON.stringify({ message: "No products found for this category", success: false }),
+        { status: 404 }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({ message: "Products retrieved successfully", success: true, products }),
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("error", error.message);
+    return new Response(
+      JSON.stringify({
+        message: error.message,
+        success: false,
+      }),
+      { status: 500 }
+    );
+  }
+}
+

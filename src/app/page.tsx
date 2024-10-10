@@ -20,7 +20,8 @@ export default function Home() {
     <>
     {/* <ZeroLimitPage></ZeroLimitPage> */}
     {/* <CatCarousel /> */}
-    {/* <ContinuousCarousel/>
+    <ContinuousCarousel/>
+    {/*
     <JoinUs/>
     <MarqueeDemo/>
     <ReviewSection/> */}
