@@ -5,7 +5,6 @@ import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
 import axios from "axios";
 import { Product } from "@/Models/Product";
-import { Router } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 let products: Product[] = [];
@@ -126,7 +125,9 @@ export default function ContinuousCarousel() {
              
             {[...products, ...products].map((product, index) => (
               <div key={index} className="flex-shrink-0 w-[280px] h-[400px] mr-4 " onClick={()=>{
-                router.push(`product/${product._id}`)
+                localStorage.removeItem('product');
+                localStorage.setItem('product', JSON.stringify(product));
+                router.push(`Product/${product._id}`)
               }}>
                 <FeaturedProductCard product={product}  />
               </div>

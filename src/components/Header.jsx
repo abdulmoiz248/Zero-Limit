@@ -10,7 +10,7 @@ export default function Header() {
   return (
     <>
       {/* Main Header */}
-      <header className=" bg-[#000000]">
+      <header className=" bg-[#576778]">
         <div className="container flex flex-col md:flex-row items-center justify-center md:justify-between mx-auto">
           {/* Left Spacer (Empty div for centering the logo) */}
           <div className="hidden md:block flex-1" />
@@ -30,12 +30,12 @@ export default function Header() {
               >
                 <CgProfile size={30}  onClick={  ()=>{
               router.push('/Profile');
-            }} color='#F5EEDC' />
+            }} color='#000000' />
               </a>
             </li>
             <li className="flex">
-              <a rel="noopener noreferrer" href="#" className="flex items-center hover:text-white">
-                <LiaLuggageCartSolid size={30} color='#F5EEDC' onClick={  ()=>{
+              <a rel="noopener noreferrer" href="/Cart" className="flex items-center hover:text-white">
+                <LiaLuggageCartSolid size={30} color='#000000' onClick={  ()=>{
               router.push('/Cart');
             }} />
               </a>

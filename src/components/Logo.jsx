@@ -4,7 +4,7 @@ const LogoComponent = () => {
   return (
     <div className="flex justify-center items-center ">
       <Image 
-        src="/images/logo.jpg" 
+        src="/images/logo 2.png" 
         width={250} 
         height={250} 
         alt="Logo" 

@@ -8,7 +8,7 @@ import ContinuousCarousel from '@/components/Featured'
 import JoinUs from '@/components/JoinUs';
 import ReviewSection from '@/components/ReviewUs';
 import MarqueeDemo from '@/components/Reviews'
-// import ZeroCard from '@/components/ZeroCard';
+ import ZeroCard from '@/components/ZeroCard';
 import ZeroLimitPage from '@/components/Tiger';
 
 export default function Home() {
@@ -17,14 +17,16 @@ export default function Home() {
    
 
   return (
+   
     <>
-    {/* <ZeroLimitPage></ZeroLimitPage> */}
-    {/* <CatCarousel /> */}
+    {/* <ZeroCard/> */}
+    <ZeroLimitPage></ZeroLimitPage>
+    <CatCarousel />
     <ContinuousCarousel/>
-    {/*
-    <JoinUs/>
-    <MarqueeDemo/>
-    <ReviewSection/> */}
+    
+     <JoinUs/>
+     <MarqueeDemo/>
+     <ReviewSection/>
   
 
    <LionLoader/>

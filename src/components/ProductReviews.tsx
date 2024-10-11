@@ -3,24 +3,22 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Star } from 'lucide-react'
+import { Review } from '@/Models/Review'
 
-interface Review {
-  id: number
-  username: string
-  rating: number
-  comment: string
-  date: string
-}
 
-interface ProductReviewsProps {
-  reviews: Review[]
-}
-
-export default function ProductReviews({ reviews }: ProductReviewsProps) {
+export default function ProductReviews({ reviews }:{reviews:Review[] } ) {
   const [visibleReviews, setVisibleReviews] = useState(7)
 
   const loadMoreReviews = () => {
     setVisibleReviews((prev) => Math.min(prev + 7, reviews.length))
+  }
+
+  if(reviews.length ==0){
+    return (
+      <div className="text-center text-gray-600">
+        No reviews found for this product.
+      </div>
+    )
   }
 
   return (
@@ -52,8 +50,10 @@ export default function ProductReviews({ reviews }: ProductReviewsProps) {
                     ))}
                   </div>
                 </div>
-                <p className="text-gray-700 mb-3 italic">&quot;{review.comment}&quot;</p>
-                <p className="text-sm text-gray-500">{review.date}</p>
+                <p className="text-gray-700 mb-3 italic">&quot;{review.body}&quot;</p>
+                <p className="text-sm text-gray-500">
+                {review.date instanceof Date ? review.date.toLocaleDateString() : review.date}
+                </p>
               </motion.div>
             ))}
           </AnimatePresence>

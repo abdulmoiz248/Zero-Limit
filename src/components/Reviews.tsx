@@ -1,35 +1,8 @@
 import { cn } from "@/lib/utils"
 import Marquee from "@/components/ui/marquee"
-
-const reviews = [
-  {
-    username: "@jack",
-    body: "I've never seen anything like this before. It's amazing. I love it.",
-  },
-  {
-    username: "@jill",
-    body: "I don't know what to say. I'm speechless. This is amazing.",
-  },
-  {
-    username: "@john",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-  },
-  {
-    username: "@jane",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-  },
-  {
-    username: "@jenny",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-  },
-  {
-    username: "@james",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-  },
-]
-
-const firstRow = reviews.slice(0, reviews.length / 2)
-const secondRow = reviews.slice(reviews.length / 2)
+import { Review } from "@/Models/Review"
+import { useEffect, useState } from "react"
+import axios from "axios"
 
 const ReviewCard = ({ username, body }: { username: string; body: string }) => {
   return (
@@ -47,6 +20,28 @@ const ReviewCard = ({ username, body }: { username: string; body: string }) => {
 }
 
 export default function MarqueeDemo() {
+  const [reviews, setReviews] = useState<Review[]>([])
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await axios.get(`/api/reviews`)
+        if (res.data.success) {
+          setReviews(res.data.reviews)
+        } else {
+          console.log("Failed to load reviews data.")
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchReviews()
+  }, [])
+
+  // Split the reviews into two rows for the marquee effect
+  const firstRow = reviews.slice(0, reviews.length / 2)
+  const secondRow = reviews.slice(reviews.length / 2)
+
   return (
     <div className="w-full">
       <h2 className="text-3xl font-bold text-center mb-8 text-primary">What Our Users Say</h2>
