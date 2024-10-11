@@ -1,23 +1,24 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Star, ChevronLeft, ChevronRight } from 'lucide-react'
-import ProductReviews from '@/components/ProductReviews'
-import { Product } from '@/Models/Product'
-import axios from 'axios'
-import LionLoader from '@/components/LionLoader'
-import { Review } from '@/Models/Review'
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import ProductReviews from '@/components/ProductReviews';
+import { Product } from '@/Models/Product';
+import axios from 'axios';
+import LionLoader from '@/components/LionLoader';
+import { Review } from '@/Models/Review';
+import { addToCart, removeFromCart, getCart } from '@/helper/cart'; // Make sure to import the removeFromCart function
 
-// Main ProductPage Component
 export default function ProductPage({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
   const [showReviews, setShowReviews] = useState(false);
-  const [loadingReviews, setLoadingReviews] = useState(false); // Add loading state
-  const [reviews, setReviews] = useState<Review[]>([]); // Initialize reviews as an empty array
+  const [loadingReviews, setLoadingReviews] = useState(false); 
+  const [reviews, setReviews] = useState<Review[]>([]); 
+  const [isInCart, setIsInCart] = useState(false); // New state to track if product is in cart
 
   // Fetch product data
   useEffect(() => {
@@ -25,13 +26,13 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       try {
         let res = await axios.get(`/api/getProduct/${params.id}`)
         if (res.data.success) {
-          setProduct(res.data.product)
-          localStorage.setItem('product', JSON.stringify(res.data.product))
+          setProduct(res.data.product);
+          localStorage.setItem('product', JSON.stringify(res.data.product));
         }
       } catch (error) {
         console.error("Error fetching product from localStorage", error);
       }
-    }
+    };
 
     const storedProduct = localStorage.getItem('product');
 
@@ -50,6 +51,16 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       fetchedProduct();
     }
   }, [params.id]);
+
+  
+  useEffect(() => {
+    const cart = getCart();
+    if (cart[params.id]) {
+      setIsInCart(true);
+    } else {
+      setIsInCart(false);
+    }
+  }, [product]);
 
   const nextImage = () => {
     if (product && product.link) {
@@ -73,13 +84,22 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       let res = await axios.get(`/api/reviews/${params.id}`);
       if (res.data.success) {
         setShowReviews(true);
-        setReviews(res.data.reviews); // Set reviews based on API response
+        setReviews(res.data.reviews); 
       }
     } catch (error) {
       console.error("Error fetching reviews", error);
     } finally {
-      setLoadingReviews(false); // Ensure loading state is reset
+      setLoadingReviews(false);
     }
+  };
+
+  const handleCartToggle = () => {
+    if (isInCart) {
+      removeFromCart(product!._id); // Ensure to use non-null assertion
+    } else {
+      addToCart(product!, 1);
+    }
+    setIsInCart(!isInCart); // Toggle the inCart status
   };
 
   return (
@@ -165,11 +185,13 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </div>
               <div className="mt-8">
                 <motion.button
+                  onClick={handleCartToggle} // Attach toggle handler
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full bg-[#3498db] text-white px-6 py-3 rounded-md font-semibold text-base sm:text-lg flex items-center justify-center"
+                  className={`w-full ${isInCart ? 'bg-red-600' : 'bg-[#3498db]'} text-white px-6 py-3 rounded-md font-semibold text-base sm:text-lg flex items-center justify-center`}
                 >
-                  <ShoppingCart className="w-5 h-5 mr-2" /> Add to Cart
+                  <ShoppingCart className="w-5 h-5 mr-2" /> 
+                  {isInCart ? 'Remove from Cart' : 'Add to Cart'} {/* Toggle text */}
                 </motion.button>
               </div>
             </div>

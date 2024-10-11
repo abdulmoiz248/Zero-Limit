@@ -1,40 +1,77 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Minus, Plus, X, ShoppingBag, CreditCard, Truck } from 'lucide-react'
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Minus, Plus, X, ShoppingBag, CreditCard, Truck } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { getCart } from '@/helper/cart';
+import { Product } from '@/Models/Product';
+import { useRouter } from 'next/navigation';
 
-const initialProducts = [
-  { id: 1, name: 'Wireless Earbuds', price: 179.99, quantity: 1, image: 'https://aqvnhcwgkwxe.public.blob.vercel-storage.com/earbuds-YJWV7K.png' },
-  { id: 2, name: 'Luxury Smartwatch', price: 299.99, quantity: 1, image: 'https://aqvnhcwgkwxe.public.blob.vercel-storage.com/smartwatch-YJWV7K.png' },
-  { id: 3, name: 'Premium Bluetooth Speaker', price: 159.99, quantity: 2, image: 'https://aqvnhcwgkwxe.public.blob.vercel-storage.com/speaker-YJWV7K.png' },
-]
+interface CartItem {
+  product: Product;
+  quantity: number;
+}
 
 export default function LuxuryCartPage() {
-  const [products, setProducts] = useState(initialProducts)
-  const [isLoading, setIsLoading] = useState(true)
+  const router = useRouter();
+  const [products, setProducts] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Load cart data from localStorage on mount
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1000)
-    return () => clearTimeout(timer)
-  }, [])
+    const cart = getCart();  // Get cart as an object
+    const cartItems = Object.values(cart).map(item => item as CartItem); // Transform object into array
 
-  const updateQuantity = (id: number, change: number) => {
-    setProducts(products.map(product => 
-      product.id === id ? { ...product, quantity: Math.max(0, product.quantity + change) } : product
-    ).filter(product => product.quantity > 0))
-  }
+    setProducts(cartItems); // Set the cart items to state
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const removeProduct = (id: number) => {
-    setProducts(products.filter(product => product.id !== id))
-  }
+  // Update quantity of product in the cart
+  const updateQuantity = (id: string, change: number) => {
+    setProducts((prevProducts) => {
+      const updatedProducts = prevProducts
+        .map(product =>
+          product.product._id === id
+            ? { ...product, quantity: Math.max(0, product.quantity + change) }
+            : product
+        )
+        .filter(product => product.quantity > 0); // Filter out products with 0 quantity
 
-  const total = products.reduce((sum, product) => sum + product.price * product.quantity, 0)
+      // Convert back to object format for localStorage
+      const cartObject = updatedProducts.reduce((acc, { product, quantity }) => {
+        acc[product._id as any] = { product, quantity };
+        return acc;
+      }, {} as { [key: string]: CartItem });
+
+      localStorage.setItem('cart', JSON.stringify(cartObject)); // Update localStorage
+      return updatedProducts;
+    });
+  };
+
+  // Remove product from cart
+  const removeProduct = (id: string) => {
+    setProducts((prevProducts) => {
+      const updatedProducts = prevProducts.filter(product => product.product._id !== id);
+
+      // Convert back to object format for localStorage
+      const cartObject = updatedProducts.reduce((acc, { product, quantity }) => {
+        acc[product._id as  any] = { product, quantity };
+        return acc;
+      }, {} as { [key: string]: CartItem });
+
+      localStorage.setItem('cart', JSON.stringify(cartObject)); // Update localStorage
+      return updatedProducts;
+    });
+  };
+
+  // Calculate the total price
+  const total = products.reduce((sum, { product, quantity }) => sum + product.price * quantity, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -68,9 +105,9 @@ export default function LuxuryCartPage() {
               </motion.div>
             ) : (
               <ul role="list" className="divide-y divide-gray-200">
-                {products.map((product) => (
+                {products.map(({ product, quantity }) => (
                   <motion.li
-                    key={product.id}
+                    key={product._id as any}
                     layout
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -80,7 +117,7 @@ export default function LuxuryCartPage() {
                   >
                     <div className="h-32 w-32 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                       <motion.img
-                        src={product.image}
+                        src={product.link[0]}
                         alt={product.name}
                         className="h-full w-full object-cover object-center"
                         whileHover={{ scale: 1.05 }}
@@ -90,7 +127,7 @@ export default function LuxuryCartPage() {
                     <div className="ml-6 flex flex-1 flex-col">
                       <div className="flex justify-between text-base font-medium text-gray-900">
                         <h3 className="text-lg">{product.name}</h3>
-                        <p className="ml-4 text-lg">${product.price.toFixed(2)}</p>
+                        <p className="ml-4 text-lg">${product.price}</p>
                       </div>
                       <p className="mt-1 text-sm text-gray-500">Luxury Edition</p>
                       <div className="flex flex-1 items-end justify-between text-sm">
@@ -98,16 +135,16 @@ export default function LuxuryCartPage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => updateQuantity(product.id, -1)}
+                            onClick={() => updateQuantity(product._id as any, -1)} // Update product.id to product._id
                             className="h-8 w-8 rounded-full"
                           >
                             <Minus className="h-4 w-4" />
                           </Button>
-                          <span className="mx-3 text-gray-700 text-lg font-medium">{product.quantity}</span>
+                          <span className="mx-3 text-gray-700 text-lg font-medium">{quantity}</span>
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => updateQuantity(product.id, 1)}
+                            onClick={() => updateQuantity(product._id as any, 1)} // Update product.id to product._id
                             className="h-8 w-8 rounded-full"
                           >
                             <Plus className="h-4 w-4" />
@@ -115,7 +152,7 @@ export default function LuxuryCartPage() {
                         </div>
                         <Button
                           variant="ghost"
-                          onClick={() => removeProduct(product.id)}
+                          onClick={() => removeProduct(product._id as any)} // Update product.id to product._id
                           className="text-red-500 hover:text-red-600 mt-4"
                         >
                           <X className="h-5 w-5 mr-1" />
@@ -150,14 +187,23 @@ export default function LuxuryCartPage() {
               </div>
             </div>
             <div className="mt-6">
-              <Button className="w-full text-lg py-6">
+              <Button
+                onClick={() => {
+                  router.push('/Checkout');
+                }}
+                className="w-full text-lg py-6"
+              >
                 Proceed to Checkout
               </Button>
             </div>
             <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
               <p>
                 or{' '}
-                <button type="button" className="font-medium text-primary hover:text-primary/80">
+                <button 
+                onClick={() => {
+                  router.push('/'); 
+                }}
+                type="button" className="font-medium text-primary hover:text-primary/80">
                   Continue Shopping
                   <span aria-hidden="true"> &rarr;</span>
                 </button>
@@ -167,5 +213,5 @@ export default function LuxuryCartPage() {
         )}
       </motion.div>
     </div>
-  )
+  );
 }
