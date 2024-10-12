@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from 'axios';
-
+import { useRouter } from 'next/navigation';
+import  Cookies from 'js-cookie';
 const emailSchema = z.string().email('Invalid email address');
 const nameSchema = z.string().min(6, 'Name must be at least 6 characters');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -22,7 +23,7 @@ export default function RegisterForm() {
   const [showRegisterButton, setShowRegisterButton] = useState(false);
   const [errors, setErrors] = useState({ email: '', name: '', password: '' });
   const [touched, setTouched] = useState({ email: false, name: false, password: false });
-  const [debounceTimeout, setDebounceTimeout] = useState<number | null>(null); // Debouncing timer
+  const [debounceTimeout, setDebounceTimeout] = useState<number | null>(null);
 
   // Validation function
   const validateField = (value: string, schema: z.ZodSchema, field: keyof typeof errors) => {
@@ -60,18 +61,11 @@ export default function RegisterForm() {
     };
 
     if (touched.email) {
-      // Clear the previous timeout if the user keeps typing
       if (debounceTimeout) clearTimeout(debounceTimeout);
-
-      // Set a new debounce timeout (300ms)
       const timer = setTimeout(() => {
         checkEmail();
       }, 1000);
-
-      // Set the new debounce timeout
       setDebounceTimeout(timer as any);
-
-      // Cleanup on unmount
       return () => {
         if (timer) clearTimeout(timer);
       };
@@ -94,6 +88,34 @@ export default function RegisterForm() {
     }
   }, [password, showPasswordField]);
 
+let router=useRouter();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return; // Prevent double submission
+    if (validateField(email, emailSchema, 'email') && 
+        validateField(name, nameSchema, 'name') && 
+        validateField(password, passwordSchema, 'password')) {
+      setLoading(true);
+      try {
+        const response = await axios.post('/api/auth/register', { email, name, password });
+         
+        if (response.data.success) {
+          Cookies.set('OTP',email);
+           router.push(`/otp`);     
+          console.log("Registration successful!");
+        } else {
+        
+          console.error(response.data.message);
+           
+        }
+      } catch (error) {
+        setErrors(prev => ({ ...prev, email: 'Registeratio Failed' }))
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-[350px]">
@@ -102,7 +124,7 @@ export default function RegisterForm() {
           <CardDescription>Create your account step by step.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -112,7 +134,7 @@ export default function RegisterForm() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onBlur={() => setTouched(prev => ({ ...prev, email: true }))} // Set touched on blur
+                onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
               />
               {touched.email && errors.email && (
                 <p className="text-sm text-red-500">{errors.email}</p>
@@ -129,7 +151,7 @@ export default function RegisterForm() {
                   placeholder="Enter your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  onBlur={() => setTouched(prev => ({ ...prev, name: true }))} // Set touched on blur
+                  onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
                 />
                 {touched.name && errors.name && (
                   <p className="text-sm text-red-500">{errors.name}</p>
@@ -147,7 +169,7 @@ export default function RegisterForm() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  onBlur={() => setTouched(prev => ({ ...prev, password: true }))} // Set touched on blur
+                  onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
                 />
                 {touched.password && errors.password && (
                   <p className="text-sm text-red-500">{errors.password}</p>

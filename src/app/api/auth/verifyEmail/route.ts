@@ -1,11 +1,10 @@
-import connect from "@/dbConfig/dbConfig";
-import CustomerModel from "@/Models/Customer";
+import { getCustomerByEmail } from "@/services/CustomerServices";
 
 export async function POST(request:Request){
-    connect();
+   
     try {
         let {email}=await request.json();
-        const customer=await CustomerModel.findOne({email});
+        const customer=await getCustomerByEmail(email);
         if(customer){
             return Response.json({
                 message: "Email already Exists",
@@ -18,7 +17,8 @@ export async function POST(request:Request){
         },{status:200})
 
     } catch (error:any) {
-        return Response.json({
+        console.log(error.message);
+                return Response.json({
             message: error.message,
             success:false
         },{status:500})
