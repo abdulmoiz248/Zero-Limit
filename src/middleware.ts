@@ -12,18 +12,33 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/admin/dashboard', request.url));
       }
     }
+
+
+
+
     const cookies = request.cookies;
     const email = cookies.get('OTP');
+
     if(pathname==='/otp' && !email){
       return NextResponse.redirect(new URL('/Register', request.url));
     }
     if(pathname==='/Register' && email){
       return NextResponse.redirect(new URL('/otp', request.url));
     }
+
+    const customer=cookies.get('customer');
+  
+      if (!customer && pathname === '/Checkout') {
+        return NextResponse.redirect(new URL('/Login', request.url));
+      }
+      if(customer && pathname === '/Login'){
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+    
          
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*','/otp','/Register'],
+  matcher: ['/admin/:path*','/otp','/Register','/Checkout','/Login'],
 };

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { getCart } from '@/helper/cart';
 import { Product } from '@/Models/Product';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 interface CartItem {
   product: Product;
@@ -17,18 +18,21 @@ export default function LuxuryCartPage() {
   const router = useRouter();
   const [products, setProducts] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCustomer, setIsCustomer] = useState(false);
 
-  // Load cart data from localStorage on mount
   useEffect(() => {
-    const cart = getCart();  // Get cart as an object
-    const cartItems = Object.values(cart).map(item => item as CartItem); // Transform object into array
+    const customerCookie = Cookies.get('customer');
+    console.log(customerCookie);
+    setIsCustomer(!!customerCookie);
 
-    setProducts(cartItems); // Set the cart items to state
+    const cart = getCart();
+    const cartItems = Object.values(cart).map(item => item as CartItem);
+
+    setProducts(cartItems);
     const timer = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Update quantity of product in the cart
   const updateQuantity = (id: string, change: number) => {
     setProducts((prevProducts) => {
       const updatedProducts = prevProducts
@@ -37,37 +41,41 @@ export default function LuxuryCartPage() {
             ? { ...product, quantity: Math.max(0, product.quantity + change) }
             : product
         )
-        .filter(product => product.quantity > 0); // Filter out products with 0 quantity
+        .filter(product => product.quantity > 0);
 
-      // Convert back to object format for localStorage
       const cartObject = updatedProducts.reduce((acc, { product, quantity }) => {
         acc[product._id as any] = { product, quantity };
         return acc;
       }, {} as { [key: string]: CartItem });
 
-      localStorage.setItem('cart', JSON.stringify(cartObject)); // Update localStorage
+      localStorage.setItem('cart', JSON.stringify(cartObject));
       return updatedProducts;
     });
   };
 
-  // Remove product from cart
   const removeProduct = (id: string) => {
     setProducts((prevProducts) => {
       const updatedProducts = prevProducts.filter(product => product.product._id !== id);
 
-      // Convert back to object format for localStorage
       const cartObject = updatedProducts.reduce((acc, { product, quantity }) => {
-        acc[product._id as  any] = { product, quantity };
+        acc[product._id as any] = { product, quantity };
         return acc;
       }, {} as { [key: string]: CartItem });
 
-      localStorage.setItem('cart', JSON.stringify(cartObject)); // Update localStorage
+      localStorage.setItem('cart', JSON.stringify(cartObject));
       return updatedProducts;
     });
   };
 
-  // Calculate the total price
   const total = products.reduce((sum, { product, quantity }) => sum + product.price * quantity, 0);
+
+  const handleCheckout = () => {
+    if (isCustomer) {
+      router.push('/Checkout');
+    } else {
+      router.push('/Login?redirect=Checkout');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12">
@@ -99,7 +107,7 @@ export default function LuxuryCartPage() {
                 <ShoppingBag className="mx-auto h-24 w-24 text-gray-400" />
                 <h3 className="mt-4 text-xl font-medium text-gray-900">Your cart is empty</h3>
                 <p className="mt-2 text-gray-500">Discover our exclusive collection and start adding luxurious items to your cart!</p>
-                <Button className="mt-6">
+                <Button className="mt-6" onClick={() => router.push('/')}>
                   Explore Collection
                 </Button>
               </motion.div>
@@ -135,7 +143,7 @@ export default function LuxuryCartPage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => updateQuantity(product._id as any, -1)} // Update product.id to product._id
+                            onClick={() => updateQuantity(product._id as any, -1)}
                             className="h-8 w-8 rounded-full"
                           >
                             <Minus className="h-4 w-4" />
@@ -144,7 +152,7 @@ export default function LuxuryCartPage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => updateQuantity(product._id as any, 1)} // Update product.id to product._id
+                            onClick={() => updateQuantity(product._id as any, 1)}
                             className="h-8 w-8 rounded-full"
                           >
                             <Plus className="h-4 w-4" />
@@ -152,7 +160,7 @@ export default function LuxuryCartPage() {
                         </div>
                         <Button
                           variant="ghost"
-                          onClick={() => removeProduct(product._id as any)} // Update product.id to product._id
+                          onClick={() => removeProduct(product._id as any)}
                           className="text-red-500 hover:text-red-600 mt-4"
                         >
                           <X className="h-5 w-5 mr-1" />
@@ -188,21 +196,17 @@ export default function LuxuryCartPage() {
             </div>
             <div className="mt-6">
               <Button
-                onClick={() => {
-                  router.push('/Checkout');
-                }}
+                onClick={handleCheckout}
                 className="w-full text-lg py-6"
               >
-                Proceed to Checkout
+                {isCustomer ? 'Proceed to Checkout' : 'Login to Checkout'}
               </Button>
             </div>
             <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
               <p>
                 or{' '}
                 <button 
-                onClick={() => {
-                  router.push('/'); 
-                }}
+                onClick={() => router.push('/')}
                 type="button" className="font-medium text-primary hover:text-primary/80">
                   Continue Shopping
                   <span aria-hidden="true"> &rarr;</span>
