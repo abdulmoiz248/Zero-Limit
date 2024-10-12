@@ -1,21 +1,18 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { z } from 'zod'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import axios from 'axios'
+import { useState, useEffect } from 'react';
+import { z } from 'zod';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import axios from 'axios';
 
-
-
-const emailSchema = z.string().email('Invalid email address')
-const nameSchema = z.string().min(6, 'Name must be at least 6 characters')
-const passwordSchema = z.string().min(6, 'Password must be at least 6 characters')
+const emailSchema = z.string().email('Invalid email address');
+const nameSchema = z.string().min(6, 'Name must be at least 6 characters');
+const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
 
 export default function RegisterForm() {
-  
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -24,7 +21,10 @@ export default function RegisterForm() {
   const [showPasswordField, setShowPasswordField] = useState(false);
   const [showRegisterButton, setShowRegisterButton] = useState(false);
   const [errors, setErrors] = useState({ email: '', name: '', password: '' });
+  const [touched, setTouched] = useState({ email: false, name: false, password: false });
+  const [debounceTimeout, setDebounceTimeout] = useState<number | null>(null); // Debouncing timer
 
+  // Validation function
   const validateField = (value: string, schema: z.ZodSchema, field: keyof typeof errors) => {
     try {
       schema.parse(value);
@@ -42,7 +42,7 @@ export default function RegisterForm() {
     const checkEmail = async () => {
       if (validateField(email, emailSchema, 'email')) {
         try {
-          const response = await axios.post('/api/patient/verifyEmail', { email });
+          const response = await axios.post('/api/auth/verifyEmail', { email });
           const { success } = response.data;
           if (success) {
             setShowNameField(true);
@@ -59,10 +59,25 @@ export default function RegisterForm() {
       }
     };
 
-    checkEmail();
-  }, [email]);
+    if (touched.email) {
+      // Clear the previous timeout if the user keeps typing
+      if (debounceTimeout) clearTimeout(debounceTimeout);
 
-  
+      // Set a new debounce timeout (300ms)
+      const timer = setTimeout(() => {
+        checkEmail();
+      }, 1000);
+
+      // Set the new debounce timeout
+      setDebounceTimeout(timer as any);
+
+      // Cleanup on unmount
+      return () => {
+        if (timer) clearTimeout(timer);
+      };
+    }
+  }, [email, touched.email]);
+
   useEffect(() => {
     if (showNameField && validateField(name, nameSchema, 'name')) {
       setShowPasswordField(true);
@@ -79,8 +94,6 @@ export default function RegisterForm() {
     }
   }, [password, showPasswordField]);
 
-   
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-[350px]">
@@ -89,7 +102,7 @@ export default function RegisterForm() {
           <CardDescription>Create your account step by step.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form  className="space-y-4">
+          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             {/* Email Field */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -99,8 +112,11 @@ export default function RegisterForm() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => setTouched(prev => ({ ...prev, email: true }))} // Set touched on blur
               />
-              {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+              {touched.email && errors.email && (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              )}
             </div>
 
             {/* Name Field */}
@@ -113,8 +129,11 @@ export default function RegisterForm() {
                   placeholder="Enter your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  onBlur={() => setTouched(prev => ({ ...prev, name: true }))} // Set touched on blur
                 />
-                {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+                {touched.name && errors.name && (
+                  <p className="text-sm text-red-500">{errors.name}</p>
+                )}
               </div>
             )}
 
@@ -128,15 +147,18 @@ export default function RegisterForm() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onBlur={() => setTouched(prev => ({ ...prev, password: true }))} // Set touched on blur
                 />
-                {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+                {touched.password && errors.password && (
+                  <p className="text-sm text-red-500">{errors.password}</p>
+                )}
               </div>
             )}
 
             {/* Register Button */}
             {loading ? (
               <div className="text-white py-2 rounded-lg transition duration-300 flex justify-center items-center">
-               loafing...
+                Loading...
               </div>
             ) : (
               showRegisterButton && (
@@ -145,14 +167,12 @@ export default function RegisterForm() {
                 </Button>
               )
             )}
-
           </form>
 
-       
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-600">
               Already registered?{' '}
-              <a href="/patient/login" className="text-blue-500 hover:underline">
+              <a href="/Login" className="text-blue-500 hover:underline">
                 Log In
               </a>
             </p>

@@ -7,7 +7,7 @@ import AddDiscountModal from '@/components/admin/AddDiscountModal';
 import FeatureProductModal from '@/components/admin/FeatureModal';
 import DeleteProductModal from '@/components/admin/DeleteModal'; 
 import axios from 'axios';
-import { Router } from 'lucide-react';
+ 
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
