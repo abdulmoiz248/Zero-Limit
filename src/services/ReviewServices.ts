@@ -2,7 +2,7 @@
 import { prisma } from '@/helper/prisma';
 
 // Create a new review associated with a product
-export const createReview = async (username: string, body: string, rating: number, productId: number) => {
+export const createReview = async (username: string, body: string, rating: number, productId: string) => {
   return await prisma.review.create({
     data: {
       username,
@@ -26,7 +26,7 @@ export const getReviewById = async (id: number) => {
 }
 
 // services/reviewService.ts
-export const getReviewsByProductId = async (productId: number) => {
+export const getReviewsByProductId = async (productId: string) => {
     return await prisma.review.findMany({
       where: { productId }, // Filter reviews by product ID
     });

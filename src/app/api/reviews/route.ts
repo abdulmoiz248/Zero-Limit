@@ -1,14 +1,11 @@
-import connect from "@/dbConfig/dbConfig";
-import ProductModel from "@/Models/Product";
-import ReviewModel from "@/Models/Review";
+import { getAllReviews } from "@/services/ReviewServices";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
     try {
-        await connect(); 
-
+       
         
-       let reviews=await ReviewModel.find().limit(24);
+       let reviews=await getAllReviews();
        
         return NextResponse.json({
             reviews,
@@ -18,7 +15,7 @@ export async function GET(req: Request) {
     } catch (error: unknown) {
         console.log(error);
         return NextResponse.json({
-            message: "Error loading category.",
+            message: "Error loading Reviews.",
             success: false
         }, { status: 500 });
     }

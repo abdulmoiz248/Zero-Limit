@@ -1,13 +1,11 @@
-import connect from "@/dbConfig/dbConfig";
-import ReviewModel from "@/Models/Review";
-
+import { getReviewsByProductId } from "@/services/ReviewServices";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
     try {
-        await connect(); 
+       
         const url = new URL(req.url); 
-        const productID = url.pathname.split('/').pop(); 
+        const productID :string= url.pathname.split('/').pop() || ''; 
         if (!productID) {
             return NextResponse.json({
                 message: "Product ID is required.",
@@ -16,7 +14,7 @@ export async function GET(req: Request) {
         }
 
       
-      let reviews=await ReviewModel.find({ productID: productID})
+      let reviews=await getReviewsByProductId(productID);
        return NextResponse.json({
             reviews,
             success: true
@@ -25,7 +23,7 @@ export async function GET(req: Request) {
     } catch (error: unknown) {
         console.log(error);
         return NextResponse.json({
-            message: "Error loading category.",
+            message: "Error loading reviews.",
             success: false
         }, { status: 500 });
     }
