@@ -7,37 +7,36 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useToast } from "@/hooks/use-toast"
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import Cookies from 'js-cookie'
+import { getCart } from '@/helper/cart'
+import { CartItem } from '@/interfaces/interfaces';
 
 interface FormData {
-  firstName: string;
-  lastName: string;
+  name: string;
+  email: string;
   address: string;
   city: string;
   zipCode: string;
   country: string;
-  cardName: string;
-  cardNumber: string;
-  expiry: string;
-  cvv: string;
 }
 
 export default function LuxuryCheckoutPage() {
   const [step, setStep] = useState(1)
   const [paymentMethod, setPaymentMethod] = useState('online')
   const [formData, setFormData] = useState<FormData>({
-    firstName: '', lastName: '', address: '', city: '', zipCode: '', country: '',
-    cardName: '', cardNumber: '', expiry: '', cvv: ''
-  })
-  const [errors, setErrors] = useState<Partial<FormData>>({})
+    name: '', email: '', address: '', city: '', zipCode: '', country: ''})
+  const [phone, setPhone] = useState('')
+  const [errors, setErrors] = useState<Partial<FormData & { phone: string }>>({})
   const [isProcessing, setIsProcessing] = useState(false)
-  const { toast } = useToast()
+  const router = useRouter()
 
   const nextStep = () => {
     if (step === 1 && validateShippingInfo()) {
       setStep(2)
     } else if (step === 2 && validatePaymentInfo()) {
-      setStep(3)
+      simulatePayment()
     }
   }
 
@@ -51,8 +50,8 @@ export default function LuxuryCheckoutPage() {
 
   const validateShippingInfo = () => {
     const newErrors: Partial<FormData> = {}
-    if (!formData.firstName) newErrors.firstName = 'First name is required'
-    if (!formData.lastName) newErrors.lastName = 'Last name is required'
+    if (!formData.name) newErrors.name = 'Name is required'
+    if (!formData.email) newErrors.email = 'Email is required'
     if (!formData.address) newErrors.address = 'Address is required'
     if (!formData.city) newErrors.city = 'City is required'
     if (!formData.zipCode) newErrors.zipCode = 'ZIP code is required'
@@ -63,25 +62,28 @@ export default function LuxuryCheckoutPage() {
 
   const validatePaymentInfo = () => {
     if (paymentMethod === 'cod') return true
-    const newErrors: Partial<FormData> = {}
-    if (!formData.cardName) newErrors.cardName = 'Name on card is required'
-    if (!formData.cardNumber) newErrors.cardNumber = 'Card number is required'
-    if (!formData.expiry) newErrors.expiry = 'Expiry date is required'
-    if (!formData.cvv) newErrors.cvv = 'CVV is required'
+    const newErrors: Partial<FormData & { phone: string }> = {}
+    if (!phone) newErrors.phone = 'Phone number is required for online payment'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const simulatePayment = () => {
+  const simulatePayment = async () => {
     setIsProcessing(true)
-    setTimeout(() => {
+    try {
+      const cart = getCart();
+      const cartItems = Object.values(cart).map(item => item as CartItem);
+      const res = await axios.post('/api/order', { formData, phone, cartItems,paymentMethod })
+      if (res.data.success) {
+        Cookies.set('order', res.data.id)
+        localStorage.removeItem('cart');
+        router.push('/verify-order')
+      }
+    } catch (error: any) {
+      console.error('Order submission failed:', error.message)
+    } finally {
       setIsProcessing(false)
-      toast({
-        title: "Payment Successful",
-        description: "Your order has been placed successfully!",
-        duration: 5000,
-      })
-    }, 2000)
+    }
   }
 
   return (
@@ -94,17 +96,17 @@ export default function LuxuryCheckoutPage() {
       >
         <div className="px-6 py-8 sm:px-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Secure Checkout</h1>
-          
+
           <div className="mb-8">
             <div className="flex justify-between items-center">
-              {[1, 2, 3].map((i) => (
+              {[1, 2].map((i) => (
                 <div key={i} className="flex items-center">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                     step >= i ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'
                   }`}>
                     {i}
                   </div>
-                  {i < 3 && (
+                  {i < 2 && (
                     <div className={`h-1 w-full ${
                       step > i ? 'bg-primary' : 'bg-gray-200'
                     }`} />
@@ -115,7 +117,6 @@ export default function LuxuryCheckoutPage() {
             <div className="flex justify-between mt-2">
               <span className="text-sm font-medium">Shipping</span>
               <span className="text-sm font-medium">Payment</span>
-              <span className="text-sm font-medium">Review</span>
             </div>
           </div>
 
@@ -128,26 +129,26 @@ export default function LuxuryCheckoutPage() {
               <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="name">Name</Label>
                   <Input 
-                    id="firstName" 
-                    name="firstName"
-                    value={formData.firstName}
+                    id="name" 
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="John"
+                    placeholder="John Doe"
                   />
-                  {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                  {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input 
-                    id="lastName" 
-                    name="lastName"
-                    value={formData.lastName}
+                    id="email" 
+                    name="email"
+                    value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="Doe"
+                    placeholder="JohnDoe@gmail.com"
                   />
-                  {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                 </div>
                 <div className="col-span-2">
                   <Label htmlFor="address">Address</Label>
@@ -227,159 +228,30 @@ export default function LuxuryCheckoutPage() {
                     </div>
                   </RadioGroup>
                 </div>
+
                 {paymentMethod === 'online' && (
-                  <>
-                    <div>
-                      <Label htmlFor="cardName">Name on Card</Label>
-                      <Input 
-                        id="cardName" 
-                        name="cardName"
-                        value={formData.cardName}
-                        onChange={handleInputChange}
-                        placeholder="John Doe"
-                      />
-                      {errors.cardName && <p className="text-red-500 text-sm mt-1">{errors.cardName}</p>}
-                    </div>
-                    <div>
-                      <Label htmlFor="cardNumber">Card Number</Label>
-                      <Input 
-                        id="cardNumber" 
-                        name="cardNumber"
-                        value={formData.cardNumber}
-                        onChange={handleInputChange}
-                        placeholder="1234 5678 9012 3456"
-                      />
-                      {errors.cardNumber && <p className="text-red-500 text-sm mt-1">{errors.cardNumber}</p>}
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="expiry">Expiry Date</Label>
-                        <Input 
-                          id="expiry" 
-                          name="expiry"
-                          value={formData.expiry}
-                          onChange={handleInputChange}
-                          placeholder="MM/YY"
-                        />
-                        {errors.expiry && <p className="text-red-500 text-sm mt-1">{errors.expiry}</p>}
-                      </div>
-                      <div>
-                        <Label htmlFor="cvv">CVV</Label>
-                        <Input 
-                          id="cvv" 
-                          name="cvv"
-                          value={formData.cvv}
-                          onChange={handleInputChange}
-                          placeholder="123"
-                        />
-                        {errors.cvv && <p className="text-red-500 text-sm mt-1">{errors.cvv}</p>}
-                      </div>
-                    </div>
-                  </>
-                )}
-                {paymentMethod === 'cod' && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">
-                      You have selected Cash on Delivery. Please have the exact amount ready when your order arrives.
-                    </p>
+                  <div>
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input 
+                      id="phone" 
+                      name="phone"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="123-456-7890"
+                    />
+                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                   </div>
                 )}
-              </div>
-              <div className="mt-6 flex justify-between">
-                <Button variant="outline" onClick={prevStep}>Back</Button>
-                <Button onClick={nextStep}>Review Order</Button>
+
+                <div className="mt-6 flex justify-between">
+                  <Button variant="outline" onClick={prevStep}>Back to Shipping</Button>
+                  <Button onClick={nextStep} disabled={isProcessing}>
+                    {isProcessing ? 'Processing...' : 'Confirm Order'}
+                  </Button>
+                </div>
               </div>
             </motion.div>
           )}
-
-          {step === 3 && (
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-            >
-              <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-              <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-medium mb-2">Items</h3>
-                  <ul className="space-y-2">
-                    <li className="flex justify-between">
-                      <span>Wireless Earbuds</span>
-                      <span>$179.99</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Luxury Smartwatch</span>
-                      <span>$299.99</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span>Premium Bluetooth Speaker (x2)</span>
-                      <span>$319.98</span>
-                    </li>
-                  </ul>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-medium mb-2">Shipping</h3>
-                  <RadioGroup defaultValue="standard">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="standard" id="standard" />
-                      <Label htmlFor="standard">Standard Shipping (Free)</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="express" id="express" />
-                      <Label htmlFor="express">Express Shipping ($15.00)</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-medium mb-2">Payment Method</h3>
-                  <p>{paymentMethod === 'online' ? 'Online Payment' : 'Cash on Delivery'}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-medium mb-2">Total</h3>
-                  <div className="flex justify-between text-lg font-semibold">
-                    
-                    <span>Total Amount</span>
-                    <span>$799.96</span>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-between">
-                <Button variant="outline" onClick={prevStep}>Back</Button>
-                <Button onClick={simulatePayment} disabled={isProcessing}>
-                  {isProcessing ? (
-                    <>
-                      <span className="mr-2">Processing</span>
-                      <motion.span
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      >
-                        <CheckCircle className="h-5 w-5" />
-                      </motion.span>
-                    </>
-                  ) : (
-                    'Place Order'
-                  )}
-                </Button>
-              </div>
-            </motion.div>
-          )}
-
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <div className="flex items-center justify-between text-sm text-gray-500">
-              <div className="flex items-center">
-                <Lock className="h-5 w-5 mr-2" />
-                <p>Secure checkout</p>
-              </div>
-              <div className="flex items-center">
-                <Truck className="h-5 w-5 mr-2" />
-                <p>Free shipping on orders over $500</p>
-              </div>
-              <div className="flex items-center">
-                <CreditCard className="h-5 w-5 mr-2" />
-                <p>Multiple payment options</p>
-              </div>
-            </div>
-          </div>
         </div>
       </motion.div>
     </div>

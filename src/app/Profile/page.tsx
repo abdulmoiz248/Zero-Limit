@@ -7,11 +7,11 @@ import Profile from '@/components/Profile';
 
 export default function Page() {
   const cookieStore = cookies(); 
-  const loginCookie = cookieStore.get('login'); 
+  const loginCookie = cookieStore.get('customer'); 
 
   return (
     <div>
-      <h1>Login Cookie</h1>
+    
       {loginCookie ? (
         <Profile/>
       ) : (

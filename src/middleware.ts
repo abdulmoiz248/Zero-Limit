@@ -27,18 +27,25 @@ export function middleware(request: NextRequest) {
     }
 
     const customer=cookies.get('customer');
-  
+    
+
       if (!customer && pathname === '/Checkout') {
         return NextResponse.redirect(new URL('/Login', request.url));
       }
       if(customer && pathname === '/Login'){
         return NextResponse.redirect(new URL('/', request.url));
       }
+
     
+      const order=cookies.get('order');
+       if (!order && pathname === '/verify-order') {
+        return NextResponse.redirect(new URL('/Checkout', request.url));
+      }
          
+    
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*','/otp','/Register','/Checkout','/Login'],
+  matcher: ['/admin/:path*','/otp','/Register','/Checkout','/Login','/verify-order'],
 };

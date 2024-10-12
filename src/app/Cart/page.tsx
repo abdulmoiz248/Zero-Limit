@@ -5,14 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Minus, Plus, X, ShoppingBag, CreditCard, Truck } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { getCart } from '@/helper/cart';
-import { Product } from '@/Models/Product';
+
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { CartItem } from '@/interfaces/interfaces';
 
-interface CartItem {
-  product: Product;
-  quantity: number;
-}
 
 export default function LuxuryCartPage() {
   const router = useRouter();
