@@ -7,7 +7,7 @@ import { ChevronRight } from 'lucide-react'
 
 export default function NotLogin() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-yellow-400 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
       <motion.div 
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -37,7 +37,7 @@ export default function NotLogin() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link href="/Login" className="block w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out text-center">
+              <Link href="/Login" className="block w-full bg-white  text-black font-bold py-3 px-4 rounded-md transition duration-300 ease-in-out text-center">
                 Login
                 <ChevronRight className="inline-block ml-2 h-5 w-5" />
               </Link>
@@ -46,7 +46,7 @@ export default function NotLogin() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link href="/Register" className="block w-full bg-black hover:bg-gray-900 text-yellow-500 font-bold py-3 px-4 rounded-md border-2 border-yellow-500 transition duration-300 ease-in-out text-center">
+              <Link href="/Register" className="block w-full bg-black hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-md border-2 border-white transition duration-300 ease-in-out text-center">
                 Register
                 <ChevronRight className="inline-block ml-2 h-5 w-5" />
               </Link>

@@ -9,8 +9,11 @@ export async function POST(req: Request) {
     await connect();
     const { phone, formData, cartItems, paymentMethod } = await req.json();
 
-    // Mapping cart items to product IDs
-    let products = cartItems.map((cartItem: CartItem) => cartItem.product._id);
+    let total=0;
+    let products = cartItems.map((cartItem: CartItem) =>{
+      total+=cartItem.product.price;
+     return cartItem.product._id
+    });
 
     let method;
     if(paymentMethod==='online'){
@@ -24,6 +27,7 @@ export async function POST(req: Request) {
       phone,
       products,
       otp,
+      total,
       name: formData.name,
       address: formData.address,
       city: formData.city, // Fixed: should be lowercase

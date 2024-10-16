@@ -1,11 +1,10 @@
-// pages/CategoryPage.tsx
 'use client'
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Categories } from '@/Models/Categories';
 import { Product } from '@/Models/Product';
-import ProductCard from '@/components/ProductCard'; // Import ProductCard
+import ProductCard from '@/components/ProductCard'; 
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import LionLoader from '@/components/LionLoader';
@@ -42,7 +41,8 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
   if (!category) return <div>Category not found.</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+
+    <div className="min-h-screen bg-gray-100 pt-10">
       <div className="container mx-auto px-4 py-12">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -52,8 +52,6 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
         >
           {category.name}
         </motion.h1>
-
-        {/* Check if there are no products available */}
         {products.length === 0 ? (
           <div className="text-center text-gray-600">
             <p>No products available in this category.</p>

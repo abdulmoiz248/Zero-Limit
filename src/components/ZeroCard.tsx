@@ -23,12 +23,12 @@ const Card = () => {
                 priority={true} // Preload this image
               />
               <Image
-                src="/images/logo.jpg"
+                src="/images/logo.png"
                 alt="Zero Limit logo"
                 width={100}
                 height={100}
                 objectFit="contain"
-                className="zero-limit"
+                className="zero-limit bg-white"
               />
             </div>
             <span className="trail" />

@@ -36,8 +36,15 @@ export async function POST(req: Request) {
         });
 
      
+        let data={
+            id:customer.id,
+            email:customer.email,
+            fullName:customer.fullName
+
+        }
         const response = NextResponse.json(
-            { message: 'Login successful', success: true },
+            
+            { message: 'Login successful', success: true ,customerData: data},
             { status: 200 }
         );
         response.headers.set('Set-Cookie', serializedToken);

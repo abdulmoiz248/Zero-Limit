@@ -19,8 +19,14 @@ export default function LoginPage() {
 
     try {
       const response = await axios.post('/api/auth/login', { email, password });
-      console.log('Login successful:', response.data);
+      if(response.data.success)
+     {
+      
+      localStorage.setItem('customerData',JSON.stringify(response.data.customerData));
       router.push('/'); 
+       
+
+     }
     } catch (error) {
       console.error('Error logging in:', error);
       setError('Incorrect email or password. Please try again.');
@@ -28,20 +34,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-orange-600 to-yellow-400 p-4">
+    <div className="flex items-center justify-center min-h-screen pt-10 p-4">
       <motion.div 
         className="w-full max-w-md"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="bg-black p-8 rounded-lg shadow-lg border-2 border-yellow-500">
+        <div className="bg-black p-8 shadow-lg border-2 rounded">
           <h2 className="text-3xl font-bold text-center text-white mb-6">
             Login to Limit Zero
           </h2>
-          <p className="text-sm text-center text-yellow-400 mb-6">
+          <p className="text-sm text-center text-white mb-6">
             Don't have an account?{' '}
-            <Link href="/Register" className="font-medium text-orange-500 hover:text-yellow-500 transition-colors">
+            <Link href="/Register" className="font-medium  hover:text-yellow-500 transition-colors">
               Sign up here
             </Link>
           </p>
@@ -52,7 +58,7 @@ export default function LoginPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-red-500 text-white p-3 rounded-md mb-4 flex items-center"
+                className=" text-black p-3 rounded-md mb-4 flex items-center"
               >
                 <AlertCircle className="mr-2" />
                 {error}
@@ -62,7 +68,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block mb-1 text-sm text-yellow-400">
+              <label htmlFor="email" className="block mb-1 text-sm text-white">
                 Email address
               </label>
               <div className="relative">
@@ -71,16 +77,16 @@ export default function LoginPage() {
                   name="email"
                   id="email"
                   placeholder="leroy@jenkins.com"
-                  className="w-full px-4 py-2 pl-10 bg-yellow-900 border-2 border-yellow-500 rounded-md text-white placeholder-yellow-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 pl-10 bg-white border-2 border-yellow-500 rounded-md text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-yellow-500" />
+                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-black-500" />
               </div>
             </div>
             <div>
-              <label htmlFor="password" className="block mb-1 text-sm text-yellow-400">
+              <label htmlFor="password" className="block mb-1 text-sm text-white">
                 Password
               </label>
               <div className="relative">
@@ -89,18 +95,18 @@ export default function LoginPage() {
                   name="password"
                   id="password"
                   placeholder="*****"
-                  className="w-full px-4 py-2 pl-10 bg-yellow-900 border-2 border-yellow-500 rounded-md text-white placeholder-yellow-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 pl-10 bg-white border-2 border-yellow-500 rounded-md text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-yellow-500" />
+                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-black" />
               </div>
             </div>
 
             <motion.button
               type="submit" 
-              className="w-full px-4 py-3 font-bold text-black bg-gradient-to-r from-yellow-500 to-orange-500 rounded-md hover:from-yellow-600 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black transition-all duration-300"
+              className="w-full px-4 py-3 font-bold text-black bg-white  rounded-md  focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-black transition-all duration-300"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

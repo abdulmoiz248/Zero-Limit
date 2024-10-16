@@ -14,9 +14,14 @@ export interface Order extends Document {
   phone: string; // Added for additional info if needed
   address: string; // Added for additional info if needed
   otp: string; // Added
+  total:number;
 }
 
 const OrderSchema = new Schema<Order>({
+  total:{
+    type: Number,
+    required: true, // Optional: make required if needed
+  },
   otp:{
     type: String,
     required: true, 
@@ -24,8 +29,8 @@ const OrderSchema = new Schema<Order>({
   status: {
     type: String,
     required: true,
-    enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled'], // Possible order statuses
-    default: 'Pending', // Default status
+    enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled'], 
+    default: 'Pending', 
   },
   
   paymentMethod: {

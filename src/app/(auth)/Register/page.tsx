@@ -25,7 +25,7 @@ export default function RegisterForm() {
   const [touched, setTouched] = useState({ email: false, name: false, password: false });
   const [debounceTimeout, setDebounceTimeout] = useState<number | null>(null);
 
-  // Validation function
+  
   const validateField = (value: string, schema: z.ZodSchema, field: keyof typeof errors) => {
     try {
       schema.parse(value);
@@ -109,7 +109,7 @@ let router=useRouter();
            
         }
       } catch (error) {
-        setErrors(prev => ({ ...prev, email: 'Registeratio Failed' }))
+        setErrors(prev => ({ ...prev, email: 'Registeration Failed' }))
       } finally {
         setLoading(false);
       }
@@ -117,11 +117,11 @@ let router=useRouter();
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-[350px]">
+    <div className="flex items-center justify-center min-h-screen ">
+      <Card className="w-[350px]  border-black border-2 rounded">
         <CardHeader>
           <CardTitle>Register</CardTitle>
-          <CardDescription>Create your account step by step.</CardDescription>
+          <CardDescription>Hey Fearless! Create your account step by step.</CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>

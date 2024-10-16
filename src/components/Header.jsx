@@ -32,7 +32,7 @@ export default function Header() {
           <div className="flex justify-between items-center py-6 md:justify-start md:space-x-10">
             <div className="flex justify-start lg:w-0 lg:flex-1">
               <a href="/" className="flex items-center ">
-               <Image src="/images/logo.jpg"  alt='logo'  width={200} height={200}
+               <Image src="/images/logo.png"  alt='logo'  width={200} height={200}
                /> 
               </a>
             </div>
