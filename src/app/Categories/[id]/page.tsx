@@ -14,7 +14,6 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +38,8 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
   if (loading) return <LionLoader></LionLoader>;
   if (error) return <div>{error}</div>;
   if (!category) return <div>Category not found.</div>;
+
+
 
   return (
 

@@ -167,14 +167,40 @@ export default function Component({ params }: { params: { id: string } }) {
                   >
                     {product.name}
                   </motion.h2>
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                    className="text-2xl sm:text-3xl font-bold text-primary mb-4"
-                  >
-                    ${product.price}
-                  </motion.p>
+                  <div className="mb-4">
+                    {product.discountPercent && product.discountPercent > 0 ? (
+                      <div>
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.3 }}
+                          className="text-2xl sm:text-3xl font-bold text-red-600 line-through"
+                        >
+                          ${product.price}
+                        </motion.p>
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.3 }}
+                          className="text-2xl sm:text-3xl font-bold text-primary"
+                        >
+                          ${product.price - (product.price * product.discountPercent / 100)}
+                        </motion.p>
+                        <span className="text-red-600 font-semibold">
+                          {product.discountPercent}% off
+                        </span>
+                      </div>
+                    ) : (
+                      <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        className="text-2xl sm:text-3xl font-bold text-primary mb-4"
+                      >
+                        ${product.price}
+                      </motion.p>
+                    )}
+                  </div>
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
