@@ -8,6 +8,7 @@ import { Product } from '@/Models/Product';
 import ProductCard from '@/components/ProductCard'; // Import ProductCard
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import LionLoader from '@/components/LionLoader';
 
 export default function CategoryPage({ params }: { params: { id: string } }) {
   const [category, setCategory] = useState<Categories | null>(null);
@@ -36,7 +37,7 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
     fetchData();
   }, [params.id]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LionLoader></LionLoader>;
   if (error) return <div>{error}</div>;
   if (!category) return <div>Category not found.</div>;
 

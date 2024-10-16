@@ -1,11 +1,11 @@
 'use client';
 import { FaFacebook, FaInstagram } from 'react-icons/fa';
-import { SiTiktok } from 'react-icons/si'; // For TikTok icon
-import { AiOutlineWhatsApp } from 'react-icons/ai'; // For WhatsApp icon
+import { SiTiktok } from 'react-icons/si'; 
+import { AiOutlineWhatsApp } from 'react-icons/ai'; 
 
 const Footer = () => {
   return (
-    <footer className="py-6 bg-gray-100 text-gray-900">
+    <footer  id="footer" className="py-6 bg-white">
       <div className="container px-6 mx-auto space-y-6 divide-y divide-opacity-50">
         <div className="grid grid-cols-12">
           <div className="pb-6 col-span-full md:pb-0 md:col-span-6">

@@ -42,9 +42,10 @@ export default function MarqueeDemo() {
   const firstRow = reviews.slice(0, reviews.length / 2)
   const secondRow = reviews.slice(reviews.length / 2)
 
+  //if(reviews.length<10) return <></>
   return (
     <div className="w-full">
-      <h2 className="text-3xl font-bold text-center mb-8 text-primary">What Our Users Say</h2>
+      <h2 className="text-3xl font-bold text-center mb-8 text-primary py-8">What Our Users Say</h2>
       <div className="relative flex h-[400px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border bg-background shadow-xl">
         <Marquee pauseOnHover className="[--duration:30s]">
           {firstRow.map((review) => (

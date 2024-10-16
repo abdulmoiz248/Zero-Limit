@@ -1,45 +1,167 @@
-'use client'
+import React, { useEffect } from "react";
+import styled from "styled-components";
+import Image from "next/image"; // Import Next.js Image component
 
-import { useState } from 'react'
-import Image from 'next/image'
 
-export default function ZeroCard() {
-  const [isHovered, setIsHovered] = useState(false)
+const Card = () => {
+
 
   return (
-    <div 
-      className="relative w-[300px] h-[200px] bg-black flex items-center justify-center rounded-lg overflow-hidden transition-all duration-500 ease-in-out hover:rounded-none hover:scale-110"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className={`absolute inset-0 border-2 border-white opacity-0 rotate-[10deg] transition-all duration-500 ease-in-out ${isHovered ? 'opacity-100 inset-[15px] rotate-0' : ''}`} />
-      
-      <div className="transition-all duration-500 ease-in-out">
-        <div className={`relative h-[35px] overflow-hidden transition-all duration-1000 ease-in-out ${isHovered ? 'w-[180px]' : 'w-[33px]'}`}>
-          <div className="absolute left-0 h-[33px] w-[33px]">
-            <Image
-              src="/images/logo.jpg"
-              alt="Limit Zero Logo"
-              width={33}
-              height={33}
-              className="object-cover"
-            />
+    <StyledWrapper>
+      <div className="card">
+        <div className="border" />
+        <div className="content">
+          <div className="logo">
+            <div className="logo1">
+              {/* Use Next.js Image component with fixed sizes */}
+              <Image
+                src="/images/Lion.jpg"
+                alt="lion logo"
+                width={100}
+                height={100}
+                objectFit="contain"
+                priority={true} // Preload this image
+              />
+              <Image
+                src="/images/logo.jpg"
+                alt="Zero Limit logo"
+                width={100}
+                height={100}
+                objectFit="contain"
+                className="zero-limit"
+              />
+            </div>
+            <span className="trail" />
           </div>
-          <div className="absolute left-[33px] h-[33px]">
-            <svg viewBox="0 0 180 33" className="h-full">
-              <text x="0" y="25" className="text-[24px] font-bold fill-white">LIMIT ZERO</text>
-            </svg>
-          </div>
-          <div className={`absolute right-0 h-full w-full opacity-0 ${isHovered ? 'animate-trail' : ''}`} />
         </div>
-        <span className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 mt-[30px] text-white text-xs opacity-0 transition-all duration-500 ease-in-out delay-500 ${isHovered ? 'opacity-100 tracking-[9.5px]' : ''}`}>
-          clothing
-        </span>
+        <span className="bottom-text">Breaking the limits</span>
       </div>
-      
-      <span className={`absolute left-1/2 bottom-[13px] -translate-x-1/2 text-[6px] uppercase px-[5px] pl-2 text-white bg-black opacity-0 transition-all duration-500 ease-in-out ${isHovered ? 'opacity-100 tracking-[3px]' : 'tracking-[7px]'}`}>
-        no limits
-      </span>
-    </div>
-  )
-}
+    </StyledWrapper>
+  );
+};
+
+const StyledWrapper = styled.div`
+  .card {
+    width: 300px;
+    height: 200px;
+    background: #ffffff;
+    position: relative;
+    display: grid;
+    place-content: center;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .border {
+    position: absolute;
+    inset: 0;
+    border: 2px solid black;
+    opacity: 0;
+    transform: rotate(10deg);
+    transition: all 0.5s ease-in-out;
+  }
+
+  .bottom-text {
+    position: absolute;
+    left: 50%;
+    bottom: 13px;
+    transform: translateX(-50%);
+    font-size: 6px;
+    text-transform: uppercase;
+    padding: 0 5px;
+    color: white;
+    background: #243137;
+    opacity: 0;
+    letter-spacing: 7px;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .content {
+    transition: all 0.5s ease-in-out;
+  }
+
+  .content .logo {
+    height: 100px;
+    width: 100px;
+    position: relative;
+    overflow: hidden;
+    transition: all 1s ease-in-out;
+  }
+
+  .content .logo .logo1 {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .zero-limit {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .card:hover {
+    border-radius: 0;
+    transform: scale(1.1);
+  }
+
+  .card:hover .zero-limit {
+    opacity: 1;
+  }
+
+  .card:hover .border {
+    inset: 15px;
+    opacity: 1;
+    transform: rotate(0);
+  }
+
+  .card:hover .bottom-text {
+    letter-spacing: 3px;
+    opacity: 1;
+  }
+
+  .card:hover .trail {
+    animation: trail 1s ease-in-out;
+  }
+
+  @keyframes trail {
+    0% {
+      background: linear-gradient(
+        90deg,
+        rgba(189, 159, 103, 0) 90%,
+        rgb(189, 159, 103) 100%
+      );
+      opacity: 0;
+    }
+    30% {
+      background: linear-gradient(
+        90deg,
+        rgba(189, 159, 103, 0) 70%,
+        rgb(189, 159, 103) 100%
+      );
+      opacity: 1;
+    }
+    70% {
+      background: linear-gradient(
+        90deg,
+        rgba(189, 159, 103, 0) 70%,
+        rgb(189, 159, 103) 100%
+      );
+      opacity: 1;
+    }
+    95% {
+      background: linear-gradient(
+        90deg,
+        rgba(189, 159, 103, 0) 90%,
+        rgb(189, 159, 103) 100%
+      );
+      opacity: 0;
+    }
+  }
+`;
+
+export default Card;

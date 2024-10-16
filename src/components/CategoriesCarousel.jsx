@@ -1,54 +1,58 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ChevronRight, Router } from "lucide-react";
-import Image from "next/image";
-import axios from "axios"; // Don't forget to import axios
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Button } from "@/components/ui/button"
+import { ChevronRight } from "lucide-react"
+import Image from "next/image"
+import axios from "axios"
+import { useRouter } from "next/navigation"
+import DanceButton from "./DanceButton"
 
 export default function ProductCarousel() {
-  const [carouselData, setCarouselData] = useState([]); // Initialize state for carousel data
-  const [currentSlide, setCurrentSlide] = useState(0);
-  let router=useRouter();
+  const [carouselData, setCarouselData] = useState([])
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const router = useRouter()
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let res = await axios.get('/api/getCategories'); // Ensure this matches your API route
+        let res = await axios.get('/api/getCategories')
         if (res.data.success) {
           const categoriesWithId = res.data.categories.map((category) => ({
-            id: category._id, // Use _id from MongoDB
-            name: category.name, // The category name
-            link: category.link // The link to the category
-          }));
-          setCarouselData(categoriesWithId); // Set state with categories
+            id: category._id,
+            name: category.name,
+            link: category.link
+          }))
+          setCarouselData(categoriesWithId)
         }
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching categories:", error)
       }
-    };
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const nextSlide = () => {
-
-    setCurrentSlide((prev) => (prev + 1) % carouselData.length);
-  };
+    setCurrentSlide((prev) => (prev + 1) % carouselData.length)
+  }
 
   return (
-    <div className="w-full min-h-screen bg-black text-white p-4 md:p-8">
-      <h1 className="text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-center">Product Categories</h1>
-      <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
-        <div className="w-full lg:w-2/3 relative overflow-hidden rounded-lg aspect-square">
+    
+    <div className="w-full min-h-screen   bg-gradient-to-br  bg-white text-black p-4 md:p-6">
+      <h1 className="text-2xl  md:text-4xl font-bold mb-4 md:mb-8 text-center pt-10 text-black">
+        Explore Our Product Categories
+      </h1>
+      <div className="flex flex-col lg:flex-row gap-6 md:gap-8 mt-10 max-w-5xl mx-auto">
+        <div className="w-full lg:w-2/3 relative overflow-hidden rounded-xl shadow-xl aspect-[16/9] bg-white">
           <AnimatePresence mode="wait">
             {carouselData.length > 0 && (
               <motion.div
                 key={currentSlide}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.5 }}
                 className="absolute inset-0"
               >
@@ -56,47 +60,56 @@ export default function ProductCarousel() {
                   src={carouselData[currentSlide].link}
                   alt={carouselData[currentSlide].name}
                   layout="fill"
-                  objectFit="contain"
+                  objectFit="cover"
                   className="z-10"
                 />
-                <div className="absolute inset-0 backdrop-blur-md bg-black/30 z-0" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-20" />
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-        <div className="w-full lg:w-1/3 flex flex-col justify-start gap-4 mt-20">
+        <div className="w-full lg:w-1/3 flex flex-col justify-between gap-4">
           {carouselData.length > 0 && (
-            <>
+            <div className="space-y-4">
               <motion.h2
                 key={carouselData[currentSlide].name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-2xl md:text-3xl font-bold"
+                className="text-2xl md:text-3xl font-bold text-gray-800"
               >
                 {carouselData[currentSlide].name}
               </motion.h2>
-              <Button className="w-full md:w-40 border-white border-2" onClick={()=>{
+              <DanceButton
+                className="w-full md:w-auto px-6 py-2 text-base font-semibold rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white transition-all hover:shadow-lg hover:scale-105"
+                label="Shop Now"
+              onClick={() => {
                 router.push(`/Categories/${carouselData[currentSlide].id}`)
-              }}>Shop Now</Button>
-            </>
+              }}>
+                
+              </DanceButton>
+            </div>
           )}
-          <div className="mt-10 relative">
-            <div className="overflow-hidden">
+          <div className="mt-6 relative">
+            <div className="overflow-hidden rounded-lg bg-white p-3 shadow-inner">
               <motion.div
-                className="flex"
-                animate={{ x: `${-currentSlide * (100 / carouselData.length)}%` }} // Adjust the width dynamically
+                className="flex gap-3"
+                animate={{ x: `${-currentSlide * (100 / carouselData.length)}%` }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 {carouselData.map((slide, index) => (
-                  <div key={slide.id} className="w-1/3 flex-shrink-0 pr-2">
-                    <div className={`relative w-24 h-24 mx-auto ${index === currentSlide ? 'ring-2 ring-white' : ''}`}>
+                  <div key={slide.id} className="w-1/4 flex-shrink-0">
+                    <div 
+                      className={`relative aspect-square rounded-md overflow-hidden cursor-pointer transition-all ${
+                        index === currentSlide ? 'ring-3 ring-purple-600 scale-105 z-10' : 'opacity-50 scale-90'
+                      }`}
+                      onClick={() => setCurrentSlide(index)}
+                    >
                       <Image
                         src={slide.link}
                         alt={slide.name}
                         fill
-                        className={`rounded-lg ${index === currentSlide ? 'opacity-100' : 'opacity-50'}`}
-                        style={{ objectFit: 'cover' }}
+                        className="object-cover"
                       />
                     </div>
                   </div>
@@ -106,15 +119,15 @@ export default function ProductCarousel() {
             <Button
               variant="outline"
               size="icon"
-              className="absolute right-0 -bottom-10 transform"
+              className="absolute -right-3 top-1/2 transform -translate-y-1/2 bg-white shadow-md hover:bg-gray-100"
               onClick={nextSlide}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-5 w-5 text-gray-800" />
               <span className="sr-only">Next slide</span>
             </Button>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

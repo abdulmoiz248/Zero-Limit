@@ -1,75 +1,91 @@
-"use client";
+"use client"
 
-import { useEffect, useState, useRef } from "react";
-import { motion, useAnimation } from "framer-motion";
-import Image from "next/image";
-import axios from "axios";
-import { Product } from "@/Models/Product";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef, useCallback } from "react"
+import { motion, useAnimation } from "framer-motion"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Star } from "lucide-react"
 
-let products: Product[] = [];
+interface Product {
+  _id: string
+  name: string
+  link: string[]
+  price: number
+  ratings: number
+}
 
-function FeaturedProductCard({ product }: { product: typeof products[0] }) {
+function FeaturedProductCard({ product }: { product: Product }) {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-lg h-full flex flex-col transition-transform transform hover:scale-105">
-      <h3 className="text-lg font-semibold mb-2 line-clamp-2 h-14">{product.name}</h3>
-      <div className="relative w-full h-48 mb-4">
-        <Image
-          src={product.link[0]}
-          alt={product.name}
-          layout="fill"
-          objectFit="cover"
-          className="rounded"
-        />
-      </div>
-      <p className="text-gray-600 mb-2">${product.price.toFixed(2)}</p>
-      <div className="flex items-center mt-auto">
-        <span className="text-yellow-500 mr-1" aria-hidden="true">
-          ★
-        </span>
-        <span>{product.ratings.toFixed(1)}</span>
-      </div>
-    </div>
-  );
+    <Card className="h-full flex flex-col transition-transform hover:scale-105">
+      <CardHeader>
+        <CardTitle className="text-lg line-clamp-2 h-14">{product.name}</CardTitle>
+      </CardHeader>
+      <CardContent className="flex-grow flex flex-col">
+        <div className="relative w-full h-48 mb-4">
+          <Image
+            src={product.link[0]}
+            alt={product.name}
+            fill
+            className="rounded object-cover"
+          />
+        </div>
+        <p className="text-muted-foreground mb-2">${product.price.toFixed(2)}</p>
+        <div className="flex items-center mt-auto">
+          <Star className="w-4 h-4 text-yellow-500 mr-1" />
+          <span>{product.ratings.toFixed(1)}</span>
+        </div>
+      </CardContent>
+    </Card>
+  )
 }
 
 export default function ContinuousCarousel() {
-  let router=useRouter();
-  const [width, setWidth] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const controls = useAnimation();
-  const duration = 40; 
+  const router = useRouter()
+  const [products, setProducts] = useState<Product[]>([])
+  const [width, setWidth] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const controls = useAnimation()
+  const duration = 40
+
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await fetch("/api/getFeatured")
+      if (res.ok) {
+        const data = await res.json()
+        if (data.success) {
+          setProducts(data.products)
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get("/api/getFeatured");
-        if (res.data.success) {
-          products = res.data.products;
-          setWidth(calculateWidth());
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    fetchData()
+  }, [fetchData])
 
-    fetchData();
-  }, []);
+  useEffect(() => {
+    if (products.length > 0) {
+      setWidth(calculateWidth())
+    }
+  }, [products])
 
   useEffect(() => {
     if (width > 0) {
-      startAnimation();
+      startAnimation()
     }
-  }, [width]);
+  }, [width])
 
   const calculateWidth = () => {
     if (containerRef.current) {
-      const cardWidth = 280; // Fixed card width
-      const gap = 16; // gap between cards
-      return products.length * (cardWidth + gap);
+      const cardWidth = 280 // Fixed card width
+      const gap = 16 // gap between cards
+      return products.length * (cardWidth + gap)
     }
-    return 0;
-  };
+    return 0
+  }
 
   const startAnimation = () => {
     controls.start({
@@ -82,34 +98,30 @@ export default function ContinuousCarousel() {
           ease: "linear",
         },
       },
-    });
-  };
+    })
+  }
 
   const handleMouseEnter = () => {
-    controls.stop(); // Stop the animation on hover
-  };
+    controls.stop() // Stop the animation on hover
+  }
 
   const handleMouseLeave = () => {
-    startAnimation(); // Restart the animation when mouse leaves
-  };
+    startAnimation() // Restart the animation when mouse leaves
+  }
 
-  const sectionVariants = {
-    initial: { opacity: 0, scale: 0.9 },
-    animate: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.9 },
-  };
+  const handleProductClick = (product: Product) => {
+    localStorage.setItem('product', JSON.stringify(product))
+    router.push(`Product/${product._id}`)
+  }
+
+  if (products.length === 0) {
+    return null
+  }
 
   return (
-    <motion.section
-      className="w-full py-16 bg-gray-50"
-      variants={sectionVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      transition={{ duration: 0.5, ease: "easeInOut" }}
-    >
+    <section className="w-full py-16 bg-secondary">
       <div className="container mx-auto px-4 text-center">
-        <h1 className="text-4xl font-bold text-primary mb-8">Featured Products</h1>
+        <h1 className="text-4xl font-bold text-primary mb-10">Featured Products</h1>
 
         <div
           className="overflow-hidden w-full"
@@ -122,19 +134,18 @@ export default function ContinuousCarousel() {
             animate={controls}
             style={{ width: `${width * 2}px` }} // Width doubled for continuous effect
           >
-             
             {[...products, ...products].map((product, index) => (
-              <div key={index} className="flex-shrink-0 w-[280px] h-[400px] mr-4 " onClick={()=>{
-                localStorage.removeItem('product');
-                localStorage.setItem('product', JSON.stringify(product));
-                router.push(`Product/${product._id}`)
-              }}>
-                <FeaturedProductCard product={product}  />
+              <div 
+                key={`${product._id}-${index}`} 
+                className="flex-shrink-0 w-[280px] h-[400px] mr-4 cursor-pointer" 
+                onClick={() => handleProductClick(product)}
+              >
+                <FeaturedProductCard product={product} />
               </div>
             ))}
           </motion.div>
         </div>
       </div>
-    </motion.section>
-  );
+    </section>
+  )
 }

@@ -1,15 +1,13 @@
 'use client';
 
 import React from 'react';
-import LionLoader from '@/components/LionLoader'
-
 import CatCarousel from '@/components/CategoriesCarousel';
 import ContinuousCarousel from '@/components/Featured'
 import JoinUs from '@/components/JoinUs';
-import ReviewSection from '@/components/ReviewUs';
+
 import MarqueeDemo from '@/components/Reviews'
- import ZeroCard from '@/components/ZeroCard';
-import ZeroLimitPage from '@/components/Tiger';
+import BelowHeader from '@/components/BelowHeader'
+import LimitZeroManifesto from '@/components/AboutUs';
 
 export default function Home() {
    
@@ -19,17 +17,16 @@ export default function Home() {
   return (
    
     <>
-    {/* <ZeroCard/> */}
-    <ZeroLimitPage></ZeroLimitPage>
+    <BelowHeader/>
     <CatCarousel />
+    <LimitZeroManifesto/>
     <ContinuousCarousel/>
     
      <JoinUs/>
      <MarqueeDemo/>
-     <ReviewSection/>
-  
+   
+   
 
-   <LionLoader/>
     </>
   
   
