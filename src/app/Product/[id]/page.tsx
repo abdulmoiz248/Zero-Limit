@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -12,7 +11,7 @@ import { Product } from '@/Models/Product'
 import { Review } from '@/Models/Review'
 import { addToCart, removeFromCart, getCart } from '@/helper/cart'
 
-export default function ProductPage({ params }: { params: { id: string } }) {
+export default function Component({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [product, setProduct] = useState<Product | null>(null)
@@ -102,25 +101,25 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-black py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+      <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
         <Skeleton className="w-full max-w-4xl h-[600px] rounded-lg" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white text-black py-6 px-4 sm:py-12 sm:px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto"
+        className="max-w-7xl mx-auto mt-10"
       >
-        <Card className="bg-gray-900 shadow-xl rounded-lg overflow-hidden mb-8">
+        <Card className="bg-white shadow-xl rounded-lg overflow-hidden mb-8">
           <CardContent className="p-0">
             <div className="lg:flex">
               <div className="lg:w-1/2 relative">
-                <div className="sticky top-0 lg:h-[calc(100vh-2rem)]">
+                <div className="sticky top-0 h-[50vh] lg:h-[calc(100vh-2rem)]">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentImageIndex}
@@ -128,7 +127,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="relative w-full h-96 lg:h-full"
+                      className="relative w-full h-full"
                     >
                       <Image
                         src={product.link[currentImageIndex]}
@@ -138,18 +137,18 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                       />
                       <div className="absolute inset-0 flex items-center justify-between p-4">
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           size="icon"
                           onClick={prevImage}
-                          className="rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20"
+                          className="rounded-full bg-white/80 text-black hover:bg-white"
                         >
                           <ChevronLeft className="w-6 h-6" />
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           size="icon"
                           onClick={nextImage}
-                          className="rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20"
+                          className="rounded-full bg-white/80 text-black hover:bg-white"
                         >
                           <ChevronRight className="w-6 h-6" />
                         </Button>
@@ -185,11 +184,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-5 h-5 ${i < Math.floor(product.ratings) ? 'text-yellow-400' : 'text-gray-600'}`}
+                        className={`w-5 h-5 ${i < Math.floor(product.ratings) ? 'text-yellow-400' : 'text-gray-300'}`}
                         fill="currentColor"
                       />
                     ))}
-                    <span className="ml-2 text-sm sm:text-base text-gray-400">
+                    <span className="ml-2 text-sm sm:text-base text-gray-600">
                       {product.ratings} out of 5 stars
                     </span>
                   </motion.div>
@@ -197,11 +196,11 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                     initial={{ height: 'auto' }}
                     animate={{ height: isDescriptionExpanded ? 'auto' : '4.5em' }}
                     transition={{ duration: 0.3 }}
-                    className="text-sm sm:text-base text-gray-300 overflow-hidden relative mb-4"
+                    className="text-sm sm:text-base text-gray-600 overflow-hidden relative mb-4"
                   >
                     <p>{product.description}</p>
                     {!isDescriptionExpanded && (
-                      <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-900 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent" />
                     )}
                   </motion.div>
                   <Button
@@ -236,7 +235,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <Card className="bg-gray-900 shadow-md rounded-lg overflow-hidden">
+          <Card className="bg-white shadow-md rounded-lg overflow-hidden">
             <CardContent className="p-6">
               <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
               {!showReviews && (
