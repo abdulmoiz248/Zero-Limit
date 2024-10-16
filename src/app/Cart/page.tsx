@@ -75,15 +75,15 @@ export default function LuxuryCartPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12">
+    <div className="min-h-screen bg-white  py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden"
+        className="max-w-4xl mx-auto bg-white shadow-2xl mt-10 rounded-2xl overflow-hidden"
       >
-        <div className="px-6 py-8 sm:px-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Your Luxury Cart</h1>
+        <div className="px-6 py-8 sm:px-8 ">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">Your Fearless Cart</h1>
           <AnimatePresence>
             {isLoading ? (
               <motion.div
