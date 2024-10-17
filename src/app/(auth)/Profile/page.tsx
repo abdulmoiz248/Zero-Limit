@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { cookies } from 'next/headers';
-import NotLogin from '@/components/NotLogin';
-import Profile from '@/components/Profile';
+import NotLogin from '@/components/auth/NotLogin';
+import Profile from '@/components/auth/Profile';
 
 export default function Page() {
   const cookieStore = cookies(); 

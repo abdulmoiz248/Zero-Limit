@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { CreditCard, Lock, Truck, DollarSign, CheckCircle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -20,16 +20,18 @@ interface FormData {
   city: string;
   zipCode: string;
   country: string;
+  phone: string;
 }
 
 export default function LuxuryCheckoutPage() {
   const [step, setStep] = useState(1)
   const [paymentMethod, setPaymentMethod] = useState('online')
   const [formData, setFormData] = useState<FormData>({
-    name: '', email: '', address: '', city: '', zipCode: '', country: ''})
-  const [phone, setPhone] = useState('')
-  const [errors, setErrors] = useState<Partial<FormData & { phone: string }>>({})
+    name: '', email: '', address: '', city: '', zipCode: '', country: '', phone: ''
+  })
+  const [errors, setErrors] = useState<Partial<FormData>>({})
   const [isProcessing, setIsProcessing] = useState(false)
+  const [showContactPrompt, setShowContactPrompt] = useState(false)
   const router = useRouter()
 
   const nextStep = () => {
@@ -56,24 +58,34 @@ export default function LuxuryCheckoutPage() {
     if (!formData.city) newErrors.city = 'City is required'
     if (!formData.zipCode) newErrors.zipCode = 'ZIP code is required'
     if (!formData.country) newErrors.country = 'Country is required'
+    if (!formData.phone) newErrors.phone = 'Phone number is required'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
+
+useEffect(()=>{
+   let cart=localStorage.getItem('cart')
+   if(!cart) 
+    router.push('/Cart');
+},[])
+
+
   const validatePaymentInfo = () => {
-    if (paymentMethod === 'cod') return true
-    const newErrors: Partial<FormData & { phone: string }> = {}
-    if (!phone) newErrors.phone = 'Phone number is required for online payment'
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    return true // No additional validation needed as phone is now in step 1
   }
 
   const simulatePayment = async () => {
     setIsProcessing(true)
     try {
-      const cart = getCart();
-      const cartItems = Object.values(cart).map(item => item as CartItem);
-      const res = await axios.post('/api/order', { formData, phone, cartItems,paymentMethod })
+      const cart:CartItem[] = getCart();
+      let total: number = 0;
+      const cartItems = Object.values(cart).map((item) => {
+        total += item.product.price * item.quantity ;
+
+      return  item as CartItem
+      });
+      const res = await axios.post('/api/order', { formData, cartItems, paymentMethod,total })
       if (res.data.success) {
         Cookies.set('order', res.data.id)
         localStorage.removeItem('cart');
@@ -84,6 +96,11 @@ export default function LuxuryCheckoutPage() {
     } finally {
       setIsProcessing(false)
     }
+  }
+
+  const handlePaymentMethodChange = (value: string) => {
+    setPaymentMethod(value)
+    setShowContactPrompt(value === 'online')
   }
 
   return (
@@ -183,7 +200,7 @@ export default function LuxuryCheckoutPage() {
                   />
                   {errors.zipCode && <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>}
                 </div>
-                <div className="col-span-2">
+                <div>
                   <Label htmlFor="country">Country</Label>
                   <Input 
                     id="country" 
@@ -193,6 +210,17 @@ export default function LuxuryCheckoutPage() {
                     placeholder="Enter your country"
                   />
                   {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input 
+                    id="phone" 
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="123-456-7890"
+                  />
+                  {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                 </div>
               </div>
               <div className="mt-6 flex justify-end">
@@ -211,7 +239,7 @@ export default function LuxuryCheckoutPage() {
               <div className="space-y-4">
                 <div>
                   <Label className="text-base font-medium">Select Payment Method</Label>
-                  <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="mt-2 space-y-2">
+                  <RadioGroup value={paymentMethod} onValueChange={handlePaymentMethodChange} className="mt-2 space-y-2">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="online" id="online" />
                       <Label htmlFor="online" className="flex items-center">
@@ -229,18 +257,14 @@ export default function LuxuryCheckoutPage() {
                   </RadioGroup>
                 </div>
 
-                {paymentMethod === 'online' && (
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input 
-                      id="phone" 
-                      name="phone"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="123-456-7890"
-                    />
-                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-                  </div>
+                {showContactPrompt && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-sm text-primary"
+                  >
+                    Our team will contact you shortly to process your online payment.
+                  </motion.p>
                 )}
 
                 <div className="mt-6 flex justify-between">

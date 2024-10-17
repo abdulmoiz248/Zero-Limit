@@ -61,27 +61,17 @@ export default function Component() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-yellow-400 p-4">
+    <div className="min-h-screen flex items-center justify-center  p-4">
       <motion.div 
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <div className="bg-black p-8 rounded-lg shadow-lg border-2 border-yellow-500">
-          <div className="flex items-center justify-center mb-8">
-            <motion.img 
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logosvg-jLOvxLlazaoj0DWiY9c6cw5DY1dU7T.svg" 
-              alt="Limit Zero Logo" 
-              className="w-16 h-16"
-              initial={{ rotate: -180 }}
-              animate={{ rotate: 0 }}
-              transition={{ duration: 0.5 }}
-            />
-            <h1 className="text-4xl font-bold text-white ml-4">Limit Zero</h1>
-          </div>
+        <div className="bg-black mt-4 p-8 rounded-lg shadow-lg border-2 border-yellow-500">
+        
           <h2 className="text-2xl font-bold text-white mb-6 text-center">Enter OTP</h2>
-          <p className="text-yellow-400 mb-8 text-center">
+          <p className="text-white mb-8 text-center">
             We've sent a one-time password to your email. Enter it below to verify your identity.
           </p>
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -92,7 +82,7 @@ export default function Component() {
                 type="text"
                 maxLength={1}
                 ref={el => inputRefs.current[index] = el as any}
-                className="w-12 h-12 text-center text-2xl font-bold bg-yellow-900 border-2 border-yellow-500 text-white focus:border-orange-500 focus:ring-orange-500"
+                className="w-12 h-12 text-center text-2xl font-bold bg-white border-2 border-yellow-500 text-black focus:border-orange-500 focus:ring-orange-500"
                 value={data}
                 onChange={e => handleChange(index, e)}
                 onKeyDown={e => handleKeyDown(e, index)}
@@ -104,12 +94,12 @@ export default function Component() {
             whileTap={{ scale: 0.95 }}
           >
             <Button onClick={handleSubmit}
-             className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold py-3 rounded-md transition duration-300 ease-in-out">
+             className="w-full bg-white text-black hover:text-white font-bold py-3 rounded-md transition duration-300 ease-in-out">
               Verify OTP
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
           </motion.div>
-          <div className="flex items-center justify-center mt-6 text-yellow-400">
+          <div className="flex items-center justify-center mt-6 text-white">
             <Mail className="mr-2 h-5 w-5" />
             <p>OTP sent to your email</p>
           </div>
@@ -146,7 +136,7 @@ export default function Component() {
                 </motion.div>
                 <h2 className="text-2xl font-bold mb-4">Verification Successful!</h2>
                 <p className="mb-6">Your account has been verified. Please log in to continue.</p>
-                <Button onClick={closeModal} className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold py-3 px-6 rounded-md transition duration-300 ease-in-out">
+                <Button onClick={closeModal} className="bg-black hover:from-yellow-600 hover:to-orange-600 text-white hover:text-black font-bold py-3 px-6 rounded-md transition duration-300 ease-in-out">
                   Go to Login
                 </Button>
               </div>

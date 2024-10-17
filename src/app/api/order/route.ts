@@ -7,11 +7,11 @@ import { CartItem } from "@/interfaces/interfaces";
 export async function POST(req: Request) {
   try {
     await connect();
-    const { phone, formData, cartItems, paymentMethod } = await req.json();
+    const {  formData, cartItems, paymentMethod ,total} = await req.json();
 
-    let total=0;
+ 
     let products = cartItems.map((cartItem: CartItem) =>{
-      total+=cartItem.product.price;
+
      return cartItem.product._id
     });
 
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     let otp=generateOtp();
         let order = await new OrderModel({
       email: formData.email,
-      phone,
+      phone:formData.phone,
       products,
       otp,
       total,

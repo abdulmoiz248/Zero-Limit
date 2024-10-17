@@ -7,7 +7,7 @@ import { ChevronRight } from "lucide-react"
 import Image from "next/image"
 import axios from "axios"
 import { useRouter } from "next/navigation"
-import DanceButton from "./DanceButton"
+import DanceButton from "../buttons/DanceButton"
 
 export default function ProductCarousel() {
   const [carouselData, setCarouselData] = useState([])

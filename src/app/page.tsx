@@ -6,12 +6,12 @@ import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
 
 // Lazy load components dynamically
-const CatCarousel = dynamic(() => import('@/components/CategoriesCarousel'));
-const LimitZeroManifesto = dynamic(() => import('@/components/AboutUs'));
-const ContinuousCarousel = dynamic(() => import('@/components/Featured'));
-const JoinUs = dynamic(() => import('@/components/JoinUs'));
-const MarqueeDemo = dynamic(() => import('@/components/Reviews'));
-import BelowHeader from '@/components/BelowHeader';
+const CatCarousel = dynamic(() => import('@/components/landing page/CategoriesCarousel'));
+const LimitZeroManifesto = dynamic(() => import('@/components/landing page/AboutUs'));
+const ContinuousCarousel = dynamic(() => import('@/components/landing page/Featured'));
+const JoinUs = dynamic(() => import('@/components/landing page/JoinUs'));
+const MarqueeDemo = dynamic(() => import('@/components/landing page/Reviews'));
+import BelowHeader from '@/components/landing page/BelowHeader';
 
 export default function Home() {
   const animationVariants = {

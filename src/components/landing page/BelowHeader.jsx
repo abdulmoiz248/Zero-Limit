@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "./ZeroCard"; // Assuming the Card component is in the same directory
-import TypingAnimation from "./ui/typing-animation";
+import TypingAnimation from "@/components/ui/typing-animation";
 
 const HomePage = () => {
   return (

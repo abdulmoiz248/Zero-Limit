@@ -35,12 +35,18 @@ export function middleware(request: NextRequest) {
       if(customer && pathname === '/Login'){
         return NextResponse.redirect(new URL('/', request.url));
       }
+ 
+      if(customer && pathname === '/Register'){
+        return NextResponse.redirect(new URL('/', request.url));
+      }
 
     
       const order=cookies.get('order');
        if (!order && pathname === '/verify-order') {
         return NextResponse.redirect(new URL('/Checkout', request.url));
       }
+
+      
          
     
   return NextResponse.next();

@@ -19,7 +19,7 @@ export default function VerifyOTP() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [error, setError] = useState('')
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-
+   const [cookie,setCookie]=useState<'' | null | undefined>();
   useEffect(() => {
 
     inputRefs.current = inputRefs.current.slice(0, 6)
@@ -48,6 +48,7 @@ export default function VerifyOTP() {
    
     try {
       let orderId=Cookies.get('order');
+      setCookie(orderId as any);
       let res=await axios.post('/api/verifyOtpOrder',{otp,orderId});
   
       if(res.data.success){
@@ -65,6 +66,9 @@ export default function VerifyOTP() {
     
 
   }
+
+
+  
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
