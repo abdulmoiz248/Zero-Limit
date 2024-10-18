@@ -39,6 +39,9 @@ export function middleware(request: NextRequest) {
       if(customer && pathname === '/Register'){
         return NextResponse.redirect(new URL('/', request.url));
       }
+      if(!customer && pathname === '/order'){
+        return NextResponse.redirect(new URL('/', request.url));
+      }
 
     
       const order=cookies.get('order');
@@ -53,5 +56,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*','/otp','/Register','/Checkout','/Login','/verify-order'],
+  matcher: ['/admin/:path*','/otp','/Register','/Checkout','/Login','/verify-order','/order'],
 };
