@@ -11,7 +11,8 @@ import axios from 'axios'
 import LionLoader from '@/components/LionLoader'
 import { Order } from '@/Models/Order'
 import { Product } from '@/Models/Product'
-import { calDiscount } from '@/helper/order'
+import { calDiscount, countItems, removeDuplicateProducts } from '@/helper/order'
+import { ObjectId } from 'mongoose'
 
 export default function OrderPage() {
 
@@ -21,21 +22,8 @@ export default function OrderPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
+  const [unfilteredProducts, setUnfilteredProducts] = useState<String[]>([])
   
-
-  const productCounts = (product: Product)=>{
-
-    let qunatity=0;
-    selectedProducts.forEach((oProduct:Product) => {
-      if(oProduct._id===product._id){
-        qunatity++;
-      }
-    });
-
-
-    setSelectedProducts(selectedProducts.filter(products =>products._id!==product._id));
-    return qunatity;
-  }
   
 
   
@@ -72,10 +60,11 @@ export default function OrderPage() {
       setSelectedOrder(order)
       
       const res = await axios.post(`/api/order-products`, { products: order.products })
-      console.log(order.products);
+      setUnfilteredProducts(order.products);
       if (res.data.success) {
-      //  setSelectedProducts(null)
-        setSelectedProducts(res.data.products)
+        const products = res.data.products;
+        
+        setSelectedProducts(removeDuplicateProducts(products))
         setIsModalOpen(true)
       }
     } catch (error) {
@@ -210,23 +199,24 @@ export default function OrderPage() {
                   <Separator />
                   <h3 className="font-semibold text-lg">Products</h3>
                   <ul className="space-y-3">
-  
-   {selectedProducts.map((product: Product) => (
-                      <motion.li
-                        key={product._id as string}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex justify-between items-center bg-gray-50 p-3 rounded-md"
-                      >
-                        <div className="flex items-center">
-                          <Package className="w-5 h-5 mr-2 text-primary" />
-                          <span>{product.name} x {product.quantity}</span>
-                        </div>
-                        <span className="font-medium">${(calDiscount(product.price,product.discountPercent) * product.quantity).toFixed(2)}</span>
-                      </motion.li>
-                    ))}
-                 
+                  {selectedProducts.map((product: Product) => {
+  const quantity = countItems(product._id as string, unfilteredProducts);
+  return (
+    <motion.li
+      key={product._id as string}
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex justify-between items-center bg-gray-50 p-3 rounded-md"
+    >
+      <div className="flex items-center">
+        <Package className="w-5 h-5 mr-2 text-primary" />
+        <span>{product.name} x {quantity}</span>
+      </div>
+   </motion.li>
+  );
+})}
+ 
                  </ul>
 
                   <Separator />
