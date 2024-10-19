@@ -11,14 +11,34 @@ import axios from 'axios'
 import LionLoader from '@/components/LionLoader'
 import { Order } from '@/Models/Order'
 import { Product } from '@/Models/Product'
+import { calDiscount } from '@/helper/order'
 
 export default function OrderPage() {
+
   const [orders, setOrders] = useState<Order[]>([])
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
+  
+
+  const productCounts = (product: Product)=>{
+
+    let qunatity=0;
+    selectedProducts.forEach((oProduct:Product) => {
+      if(oProduct._id===product._id){
+        qunatity++;
+      }
+    });
+
+
+    setSelectedProducts(selectedProducts.filter(products =>products._id!==product._id));
+    return qunatity;
+  }
+  
+
+  
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -50,8 +70,11 @@ export default function OrderPage() {
   const handleOpenModal = async (order: Order) => {
     try {
       setSelectedOrder(order)
+      
       const res = await axios.post(`/api/order-products`, { products: order.products })
+      console.log(order.products);
       if (res.data.success) {
+      //  setSelectedProducts(null)
         setSelectedProducts(res.data.products)
         setIsModalOpen(true)
       }
@@ -187,7 +210,8 @@ export default function OrderPage() {
                   <Separator />
                   <h3 className="font-semibold text-lg">Products</h3>
                   <ul className="space-y-3">
-                    {selectedProducts.map((product: Product) => (
+  
+   {selectedProducts.map((product: Product) => (
                       <motion.li
                         key={product._id as string}
                         initial={{ opacity: 0, x: -20 }}
@@ -199,10 +223,12 @@ export default function OrderPage() {
                           <Package className="w-5 h-5 mr-2 text-primary" />
                           <span>{product.name} x {product.quantity}</span>
                         </div>
-                        <span className="font-medium">${(product.price * product.quantity).toFixed(2)}</span>
+                        <span className="font-medium">${(calDiscount(product.price,product.discountPercent) * product.quantity).toFixed(2)}</span>
                       </motion.li>
                     ))}
-                  </ul>
+                 
+                 </ul>
+
                   <Separator />
                   {selectedOrder.status === 'Pending' && (
                     <Button

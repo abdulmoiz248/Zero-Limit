@@ -1,187 +1,384 @@
-'use client'; 
-import Button from '@/components/admin/Button';
-import { useState, useEffect } from 'react';
-import AddCategory from '@/components/admin/AddCat';
-import AddProductModal from '@/components/admin/AddProductModal';
-import AddDiscountModal from '@/components/admin/AddDiscountModal'; 
-import FeatureProductModal from '@/components/admin/FeatureModal';
-import DeleteProductModal from '@/components/admin/DeleteModal'; 
-import axios from 'axios';
- 
-import { useRouter } from 'next/navigation';
+"use client" 
 
-export default function Home() {
-  let router=useRouter();
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
-  const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
-  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); 
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import axios from 'axios'
+import { 
+  PlusCircle, 
+  Tag, 
+  Star, 
+  Trash2, 
+  Package, 
+  Truck, 
+  LogOut,
+  DollarSign,
+  Users,
+  ShoppingCart,
+  TrendingUp,
+  TrendingDown,
+  BarChart,
+  PieChart
+} from 'lucide-react'
+import { Bar, Line, Pie } from 'react-chartjs-2'
+import { 
+  Chart as ChartJS, 
+  CategoryScale, 
+  LinearScale, 
+  BarElement, 
+  PointElement, 
+  LineElement, 
+  ArcElement,
+  Title, 
+  Tooltip, 
+  Legend 
+} from 'chart.js'
 
-  const handleOpenCategoryModal = () => {
-    setIsCategoryModalOpen(true);
-    setIsProductModalOpen(false);
-    setIsDiscountModalOpen(false);
-    setIsFeatureModalOpen(false);
-    setIsDeleteModalOpen(false); // Close delete modal if open
-  };
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import AddCategory from '@/components/admin/AddCat'
+import AddProductModal from '@/components/admin/AddProductModal'
+import AddDiscountModal from '@/components/admin/AddDiscountModal'
+import FeatureProductModal from '@/components/admin/FeatureModal'
+import DeleteProductModal from '@/components/admin/DeleteModal'
+import { Order } from '@/Models/Order'
 
-  const handleOpenProductModal = () => {
-    setIsProductModalOpen(true);
-    setIsCategoryModalOpen(false);
-    setIsDiscountModalOpen(false);
-    setIsFeatureModalOpen(false);
-    setIsDeleteModalOpen(false); // Close delete modal if open
-  };
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+)
 
-  const handleOpenDiscountModal = () => {
-    setIsDiscountModalOpen(true);
-    setIsCategoryModalOpen(false);
-    setIsProductModalOpen(false);
-    setIsFeatureModalOpen(false);
-    setIsDeleteModalOpen(false); // Close delete modal if open
-  };
 
-  const handleOpenFeatureModal = () => {
-    setIsFeatureModalOpen(true);
-    setIsCategoryModalOpen(false);
-    setIsProductModalOpen(false);
-    setIsDiscountModalOpen(false);
-    setIsDeleteModalOpen(false); // Close delete modal if open
-  };
+interface topProducts{
+   name:string;
+   revenue:string | number;
+   sales:string | number;
+}
 
-  const handleOpenDeleteModal = () => {
-    setIsDeleteModalOpen(true);
-    setIsCategoryModalOpen(false);
-    setIsProductModalOpen(false);
-    setIsDiscountModalOpen(false);
-    setIsFeatureModalOpen(false); // Close feature modal if open
-  };
+export default function Dashboard() {
+  const router = useRouter()
+  let ordernumber=0;
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false)
+  const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false)
+  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [summary,setSummary]=useState({
+    revenue:{value:0,trend:0},
+    customers:{value:0,trend:0},
+    products:{value:0,trend:0},
+    orders:{value:0,trend:0},
+  })
+  const [topProducts,setTopProducts] = useState<topProducts[]>([]);
+  const [salesData, setSalesData] = useState(null); 
+ const [topOrders,setTopOrders] = useState([]);
+  useEffect(()=>{
+    const fetchSalesData = async () => {
+      try {
+        const res = await axios.get('/api/admin/sales')
+        if (res.data.success) {
+          setSalesData(res.data.sales)
+          setSummary(res.data.summary)
+         
+          setTopOrders(res.data.topOrders)
+          setTopProducts(res.data.topProducts)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchSalesData()
+
+  },[])
+
+  const handleOpenModal = (modalSetter: React.Dispatch<React.SetStateAction<boolean>>) => {
+    setIsCategoryModalOpen(false)
+    setIsProductModalOpen(false)
+    setIsDiscountModalOpen(false)
+    setIsFeatureModalOpen(false)
+    setIsDeleteModalOpen(false)
+    modalSetter(true)
+  }
 
   const handleCloseModal = () => {
-    setIsCategoryModalOpen(false);
-    setIsProductModalOpen(false);
-    setIsDiscountModalOpen(false);
-    setIsFeatureModalOpen(false);
-    setIsDeleteModalOpen(false); // Close delete modal
-  };
+    setIsCategoryModalOpen(false)
+    setIsProductModalOpen(false)
+    setIsDiscountModalOpen(false)
+    setIsFeatureModalOpen(false)
+    setIsDeleteModalOpen(false)
+  }
 
-  const addCategory = async (formData:unknown) => {
-    console.log('Form Data:', formData);
+  const addCategory = async (formData: unknown) => {
     try {
-      let res = await axios.post('/api/admin/category', formData);
+      const res = await axios.post('/api/admin/category', formData)
       if (res.data.success) {
-        console.log('Category added successfully');
+        console.log('Category added successfully')
       }
     } catch (error) {
-      console.log(error);
+      console.error(error)
     } finally {
-      handleCloseModal(); 
+      handleCloseModal()
     }
-  };
+  }
 
-  const addProduct = async (formData:unknown) => {
-    console.log('Product Data:', formData);
+  const addProduct = async (formData: unknown) => {
     try {
-      let res = await axios.post('/api/admin/product', formData);
+      const res = await axios.post('/api/admin/product', formData)
       if (res.data.success) {
-        console.log('Product added successfully');
+        console.log('Product added successfully')
       }
     } catch (error) {
-      console.log(error);
+      console.error(error)
     } finally {
-      handleCloseModal(); 
+      handleCloseModal()
     }
-  };
+  }
 
-  const addDiscount = async (data:unknown) => {
-    console.log('Discount Data:', data);
+  const addDiscount = async (data: unknown) => {
     try {
-      let res = await axios.post('/api/admin/discount', data);
+      const res = await axios.post('/api/admin/discount', data)
       if (res.data.success) {
-        console.log('Discount added successfully');
+        console.log('Discount added successfully')
       }
     } catch (error) {
-      console.log(error);
+      console.error(error)
     } finally {
-      handleCloseModal();
+      handleCloseModal()
     }
-  };
+  }
 
-  const addFeature = async (data:unknown) => {
-    console.log('Feature Data:', data);
+  const addFeature = async (data: unknown) => {
     try {
-      let res = await axios.post('/api/admin/feature-product', data);
+      const res = await axios.post('/api/admin/feature-product', data)
       if (res.data.success) {
-        console.log('Product featured successfully');
+        console.log('Product featured successfully')
       }
     } catch (error) {
-      console.log(error);
+      console.error(error)
     } finally {
-      handleCloseModal(); 
+      handleCloseModal()
     }
-  };
+  }
 
-  const deleteProduct = async (data:any) => {
-    console.log('Delete Data:', data);
+  const deleteProduct = async (data: { productId: string }) => {
     try {
-      let res = await axios.delete(`/api/admin/product/${data.productId}`);
-      // Assuming your delete API endpoint follows this pattern
+      const res = await axios.delete(`/api/admin/product/${data.productId}`)
       if (res.data.success) {
-        console.log('Product deleted successfully');
+        console.log('Product deleted successfully')
       }
     } catch (error) {
-      console.log(error);
+      console.error(error)
     } finally {
-      handleCloseModal(); // Close the modal after deletion
+      handleCloseModal()
     }
-  };
+  }
+
+  const handleLogout = async () => {
+    try {
+      const res = await axios.post("/api/admin/logout")
+      if (res.data.success) {
+        console.log("Logged out successfully")
+        router.push("/")
+      }
+    } catch (error) {
+      console.error("Logout failed", error)
+    }
+  }
 
   return (
-    <div className="grid grid-cols-3 gap-4 h-screen items-center justify-center">
-      <AddCategory
-        isOpen={isCategoryModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={addCategory}
-      />
-      <AddProductModal
-        isOpen={isProductModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={addProduct}
-      />
-      <AddDiscountModal
-        isOpen={isDiscountModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={addDiscount}
-      />
-      <FeatureProductModal
-        isOpen={isFeatureModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={addFeature}
-      />
-      <DeleteProductModal
-        isOpen={isDeleteModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={deleteProduct} // Pass the delete function
-      />
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-7xl mt-20 mx-auto">
+        <header className="mb-8 flex justify-between items-center">
+          <h1 className="text-4xl font-bold text-gray-800">E-commerce Dashboard</h1>
+          <Button variant="destructive" onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" /> Logout
+          </Button>
+        </header>
 
-      {/* Buttons to open modals */}
-      <Button name={"Add a Category"} handler={handleOpenCategoryModal} />
-      <Button name={"Add a Product"} handler={handleOpenProductModal} />
-      <Button name={"Add Discount to a Product"} handler={handleOpenDiscountModal} />
-      <Button name={"Feature a Product"} handler={handleOpenFeatureModal} />
-      <Button name={"Delete a Product"} handler={handleOpenDeleteModal} /> {/* Open delete modal */}
-      <Button name={"View Orders"} handler={() => console.log("View Orders")} />
-      <Button name={"Change Order Status"} handler={() => console.log("Change Order Status")} />
-      <button onClick={async()=>{
-        let res=await axios.post("/api/admin/logout");
-        if(res.data.success){
-          console.log("Logged out successfully");
-          router.push("/");
-        }
-      }}>
-        LOGOUT
-        </button>  
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard title="Total Revenue" value={summary.revenue.value} icon={<DollarSign />} trend={summary.revenue.trend} />
+          <StatCard title="Orders" value={summary.orders.value} icon={<ShoppingCart />} trend={summary.orders.trend} />
+          <StatCard title="Customers" value={summary.customers.value} icon={<Users />} trend={summary.customers.trend} />
+          <StatCard title="Product Sales" value={summary.products.value} icon={<Package />} trend={summary.products.trend} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sales Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+               {salesData && <Bar data={salesData} options={{ responsive: true }} />}
+            </CardContent>
+          </Card>
+         
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          {[
+            { title: "Add a Category", icon: PlusCircle, handler: () => handleOpenModal(setIsCategoryModalOpen) },
+            { title: "Add a Product", icon: Package, handler: () => handleOpenModal(setIsProductModalOpen) },
+            { title: "Add Discount", icon: Tag, handler: () => handleOpenModal(setIsDiscountModalOpen) },
+            { title: "Feature a Product", icon: Star, handler: () => handleOpenModal(setIsFeatureModalOpen) },
+            { title: "Delete a Product", icon: Trash2, handler: () => handleOpenModal(setIsDeleteModalOpen) },
+            { title: "View Pending Orders", icon: ShoppingCart, handler: () => router.push('/admin/order/pending')},
+            { title: "Change Order Status", icon: Truck, handler: () => console.log("Change Order Status") },
+            { title: "View All Orders", icon: Package, handler: () => router.push('/admin/order/all') },
+          ].map((item, index) => (
+            <motion.div
+              key={item.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+            >
+              <Card className="hover:shadow-lg transition-shadow duration-300">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
+                  <item.icon className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    className="w-full" 
+                    onClick={item.handler}
+                  >
+                    {item.title}
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Orders</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Order ID</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Total</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topOrders && 
+                  topOrders.map((order:Order) => (
+                    <TableRow key={order._id as string}>
+                      <TableCell>{ordernumber++}</TableCell>
+                      <TableCell>{order.email}</TableCell>
+                      <TableCell>${order.total}</TableCell>
+                      <TableCell>{order.status}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Top Products</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Sales</TableHead>
+                    <TableHead>Revenue</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                {topProducts && topProducts.map(product => (
+                    <TableRow key={product.name}>
+                      <TableCell>{product.name}</TableCell>
+                      <TableCell>{product.sales}</TableCell>
+                      <TableCell>${product.revenue}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+
+        <AddCategory
+          isOpen={isCategoryModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={addCategory}
+        />
+        <AddProductModal
+          isOpen={isProductModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={addProduct}
+        />
+        <AddDiscountModal
+          isOpen={isDiscountModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={addDiscount}
+        />
+        <FeatureProductModal
+          isOpen={isFeatureModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={addFeature}
+        />
+        <DeleteProductModal
+          isOpen={isDeleteModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={deleteProduct}
+        />
+      </div>
     </div>
-  );
+  )
+}
+
+interface StatCardProps {
+  title: string
+  value: string | number
+  icon: React.ReactNode
+  trend: number
+}
+
+function StatCard({ title, value, icon, trend }: StatCardProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          {icon}
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{value}</div>
+          <p className="text-xs text-muted-foreground mt-1">
+            {trend > 0 ? (
+              <span className="text-green-600 flex items-center">
+                <TrendingUp className="h-4 w-4 mr-1" /> {trend}% from last month
+              </span>
+            ) : trend < 0 ? (
+              <span className="text-red-600 flex items-center">
+                <TrendingDown className="h-4 w-4 mr-1" /> {Math.abs(trend)}% from last month
+              </span>
+            ) : (
+              <span className="text-gray-600">No change from last month</span>
+            )}
+          </p>
+        </CardContent>
+      </Card>
+    </motion.div>
+  )
 }

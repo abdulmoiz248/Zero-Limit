@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { getCart } from '@/helper/cart'
 import { CartItem } from '@/interfaces/interfaces';
+import { calDiscount } from '@/helper/order'
 
 interface FormData {
   name: string;
@@ -81,11 +82,11 @@ useEffect(()=>{
       const cart:CartItem[] = getCart();
       let total: number = 0;
       const cartItems = Object.values(cart).map((item) => {
-        total += item.product.price * item.quantity ;
+        total += calDiscount(item.product.price,item.product.discountPercent) * item.quantity;
 
       return  item as CartItem
       });
-      const res = await axios.post('/api/order', { formData, cartItems, paymentMethod,total })
+      const res = await axios.post('/api/order', { formData, cartItems, paymentMethod,total})
       if (res.data.success) {
         Cookies.set('order', res.data.id)
         localStorage.removeItem('cart');

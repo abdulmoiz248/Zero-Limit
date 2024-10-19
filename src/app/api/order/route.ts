@@ -10,9 +10,8 @@ export async function POST(req: Request) {
     const {  formData, cartItems, paymentMethod ,total} = await req.json();
 
  
-    let products = cartItems.map((cartItem: CartItem) =>{
-
-     return cartItem.product._id
+    let products = cartItems.flatMap((cartItem: CartItem) => {
+      return Array(cartItem.quantity).fill(cartItem.product._id);
     });
 
     let method;
@@ -35,6 +34,7 @@ export async function POST(req: Request) {
       country: formData.country,
       paymentMethod:method, // Assuming paymentMethod is passed in the body
       paymentStatus: 'Pending',
+   
     });
 
     // Saving the order to the database

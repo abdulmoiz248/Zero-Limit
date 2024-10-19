@@ -10,18 +10,20 @@ export interface Order extends Document {
   city: string; // Added for additional info if needed
   zipCode: string; // Added for additional info if needed
   country: string; // Added for additional info if needed
-  products: string[]; // Added for additional info if needed
-  phone: string; // Added for additional info if needed
-  address: string; // Added for additional info if needed
+  products: string[]; 
+  phone: string; 
+  address: string; 
   otp: string; // Added
   total:number;
 }
 
 const OrderSchema = new Schema<Order>({
   total:{
+  
     type: Number,
     required: true, // Optional: make required if needed
   },
+  
   otp:{
     type: String,
     required: true, 

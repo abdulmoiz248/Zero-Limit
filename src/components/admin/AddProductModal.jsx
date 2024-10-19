@@ -63,7 +63,7 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
   if (!isOpen) return null; // Return null if modal is not open
 
   return (
-    <div className="fixed z-10 inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
+    <div className="fixed z-50 inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 overflow-hidden">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Add Product</h2>
         <div className="max-h-[70vh] overflow-y-auto">

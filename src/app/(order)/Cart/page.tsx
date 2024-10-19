@@ -5,11 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Minus, Plus, X, ShoppingBag, CreditCard, Truck } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { getCart } from '@/helper/cart';
-
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { CartItem } from '@/interfaces/interfaces';
-
 
 export default function LuxuryCartPage() {
   const router = useRouter();
@@ -64,7 +62,15 @@ export default function LuxuryCartPage() {
     });
   };
 
-  const total = products.reduce((sum, { product, quantity }) => sum + product.price * quantity, 0);
+  const calculateDiscountedPrice = (price: number, discountPercent: number | undefined) => {
+    if (discountPercent) {
+      return price * (1 - discountPercent / 100);
+    }
+    return price;
+  };
+
+  const total = products.reduce((sum, { product, quantity }) => 
+    sum + calculateDiscountedPrice(product.price, product.discountPercent) * quantity, 0);
 
   const handleCheckout = () => {
     if (isCustomer) {
@@ -75,7 +81,7 @@ export default function LuxuryCartPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white  py-12">
+    <div className="min-h-screen bg-white py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -132,9 +138,23 @@ export default function LuxuryCartPage() {
                     <div className="ml-6 flex flex-1 flex-col">
                       <div className="flex justify-between text-base font-medium text-gray-900">
                         <h3 className="text-lg">{product.name}</h3>
-                        <p className="ml-4 text-lg">${product.price}</p>
+                        <div className="text-right">
+                          {product.discountPercent ? (
+                            <>
+                              <p className="text-lg line-through text-gray-500">${product.price.toFixed(2)}</p>
+                              <p className="text-lg text-red-600">
+                                ${calculateDiscountedPrice(product.price, product.discountPercent).toFixed(2)}
+                              </p>
+                            </>
+                          ) : (
+                            <p className="text-lg">${product.price.toFixed(2)}</p>
+                          )}
+                        </div>
                       </div>
                       <p className="mt-1 text-sm text-gray-500">Luxury Edition</p>
+                      {product.discountPercent && (
+                        <p className="mt-1 text-sm text-red-600">Save {product.discountPercent}%</p>
+                      )}
                       <div className="flex flex-1 items-end justify-between text-sm">
                         <div className="flex items-center mt-4">
                           <Button
