@@ -11,6 +11,8 @@ export async function POST(req: Request) {
         let valid=order.otp==otp.join('');
       
          if(valid){
+            order.isVerified=true;
+            await order.save();
              return Response.json({
                  message: "Order Verified Successfully",
                  success: true,

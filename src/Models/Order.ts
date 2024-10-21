@@ -1,90 +1,94 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+
 export interface Order extends Document {
-  status: 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled'; // Updated to match enum
-  paymentMethod: 'credit card' | 'cash on delivery'; // Updated to match enum
-  paymentStatus: 'Paid' | 'Pending' | 'Failed'; // Updated to match enum
-  createdAt: Date; // Added to match the schema
-  name: string; // Added for additional info if needed
-  email: string; // Added for additional info if needed
-  city: string; // Added for additional info if needed
-  zipCode: string; // Added for additional info if needed
-  country: string; // Added for additional info if needed
-  products: string[]; 
-  phone: string; 
-  address: string; 
-  otp: string; // Added
-  total:number;
+  status: 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled';
+  paymentMethod: 'credit card' | 'cash on delivery';
+  paymentStatus: 'Paid' | 'Pending' | 'Failed';
+  createdAt: Date;
+  name: string;
+  email: string;
+  city: string;
+  zipCode: string;
+  country: string;
+  products: string[]; // Updated to store product details
+  phone: string;
+  address: string;
+  otp: string;
+  total: number;
+  isVerified: boolean;
 }
 
+
 const OrderSchema = new Schema<Order>({
-  total:{
-  
-    type: Number,
-    required: true, // Optional: make required if needed
+  isVerified:{
+    type: Boolean,
+    default: false,
   },
-  
-  otp:{
+  total: {
+    type: Number,
+    required: true,
+  },
+  otp: {
     type: String,
-    required: true, 
+    required: true,
   },
   status: {
     type: String,
     required: true,
-    enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled'], 
-    default: 'Pending', 
+    enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled'],
+    default: 'Pending',
   },
-  
   paymentMethod: {
     type: String,
     required: true,
-    enum: ['credit card',  'cash on delivery'], 
+    enum: ['credit card', 'cash on delivery'],
   },
   paymentStatus: {
     type: String,
     required: true,
-    enum: ['Paid', 'Pending', 'Failed'], 
-    default: 'Pending', 
+    enum: ['Paid', 'Pending', 'Failed'],
+    default: 'Pending',
   },
   createdAt: {
     type: Date,
-    default: Date.now, 
+    default: Date.now,
   },
   name: {
     type: String,
-    required: true, // Optional: make required if needed
+    required: true,
   },
   email: {
     type: String,
-    required: true, // Optional: make required if needed
+    required: true,
   },
   address: {
     type: String,
-    required: true, // Optional: make required if needed
+    required: true,
   },
   city: {
     type: String,
-    required: true, // Optional: make required if needed
+    required: true,
   },
   zipCode: {
     type: String,
-    required: true, // Optional: make required if needed
+    required: true,
   },
   country: {
     type: String,
-    required: true, // Optional: make required if needed
+    required: true,
   },
   products: {
-    type: [String], // Array of product IDs or names
-    required: true, // Optional: make required if needed
+    type: [String], 
+    required: true,
   },
   phone: {
     type: String,
-    required: true, // Optional: make required if needed
+    required: true,
   },
 });
 
-// Create or use existing Order model
+
 const OrderModel = mongoose.models.Order || mongoose.model<Order>('Order', OrderSchema);
 
 export default OrderModel;

@@ -81,7 +81,7 @@ export default function Component() {
                 key={index}
                 type="text"
                 maxLength={1}
-                ref={el => inputRefs.current[index] = el as any}
+                ref={()=>{(el:HTMLInputElement) => inputRefs.current[index] = el}}
                 className="w-12 h-12 text-center text-2xl font-bold bg-white border-2 border-yellow-500 text-black focus:border-orange-500 focus:ring-orange-500"
                 value={data}
                 onChange={e => handleChange(index, e)}

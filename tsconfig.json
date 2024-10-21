@@ -21,7 +21,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/page.tsx", "src/components/3dModel.tsx", "src/components/Tiger.tsx", "src/components/buttons/DanceButton.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/page.tsx", "src/components/3dModel.tsx", "src/components/Tiger.tsx", "src/components/buttons/DanceButton.tsx", "src/helper/cart.js"],
   "exclude": ["node_modules"],
   
 }

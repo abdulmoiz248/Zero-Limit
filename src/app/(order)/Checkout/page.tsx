@@ -66,6 +66,11 @@ export default function LuxuryCheckoutPage() {
 
 
 useEffect(()=>{
+   let customer = localStorage.getItem('customerData');
+   if(customer){
+    
+    setFormData(prev => ({ ...prev, ['email']: customer.email }))
+    }
    let cart=localStorage.getItem('cart')
    if(!cart) 
     router.push('/Cart');
