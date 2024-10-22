@@ -49,6 +49,11 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/Checkout', request.url));
       }
 
+      if(order &&( pathname === '/Checkout' || pathname === '/Cart')){
+        return NextResponse.redirect(new URL('/verify-order', request.url));
+        
+      }
+
       
          
     
@@ -56,5 +61,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*','/otp','/Register','/Checkout','/Login','/verify-order','/order'],
+  matcher: ['/admin/:path*','/Cart','/otp','/Register','/Checkout','/Login','/verify-order','/order'],
 };

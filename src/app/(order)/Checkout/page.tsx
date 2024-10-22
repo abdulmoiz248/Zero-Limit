@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import axios from 'axios'
-import { useRouter } from 'next/navigation'
-import Cookies from 'js-cookie'
 import { getCart } from '@/helper/cart'
 import { CartItem } from '@/interfaces/interfaces';
 import { calDiscount } from '@/helper/order'
+import { useRouter } from 'next/navigation'
+import axios from 'axios'
+import Cookies from 'js-cookie'
+import { toast } from 'react-hot-toast'
+
 
 interface FormData {
   name: string;
@@ -34,6 +36,44 @@ export default function LuxuryCheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [showContactPrompt, setShowContactPrompt] = useState(false)
   const router = useRouter()
+
+  const [error, setError] = useState<string | null>(null)
+
+ 
+
+  const simulatePayment = async () => {
+    setIsProcessing(true)
+    setError(null)
+    try {
+      const cart: CartItem[] = getCart();
+      if (!cart || cart.length === 0) {
+        throw new Error('Your cart is empty')
+      }
+
+      let total: number = 0;
+      const cartItems = Object.values(cart).map((item) => {
+        total += calDiscount(item.product.price, item.product.discountPercent) * item.quantity;
+        return item as CartItem
+      });
+
+      const res = await axios.post('/api/order', { formData, cartItems, paymentMethod, total })
+      
+      if (res.data.success) {
+        Cookies.set('order', res.data.id)
+        localStorage.removeItem('cart');
+        toast.success('Order placed successfully!')
+        router.push('/verify-order')
+      } else {
+        throw new Error(res.data.message || 'Failed to place order')
+      }
+    } catch (error: any) {
+      console.error('Order submission failed:', error.message)
+      setError(error.message || 'An unexpected error occurred. Please try again.')
+      toast.error(error.message || 'Failed to place order. Please try again.')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
 
   const nextStep = () => {
     if (step === 1 && validateShippingInfo()) {
@@ -64,45 +104,47 @@ export default function LuxuryCheckoutPage() {
     return Object.keys(newErrors).length === 0
   }
 
-
-useEffect(()=>{
-   let customer = localStorage.getItem('customerData');
-   if(customer){
-    
-    setFormData(prev => ({ ...prev, ['email']: customer.email }))
+  useEffect(() => {
+    // Retrieve and parse customer data from localStorage
+    const customerData = localStorage.getItem('customerData');
+    if (customerData) {
+      const customer = JSON.parse(customerData);
+      setFormData(prev => ({ ...prev, email: customer.email }));
     }
-   let cart=localStorage.getItem('cart')
-   if(!cart) 
-    router.push('/Cart');
-},[])
 
+    // Check if the cart exists in localStorage
+    const cart = localStorage.getItem('cart');
+    if (!cart) {
+      router.push('/Cart');
+    }
+  }, []);
 
   const validatePaymentInfo = () => {
     return true // No additional validation needed as phone is now in step 1
   }
 
-  const simulatePayment = async () => {
-    setIsProcessing(true)
-    try {
-      const cart:CartItem[] = getCart();
-      let total: number = 0;
-      const cartItems = Object.values(cart).map((item) => {
-        total += calDiscount(item.product.price,item.product.discountPercent) * item.quantity;
+  // const simulatePayment = async () => {
+  //   setIsProcessing(true)
+  //   try {
+  //     const cart:CartItem[] = getCart();
+  //     let total: number = 0;
+  //     const cartItems = Object.values(cart).map((item) => {
+  //       total += calDiscount(item.product.price,item.product.discountPercent) * item.quantity;
 
-      return  item as CartItem
-      });
-      const res = await axios.post('/api/order', { formData, cartItems, paymentMethod,total})
-      if (res.data.success) {
-        Cookies.set('order', res.data.id)
-        localStorage.removeItem('cart');
-        router.push('/verify-order')
-      }
-    } catch (error: any) {
-      console.error('Order submission failed:', error.message)
-    } finally {
-      setIsProcessing(false)
-    }
-  }
+  //     return  item as CartItem
+  //     });
+  //     const res = await axios.post('/api/order', { formData, cartItems, paymentMethod,total})
+  //     if (res.data.success) {
+  //       Cookies.set('order', res.data.id)
+  //       localStorage.removeItem('cart');
+  //       router.push('/verify-order')
+  //     }
+  //   } catch (error: any) {
+  //     console.error('Order submission failed:', error.message)
+  //   } finally {
+  //     setIsProcessing(false)
+  //   }
+  // }
 
   const handlePaymentMethodChange = (value: string) => {
     setPaymentMethod(value)
@@ -274,6 +316,11 @@ useEffect(()=>{
                 )}
 
                 <div className="mt-6 flex justify-between">
+                {error && (
+        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
                   <Button variant="outline" onClick={prevStep}>Back to Shipping</Button>
                   <Button onClick={nextStep} disabled={isProcessing}>
                     {isProcessing ? 'Processing...' : 'Confirm Order'}

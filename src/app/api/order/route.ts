@@ -9,39 +9,48 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     await connect();
-    const {  formData, cartItems, paymentMethod ,total} = await req.json();
 
- 
-    let method;
-    if(paymentMethod==='online'){
-        method='credit card';
-    }else{
-       method='cash on delivery';
+    const { formData, cartItems, paymentMethod, total } = await req.json();
+
+    // Determine payment method
+    const method = paymentMethod === "online" ? "credit card" : "cash on delivery";
+
+    // Check stock for all products
+    for (const item of cartItems) {
+      const product = await ProductModel.findById(item.product._id);
+
+      if (!product) {
+        return NextResponse.json(
+          { message: `Product ${item.product.name} not found`, success: false },
+          { status: 404 }
+        );
+      }
+
+      if (product.quantity < item.quantity) {
+        return NextResponse.json(
+          { message: `Not enough stock for ${item.product.name} Maximum quantity is ${product.quantity}`, success: false },
+          { status: 400 }
+        );
+      }
+
+      // Reduce product quantity
+      product.quantity -= item.quantity;
+      await product.save();
     }
 
-  
-      cartItems.some(async(item:CartItem) => {
-         let product=await ProductModel.findById(item.product._id)
-         if(product.quantity-item.quantity>=0){
-            
-          return NextResponse.json({message:"Not Enough Quantity available",success:false},{status:400})
+    // Flatten cart items into an array of product IDs for the order
+    const products = cartItems.flatMap((item: CartItem) =>
+      Array(item.quantity).fill(item.product._id)
+    );
 
-  
-         }else{
-          product.quantity=product.quantity-item.quantity;
-          await product.save();
-         }
-      });
-      let products = cartItems.flatMap((cartItem: CartItem) => {
-        return Array(cartItem.quantity).fill(cartItem.product._id);
-      });
-  
+    // Generate OTP for the order
+    const otp = generateOtp();
 
-    let otp=generateOtp();
-        let order = await new OrderModel({
+    // Create new order
+    const order = new OrderModel({
       email: formData.email,
-      phone:formData.phone,
-      products:products,
+      phone: formData.phone,
+      products,
       otp,
       total,
       name: formData.name,
@@ -49,32 +58,31 @@ export async function POST(req: Request) {
       city: formData.city,
       zipCode: formData.zipCode,
       country: formData.country,
-      paymentMethod:method, 
-      paymentStatus: 'Pending',
-   
+      paymentMethod: method,
+      paymentStatus: "Pending",
     });
 
-    // Saving the order to the database
+    // Save the order in the database
     await order.save();
-    await sendOTPEmail(formData.email,otp); 
+
+    // Send OTP email to the customer
+    await sendOTPEmail(formData.email, otp);
+
     // Return success response
-    return new Response(
-      JSON.stringify({
-        id:order._id,
+    return NextResponse.json(
+      {
+        id: order._id,
         message: "Order processed successfully",
         success: true,
-      }),
+      },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Order processing error: ", error);
+    console.error("Order processing error:", error);
 
-   
-    return new Response(
-      JSON.stringify({
-        message: "Order process failed",
-        success: false,
-      }),
+    // Handle server error
+    return NextResponse.json(
+      { message: "Order process failed", success: false },
       { status: 500 }
     );
   }
