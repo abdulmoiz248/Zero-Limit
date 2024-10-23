@@ -32,7 +32,22 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
       }
     };
 
-    fetchData();
+    const category = localStorage.getItem('category')
+    if (category) {
+      try {
+        const parsedCategory: Categories = JSON.parse(category)
+        if (parsedCategory._id !== params.id) {
+          fetchData()
+          return
+        }
+        setCategory(parsedCategory)
+      } catch (error) {
+        console.error("Error parsing product from localStorage", error)
+      }
+    } else {
+      fetchData()
+    }
+
   }, [params.id]);
 
   if (loading) return <LionLoader></LionLoader>;

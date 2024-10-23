@@ -17,7 +17,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const router = useRouter();
   const [isInCart, setIsInCart] = useState(false);
 
-  // Check if the product is in the cart
   useEffect(() => {
     const cart = getCart();
     setIsInCart(!!cart[product._id as string]); 

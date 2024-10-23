@@ -84,6 +84,7 @@ export default function ProductCarousel() {
                 className="w-full md:w-auto px-6 py-2 text-base font-semibold rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white transition-all hover:shadow-lg hover:scale-105"
                 label="Shop Now"
               onClick={() => {
+                localStorage.setItem('category', JSON.stringify(carouselData[currentSlide]));
                 router.push(`/Categories/${carouselData[currentSlide].id}`)
               }}>
                 
