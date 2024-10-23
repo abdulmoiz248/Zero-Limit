@@ -15,7 +15,7 @@ const Card = () => {
             <div className="logo1">
               {/* Use Next.js Image component with fixed sizes */}
               <Image
-                src="/images/Lion.jpg"
+                src="/images/Lion.JPG"
                 alt="lion logo"
                 width={100}
                 height={100}
