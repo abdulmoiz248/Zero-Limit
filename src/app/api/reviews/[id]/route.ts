@@ -14,7 +14,7 @@ export async function GET(req: Request) {
         }
 
       
-      let reviews=await getReviewsByProductId(productID);
+      const reviews=await getReviewsByProductId(productID);
        return NextResponse.json({
             reviews,
             success: true

@@ -1,9 +1,9 @@
 import { VerifyingCustomer } from "@/services/CustomerServices";
 
 export async function POST(req: Request) {
-    let {otp,email}=await req.json();
+    const {otp,email}=await req.json();
     try {
-         let valid= await VerifyingCustomer(email,otp)  ;
+          const valid= await VerifyingCustomer(email,otp)  ;
          if(valid){
              return Response.json({
                  message: "User Verified Successfully",
@@ -16,6 +16,7 @@ export async function POST(req: Request) {
              },{status:401});
          }
     } catch (error) {
+         console.log(error);
         return Response.json({
             message:"Error Verifying user",
             success: false,

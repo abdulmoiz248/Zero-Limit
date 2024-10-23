@@ -1,11 +1,10 @@
 import { getAllReviews } from "@/services/ReviewServices";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET() {
     try {
        
-        
-       let reviews=await getAllReviews();
+       const reviews=await getAllReviews();
        
         return NextResponse.json({
             reviews,

@@ -3,7 +3,7 @@
 import Cookies from 'js-cookie'
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle, Router, X } from 'lucide-react'
+import { CheckCircle} from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,16 +13,18 @@ import { useRouter } from 'next/navigation'
 
 
 export default function VerifyOTP() {
-  let router=useRouter();
+  const router=useRouter();
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [isVerifying, setIsVerifying] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [error, setError] = useState('')
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-   const [cookie,setCookie]=useState<'' | null | undefined>();
+  const [cookie,setCookie]=useState<'' | null | string>();
   useEffect(() => {
-
     inputRefs.current = inputRefs.current.slice(0, 6)
+    if(!cookie){
+      router.push('/')
+    }
   }, [])
 
   const handleChange = (element: HTMLInputElement, index: number) => {
@@ -47,9 +49,9 @@ export default function VerifyOTP() {
     setError('')
    
     try {
-      let orderId=Cookies.get('order');
-      setCookie(orderId as any);
-      let res=await axios.post('/api/verifyOtpOrder',{otp,orderId});
+      const orderId=Cookies.get('order');
+      setCookie(orderId as string);
+      const res=await axios.post('/api/verifyOtpOrder',{otp,orderId});
   
       if(res.data.success){
         Cookies.remove('order');
@@ -59,6 +61,7 @@ export default function VerifyOTP() {
        
       }
     } catch (error) {
+      console.log(error);
        setError('Invalid OTP');
     }finally{
       setIsVerifying(false);

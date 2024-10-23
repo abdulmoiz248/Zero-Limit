@@ -11,8 +11,7 @@ import axios from 'axios'
 import LionLoader from '@/components/LionLoader'
 import { Order } from '@/Models/Order'
 import { Product } from '@/Models/Product'
-import { calDiscount, countItems, removeDuplicateProducts } from '@/helper/order'
-import { ObjectId } from 'mongoose'
+import {  countItems, removeDuplicateProducts } from '@/helper/order'
 
 export default function OrderPage() {
 
@@ -22,7 +21,7 @@ export default function OrderPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
-  const [unfilteredProducts, setUnfilteredProducts] = useState<String[]>([])
+  const [unfilteredProducts, setUnfilteredProducts] = useState<string[]>([])
   
   
 

@@ -13,9 +13,9 @@ export async function GET() {
 
     const sales = await getSales();
     const summary=await getSummary();
-    let topProducts=await getTopProducts();
+    const topProducts=await getTopProducts();
 
-    let topOrders=await OrderModel.find().sort({createdAt:-1}).limit(5);
+    const topOrders=await OrderModel.find().sort({createdAt:-1}).limit(5);
  
 
     return NextResponse.json({ sales,summary,topProducts,topOrders, success: true }, { status: 200 });
@@ -26,10 +26,10 @@ export async function GET() {
 }
 
 const getSummary = async () => {
-    let revenue=await getRevenue();
-    let products=await getProductsSold();  
-    let orders=await getOrders();  
-    let customers=await getCustomers();
+    const revenue=await getRevenue();
+    const products=await getProductsSold();  
+    const orders=await getOrders();  
+    const customers=await getCustomers();
    
    
     return {
@@ -150,7 +150,7 @@ export const getCustomers = async () => {
 };
 
 
-let getOrders = async () => {
+const getOrders = async () => {
   const currentDate = new Date();
   const startCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const endCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -174,7 +174,7 @@ let getOrders = async () => {
 };
 
 
-let getProductsSold = async () => {
+const getProductsSold = async () => {
   const currentDate = new Date();
   const startCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const endCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -205,7 +205,7 @@ let getProductsSold = async () => {
 };
 
 
-let getRevenue = async () => {
+const getRevenue = async () => {
     const currentDate = new Date();
     const startCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   

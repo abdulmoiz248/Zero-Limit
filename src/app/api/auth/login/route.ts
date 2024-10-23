@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         });
 
      
-        let data={
+        const data={
             id:customer.id,
             email:customer.email,
             fullName:customer.fullName

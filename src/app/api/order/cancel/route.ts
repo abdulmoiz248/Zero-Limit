@@ -1,8 +1,6 @@
 import OrderModel from "@/Models/Order";
 import connect from "@/dbConfig/dbConfig";
-import { generateOtp } from "@/helper/generateOtp";
 import { sendOTPEmail } from "@/helper/otpEmail";
-import { CartItem } from "@/interfaces/interfaces";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -10,7 +8,7 @@ export async function POST(req: Request) {
     await connect();
     const { id} = await req.json();
 
-   let order=await OrderModel.findById(id);
+   const order=await OrderModel.findById(id);
    if(!order){
     return NextResponse.json({
         message: "Order not found",

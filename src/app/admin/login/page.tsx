@@ -8,9 +8,9 @@ import { useRouter } from 'next/navigation';
 export default function Page() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  let [message,setMessage]=useState('All fields are required');
+  const [message,setMessage]=useState('All fields are required');
   
- let router=useRouter();
+  const router=useRouter();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
 
@@ -23,7 +23,7 @@ export default function Page() {
      }
 
   try {
-      let res=await axios.post('/api/admin/login',{email,password});
+      const res=await axios.post('/api/admin/login',{email,password});
      
       if(res.data.success){
         console.log("inside true");

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { CreditCard, Lock, Truck, DollarSign, CheckCircle } from 'lucide-react'
+import { CreditCard,  DollarSign } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -66,10 +66,10 @@ export default function LuxuryCheckoutPage() {
       } else {
         throw new Error(res.data.message || 'Failed to place order')
       }
-    } catch (error: any) {
-      console.error('Order submission failed:', error.message)
-      setError(error.message || 'An unexpected error occurred. Please try again.')
-      toast.error(error.message || 'Failed to place order. Please try again.')
+    } catch (error) {
+      console.error('Order submission failed:', error)
+      setError('An unexpected error occurred. Please try again.')
+      toast.error( 'Failed to place order. Please try again.')
     } finally {
       setIsProcessing(false)
     }

@@ -12,7 +12,7 @@ export async function GET(req: Request){
             const email = url.pathname.split('/').pop(); 
 
 
-            let orders=await OrderModel.find({ email: email});
+            const orders=await OrderModel.find({ email: email});
 
     
             return NextResponse.json({

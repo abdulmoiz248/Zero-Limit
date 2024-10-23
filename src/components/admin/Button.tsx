@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 
-export default function Button({name, handler}:{name:any,handler:()=>void}) {
+export default function Button({name, handler}:{name:string,handler:()=>void}) {
   return (
     <div>
         

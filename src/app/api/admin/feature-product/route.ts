@@ -31,8 +31,8 @@ export async function POST(req: Request) {
             success: true
         }), { status: 200 });
         
-    } catch (error: any) {
-        console.error("Error:", error.message);
+    } catch (error) {
+        console.error("Error:", error);
         return new Response(JSON.stringify({
             message: 'An error occurred while toggling the featured status.',
             success: false

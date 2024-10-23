@@ -3,7 +3,7 @@ import { getCustomerByEmail } from "@/services/CustomerServices";
 export async function POST(request:Request){
    
     try {
-        let {email}=await request.json();
+        const {email}=await request.json();
         const customer=await getCustomerByEmail(email);
         if(customer){
             return Response.json({
@@ -16,10 +16,10 @@ export async function POST(request:Request){
             success:true
         },{status:200})
 
-    } catch (error:any) {
-        console.log(error.message);
+    } catch (error) {
+        console.log(error);
                 return Response.json({
-            message: error.message,
+            message: "Could not verify email",
             success:false
         },{status:500})
     }

@@ -6,7 +6,6 @@ import { Categories } from '@/Models/Categories';
 import { Product } from '@/Models/Product';
 import ProductCard from '@/components/ProductCard'; 
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
 import LionLoader from '@/components/LionLoader';
 
 export default function CategoryPage({ params }: { params: { id: string } }) {
@@ -26,6 +25,7 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
           setError("Failed to load category data.");
         }
       } catch (error) {
+        console.log(error);
         setError("An error occurred while fetching data.");
       } finally {
         setLoading(false);
@@ -62,7 +62,7 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
             {
              
             products.map((product:Product) => (
-              <ProductCard key={product._id as any} product={product} /> // Use ProductCard component
+              <ProductCard key={product._id as string} product={product} /> // Use ProductCard component
             ))}
           </div>
         )}

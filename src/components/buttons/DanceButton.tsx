@@ -3,10 +3,9 @@ import React from 'react';
 interface DanceButtonProps {
   label: string;
   onClick: () => void;
-  disabled?: boolean;
 }
 
-const DanceButton: React.FC<DanceButtonProps> = ({ label, onClick, disabled }) => {
+const DanceButton: React.FC<DanceButtonProps> = ({ label, onClick }) => {
  
 
   return (

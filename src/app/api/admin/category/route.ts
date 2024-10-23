@@ -46,11 +46,11 @@ export async function POST(req: Request) {
       }),
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("error", error.message);
+  } catch (error) {
+    console.error("error", error);
     return new Response(
       JSON.stringify({
-        message: error.message,
+        message: "Cannot add a category",
         success: false,
       }),
       { status: 500 }
@@ -68,10 +68,11 @@ export async function GET(){
       categories,
     });
     
-  } catch (error:any) {
+  } catch (error) {
+    console.log(error)
     return Response.json({
       success: false,
-      message: error.message,
+      message: "Error"
     },{status: 500});
   }
 }

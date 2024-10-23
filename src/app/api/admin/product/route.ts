@@ -62,11 +62,11 @@ export async function POST(req: Request) {
       }),
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("error", error.message);
+  } catch (error) {
+    console.error("error", error);
     return new Response(
       JSON.stringify({
-        message: error.message,
+        message: "Can't save product",
         success: false,
       }),
       { status: 500 }
@@ -105,11 +105,11 @@ export async function GET(req: Request) {
       JSON.stringify({ message: "Products retrieved successfully", success: true, products }),
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("error", error.message);
+  } catch (error) {
+    console.error("error", error);
     return new Response(
       JSON.stringify({
-        message: error.message,
+        message: "Cannot retrieve products",
         success: false,
       }),
       { status: 500 }

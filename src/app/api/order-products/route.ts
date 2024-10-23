@@ -14,6 +14,7 @@ export async function POST(req: Request) {
     return Response.json({ products: productsArr ,success: true},{status: 200});
 
   }catch(err){
+    console.log(err);  
     return Response.json({ message:"Error loading" ,success: false},{status: 500});
   }
 }

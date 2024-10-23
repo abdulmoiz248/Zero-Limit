@@ -23,9 +23,9 @@ export default function OrderDetailsModal({ order, onClose, onStatusChange }: Or
 
   useEffect(()=>{
 
-    let fetch = async() =>{
+    const fetch = async() =>{
       try {
-        let res=await axios.post('/api/order-products',{products:order.products});
+        const res=await axios.post('/api/order-products',{products:order.products});
         if(res.data.success){
           setProducts(res.data.products);
         }
@@ -37,7 +37,7 @@ export default function OrderDetailsModal({ order, onClose, onStatusChange }: Or
   },[])
 
   
-let productCount=(id:string)=>{
+const productCount=(id:string)=>{
   let count=0;
   products.forEach((product:Product) => {
     if(product._id===id){

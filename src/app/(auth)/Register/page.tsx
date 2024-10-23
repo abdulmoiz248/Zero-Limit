@@ -23,7 +23,7 @@ export default function RegisterForm() {
   const [showRegisterButton, setShowRegisterButton] = useState(false);
   const [errors, setErrors] = useState({ email: '', name: '', password: '' });
   const [touched, setTouched] = useState({ email: false, name: false, password: false });
-  const [debounceTimeout, setDebounceTimeout] = useState<number | null>(null);
+  const [debounceTimeout, setDebounceTimeout] = useState< NodeJS.Timer | number>();
 
   
   const validateField = (value: string, schema: z.ZodSchema, field: keyof typeof errors) => {
@@ -52,6 +52,7 @@ export default function RegisterForm() {
             setShowNameField(false);
           }
         } catch (error) {
+          console.log(error);
           setErrors(prev => ({ ...prev, email: 'Email already exists' }));
           setShowNameField(false);
         }
@@ -61,11 +62,11 @@ export default function RegisterForm() {
     };
 
     if (touched.email) {
-      if (debounceTimeout) clearTimeout(debounceTimeout);
+      if (debounceTimeout) clearTimeout(debounceTimeout as number);
       const timer = setTimeout(() => {
         checkEmail();
       }, 1000);
-      setDebounceTimeout(timer as any);
+      setDebounceTimeout(timer);
       return () => {
         if (timer) clearTimeout(timer);
       };
@@ -88,7 +89,7 @@ export default function RegisterForm() {
     }
   }, [password, showPasswordField]);
 
-let router=useRouter();
+  const router=useRouter();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return; // Prevent double submission
@@ -109,6 +110,7 @@ let router=useRouter();
            
         }
       } catch (error) {
+        console.log(error);
         setErrors(prev => ({ ...prev, email: 'Registeration Failed' }))
       } finally {
         setLoading(false);

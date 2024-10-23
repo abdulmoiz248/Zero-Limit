@@ -1,6 +1,6 @@
 "use client"
 import { useState,useEffect } from "react"
-import { Minus, Plus, Trash2, ShoppingBag, Sparkles, AlertCircle, Router } from "lucide-react"
+import { Minus, Plus, Trash2, ShoppingBag, Sparkles, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { motion, AnimatePresence } from "framer-motion"
@@ -9,11 +9,12 @@ import { CartItem } from "@/interfaces/interfaces"
 import  Cookies  from "js-cookie"
 import { getCart } from "@/helper/cart"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 
 
 export default function Component() {
-  let router=useRouter();
+  const router=useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [isCustomer, setIsCustomer] = useState(false);
 
@@ -86,7 +87,8 @@ export default function Component() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 p-6 bg-gray-50 rounded-lg shadow-sm"
                 >
-                  <img src={item.product.link[0]} alt={item.product.name} className="w-40 h-40 object-cover rounded-md" />
+                  
+                  <Image src={item.product.link[0]} alt={item.product.name} width={40} height={40} className="object-cover rounded-md" />
                   <div className="flex-grow space-y-2">
                     <h2 className="text-2xl font-bold">{item.product.name}</h2>
                     <p className="text-xl font-semibold">${item.product.price.toFixed(2)}</p>

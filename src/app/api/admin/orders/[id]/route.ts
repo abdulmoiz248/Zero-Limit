@@ -1,8 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
 import OrderModel from '@/Models/Order'
 import connect from '@/dbConfig/dbConfig'
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextApiRequest) {
   const { id } = req.query
 
   await connect()

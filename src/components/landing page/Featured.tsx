@@ -102,11 +102,11 @@ export default function ContinuousCarousel() {
   }
 
   const handleMouseEnter = () => {
-    controls.stop() // Stop the animation on hover
+    controls.stop() 
   }
 
   const handleMouseLeave = () => {
-    startAnimation() // Restart the animation when mouse leaves
+    startAnimation() 
   }
 
   const handleProductClick = (product: Product) => {

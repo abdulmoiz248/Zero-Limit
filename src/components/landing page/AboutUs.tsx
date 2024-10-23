@@ -22,7 +22,7 @@ export default function LimitZeroManifesto() {
   }, []);
 
   return (
-    <section  id="about" className=" text-white bg-black py-12 md:py-16 overflow-hidden">
+    <section id="about" className="text-white bg-black py-12 md:py-16 overflow-hidden">
       <div className="container mx-auto px-6 md:px-4">
         <motion.div
           initial={{ opacity: 0 }}
@@ -65,16 +65,16 @@ export default function LimitZeroManifesto() {
             Our Manifesto
           </h4>
           <p className="text-base md:text-lg text-white leading-relaxed">
-            At Limit Zero, we don't just create clothing; we forge a revolution.
+            At Limit Zero, we don&apos;t just create clothing; we forge a revolution.
             We are the voice of the unbound, the anthem of the audacious. Our
             designs are not mere fabric and thread, but a battle cry against
             conformity. We believe in pushing beyond the edge of possibility, in
             shattering the chains of convention. Every stitch, every seam is a
             testament to our unwavering commitment to fearless self-expression.
-            We don't follow trends; we obliterate them. We are for the dreamers,
-            the rebels, the ones who refuse to be defined by society's narrow
+            We don&apos;t follow trends; we obliterate them. We are for the dreamers,
+            the rebels, the ones who refuse to be defined by society&apos;s narrow
             vision. Wear Limit Zero, and become the limitless version of
-            yourself. Together, we'll rewrite the rules of fashion and leave an
+            yourself. Together, we&apos;ll rewrite the rules of fashion and leave an
             indelible mark on the world. Are you ready to break free?
           </p>
         </motion.div>

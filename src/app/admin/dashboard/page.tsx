@@ -17,10 +17,8 @@ import {
   ShoppingCart,
   TrendingUp,
   TrendingDown,
-  BarChart,
-  PieChart
 } from 'lucide-react'
-import { Bar, Line, Pie } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2'
 import { 
   Chart as ChartJS, 
   CategoryScale, 

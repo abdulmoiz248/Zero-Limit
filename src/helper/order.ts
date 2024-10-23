@@ -1,18 +1,13 @@
 import { Product } from "@/Models/Product";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 
 export function calDiscount(price:number,disount:number){
     return (price - (price * disount / 100))
 } 
 
-
-
-
-export function countItems(productId: string, products:  String[]): number {
+export function countItems(productId: string, products:  string[]): number {
     let total = 0;
-    console.log("Products list:", products);
-
-    products.forEach((product) => {
+     products.forEach((product) => {
        
         if (product) {
             const id1 = new mongoose.Types.ObjectId(product as string);

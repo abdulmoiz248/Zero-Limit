@@ -3,12 +3,12 @@ import OrderModel from "@/Models/Order";
 
 
 export async function POST(req: Request) {
-    let {otp,orderId}=await req.json();
+    const {otp,orderId}=await req.json();
     await connect();
     try {
         
-        let order=await OrderModel.findById(orderId);
-        let valid=order.otp==otp.join('');
+        const order=await OrderModel.findById(orderId);
+        const valid=order.otp==otp.join('');
       
          if(valid){
             order.isVerified=true;
@@ -24,6 +24,7 @@ export async function POST(req: Request) {
              },{status:401});
          }
     } catch (error) {
+        console.log(error);
         return Response.json({
             message:"Error Verifying user",
             success: false,

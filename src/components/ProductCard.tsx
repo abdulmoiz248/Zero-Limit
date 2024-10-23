@@ -20,7 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   // Check if the product is in the cart
   useEffect(() => {
     const cart = getCart();
-    setIsInCart(!!cart[product._id as any]); 
+    setIsInCart(!!cart[product._id as string]); 
   }, [product]);
 
   const handleCartToggle = () => {
@@ -33,7 +33,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     setIsInCart(!isInCart);
   };
 
-  // Calculate discounted price if applicable
+
   const discountAmount = (product.price * product.discountPercent) / 100;
   const discountedPrice = product.price - discountAmount;
 

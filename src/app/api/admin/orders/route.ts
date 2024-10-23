@@ -1,4 +1,3 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
 
 import OrderModel from '@/Models/Order'
 import connect from '@/dbConfig/dbConfig'

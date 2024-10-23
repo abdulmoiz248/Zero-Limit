@@ -1,4 +1,3 @@
-// services/customerService.ts
 import { prisma } from '@/helper/prisma';
 
 
@@ -8,13 +7,12 @@ export const createCustomer = async (email: string, password: string, fullName: 
   });
 };
 
-// Get all customers
 export const getAllCustomers = async () => {
   return await prisma.customer.findMany();
 };
 
 export const VerifyingCustomer= async (email:string,otp:string) => {
-  let customer=await getCustomerByEmail(email);
+  const customer=await getCustomerByEmail(email);
   if(customer && customer.otp===otp){
      await prisma.customer.update({
       where: { email },
@@ -33,7 +31,7 @@ export const getCustomerByEmail = async (email: string) => {
   return await prisma.customer.findUnique({ where: { email } });
 };
 
-// Update a customer by ID
+
 export const updateCustomer = async (id: number, data: { email?: string; password?: string; fullName?: string }) => {
   return await prisma.customer.update({
     where: { id },

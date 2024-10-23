@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import axios from 'axios'
-import { motion } from 'framer-motion'
-import { Package, Search, Eye } from 'lucide-react'
+import {  Search, Eye } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -56,7 +55,7 @@ export default function OrdersPage() {
     try {
       const res = await axios.post(`/api/admin/orders/${orderId}`, { status: newStatus })
       if (res.data.success) {
-        let tempOrders=orders.map(order => 
+        const tempOrders=orders.map(order => 
           order._id === orderId ? { ...order, status: newStatus } : order
         )
         setOrders(tempOrders as Order[]);

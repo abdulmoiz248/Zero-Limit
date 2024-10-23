@@ -6,9 +6,9 @@ export async function POST(req: Request){
    
     const { email, password,name } = await req.json();
     try {
-        let otp=generateOtp();
-        let hashpass=await bcrypt.hash(password,10); 
-        let customer=await createCustomer(email,hashpass,name,otp);
+        const otp=generateOtp();
+        const hashpass=await bcrypt.hash(password,10); 
+        await createCustomer(email,hashpass,name,otp);
         await sendOTPEmail(email,otp);
 
         return Response.json({
@@ -16,6 +16,7 @@ export async function POST(req: Request){
             success: true,
         },{status:201});
     } catch (error) {
+        console.log(error);
         return Response.json({
             message:"Can't create User",
             success: false,

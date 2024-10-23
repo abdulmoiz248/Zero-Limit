@@ -44,8 +44,8 @@ export async function POST(req: Request) {
             success: true,
         }, { status: 200 });
 
-    } catch (error: any) {
-        console.error('Error updating product discount:', error.message);
+    } catch (error) {
+        console.error('Error updating product discount:', error);
 
         return Response.json({
             message: 'An error occurred while updating the product discount.',
