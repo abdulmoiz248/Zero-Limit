@@ -59,7 +59,14 @@ export default function OrdersPage() {
           order._id === orderId ? { ...order, status: newStatus } : order
         )
         setOrders(tempOrders as Order[]);
-        setSelectedOrder(prev => prev ? { ...prev, status: newStatus } : null)
+        //fix
+        if (selectedOrder && selectedOrder._id === orderId) {
+          const updatedSelectedOrder: Order = {
+            ...selectedOrder.toObject(), // Convert to a plain object
+            status: newStatus,
+          };
+          setSelectedOrder(updatedSelectedOrder);
+        }
       }
     } catch (error) {
       console.error('Failed to update order status:', error)

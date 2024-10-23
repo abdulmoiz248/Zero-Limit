@@ -98,7 +98,7 @@ export default function VerifyOTP() {
                     value={data}
                     onChange={(e) => handleChange(e.target, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
-                    ref={(el) => (inputRefs.current[index] = el as any)}
+                    ref={(el:HTMLInputElement) => {inputRefs.current[index] = el}}
                     className="block w-10 h-12 text-2xl text-center"
                     required
                   />

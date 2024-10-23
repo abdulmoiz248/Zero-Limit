@@ -46,7 +46,7 @@ export default function LoginPage() {
             Login to Limit Zero
           </h2>
           <p className="text-sm text-center text-white mb-6">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/Register" className="font-medium  hover:text-yellow-500 transition-colors">
               Sign up here
             </Link>

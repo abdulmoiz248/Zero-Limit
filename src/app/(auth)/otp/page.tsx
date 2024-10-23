@@ -72,7 +72,7 @@ export default function Component() {
         
           <h2 className="text-2xl font-bold text-white mb-6 text-center">Enter OTP</h2>
           <p className="text-white mb-8 text-center">
-            We've sent a one-time password to your email. Enter it below to verify your identity.
+            We&apos;ve sent a one-time password to your email. Enter it below to verify your identity.
           </p>
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <div className="flex justify-center space-x-4 mb-8">
@@ -81,7 +81,12 @@ export default function Component() {
                 key={index}
                 type="text"
                 maxLength={1}
-                ref={()=>{(el:HTMLInputElement) => inputRefs.current[index] = el}}
+                ref={(el) => {
+                  if (el) {
+                    inputRefs.current[index] = el;
+                  }
+                }}
+                
                 className="w-12 h-12 text-center text-2xl font-bold bg-white border-2 border-yellow-500 text-black focus:border-orange-500 focus:ring-orange-500"
                 value={data}
                 onChange={e => handleChange(index, e)}

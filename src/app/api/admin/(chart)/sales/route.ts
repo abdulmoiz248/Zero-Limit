@@ -109,7 +109,7 @@ const getTopProducts = async () => {
 
 
 
-export const getCustomers = async () => {
+const getCustomers = async (): Promise<{ value: number; trend: number }> =>  {
   const currentDate = new Date();
   const startCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const endCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);

@@ -172,7 +172,7 @@ export default function Component() {
                 </motion.div>
               </div>
               <h2 className="text-3xl font-bold mt-8 mb-4">Your cart is empty</h2>
-              <p className="text-xl text-gray-600 mb-8">But it doesn't have to be. Let's add some fearless style to your life!</p>
+              <p className="text-xl text-gray-600 mb-8">But it doesn&apos;t have to be. Let&apos;s add some fearless style to your life!</p>
               <Button onClick={()=>{
             router.push('/')
           }}
