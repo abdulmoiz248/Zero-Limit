@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Image from "next/image"; // Import Next.js Image component
+import Image from "next/image"; 
 
 
 const Card = () => {
@@ -13,20 +13,20 @@ const Card = () => {
         <div className="content">
           <div className="logo">
             <div className="logo1">
-              {/* Use Next.js Image component with fixed sizes */}
+           
               <Image
                 src="/images/Lion.JPG"
                 alt="lion logo"
                 width={100}
                 height={100}
                 objectFit="contain"
-                priority={true} // Preload this image
+               // priority={true} 
               />
               <Image
                 src="/images/logo.png"
                 alt="Zero Limit logo"
-                width={100}
-                height={100}
+                width={200}
+                height={200}
                 objectFit="contain"
                 className="zero-limit bg-white"
               />
@@ -34,7 +34,7 @@ const Card = () => {
             <span className="trail" />
           </div>
         </div>
-        <span className="bottom-text">Breaking the limits</span>
+        <span className="bottom-text text-center">Beyond boundaries Wear your freedom</span>
       </div>
     </StyledWrapper>
   );

@@ -1,33 +1,91 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
-
-// Lazy load components dynamically
-const CatCarousel = dynamic(() => import('@/components/landing page/CategoriesCarousel'));
-const LimitZeroManifesto = dynamic(() => import('@/components/landing page/AboutUs'));
-const ContinuousCarousel = dynamic(() => import('@/components/landing page/Featured'));
-const JoinUs = dynamic(() => import('@/components/landing page/JoinUs'));
-const MarqueeDemo = dynamic(() => import('@/components/landing page/Reviews'));
 import BelowHeader from '@/components/landing page/BelowHeader';
+import LionLoader from '@/components/LionLoader';
+import axios from 'axios';
+import { Product } from '@/Models/Product';
+
+
+const CatCarousel = dynamic(() => import('@/components/landing page/CategoriesCarousel'), {
+  ssr: false,
+  loading: () => <LionLoader/>,
+});
+
+const LimitZeroManifesto = dynamic(() => import('@/components/landing page/AboutUs'), {
+  ssr: false,
+  loading: () => <LionLoader/>,
+});
+
+const ContinuousCarousel = dynamic(() => import('@/components/landing page/Featured'), {
+  ssr: false,
+  loading: () => <LionLoader/>,
+});
+
+const JoinUs = dynamic(() => import('@/components/landing page/JoinUs'), {
+  ssr: false,
+  loading: () => <LionLoader/>
+});
+
+const MarqueeDemo = dynamic(() => import('@/components/landing page/Reviews'), {
+  ssr: false,
+  loading: () => <LionLoader/>
+});
+
+
+const animationVariants = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0 },
+};
+
+
+function useLazyInView() {
+  const [inView, setInView] = useState(false);
+  const { ref } = useInView({
+    triggerOnce: true,
+    onChange: (visible) => visible && setInView(true),
+  });
+  return { ref, inView };
+}
 
 export default function Home() {
-  const animationVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0 },
-  };
+  const { ref: catRef, inView: isCatInView } = useLazyInView();
+  const { ref: manifestoRef, inView: isManifestoInView } = useLazyInView();
+  const { ref: featuredRef, inView: isFeaturedInView } = useLazyInView();
+  const { ref: joinUsRef, inView: isJoinUsInView } = useLazyInView();
+  const { ref: reviewsRef, inView: isReviewsInView } = useLazyInView();
+  const [loading,setloading]=useState(true);
+  const [products,setproducts]=useState<Product[]>([]);
+  const [categories,setcategories]=useState();
 
-  const { ref: catRef, inView: isCatInView } = useInView({ triggerOnce: true });
-  const { ref: manifestoRef, inView: isManifestoInView } = useInView({ triggerOnce: true });
-  const { ref: featuredRef, inView: isFeaturedInView } = useInView({ triggerOnce: true });
-  const { ref: joinUsRef, inView: isJoinUsInView } = useInView({ triggerOnce: true });
-  const { ref: reviewsRef, inView: isReviewsInView } = useInView({ triggerOnce: true });
+  useEffect(()=>{
+    let fetchData=async()=>{
+      try {
+       const res=await axios.get('/api/fetchAll');
+       if(res.data.success){
+         setloading(false);
+         
+         setproducts(res.data.products);
+         setcategories(res.data.categories);
+       }
+      } catch (error) {
+        window.location.reload();
+      }
+    }
+    fetchData();
+  },[])
+
 
   return (
     <>
-      <BelowHeader />
+    {
+      loading? <LionLoader>
+      </LionLoader>:
+      <>
+           <BelowHeader />
 
       <motion.div
         ref={catRef}
@@ -37,7 +95,7 @@ export default function Home() {
         transition={{ duration: 0.5 }}
         className="overflow-hidden"
       >
-        <CatCarousel />
+        <CatCarousel categories={categories} />
       </motion.div>
 
       <motion.div
@@ -59,7 +117,7 @@ export default function Home() {
         transition={{ duration: 0.5 }}
         className="overflow-hidden"
       >
-        <ContinuousCarousel />
+        <ContinuousCarousel featuredproducts={products} />
       </motion.div>
 
       <motion.div
@@ -83,6 +141,8 @@ export default function Home() {
       >
         <MarqueeDemo />
       </motion.div>
+ </>
+    }
     </>
   );
 }

@@ -6,14 +6,8 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Star } from "lucide-react"
+import { Product } from "@/Models/Product"
 
-interface Product {
-  _id: string
-  name: string
-  link: string[]
-  price: number
-  ratings: number
-}
 
 function FeaturedProductCard({ product }: { product: Product }) {
   return (
@@ -40,31 +34,15 @@ function FeaturedProductCard({ product }: { product: Product }) {
   )
 }
 
-export default function ContinuousCarousel() {
+export default function ContinuousCarousel({featuredproducts}:{featuredproducts:Product[]}) {
   const router = useRouter()
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<Product[]>(featuredproducts)
   const [width, setWidth] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
   const duration = 40
 
-  const fetchData = useCallback(async () => {
-    try {
-      const res = await fetch("/api/getFeatured")
-      if (res.ok) {
-        const data = await res.json()
-        if (data.success) {
-          setProducts(data.products)
-        }
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }, [])
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
 
   useEffect(() => {
     if (products.length > 0) {

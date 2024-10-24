@@ -9,29 +9,18 @@ import axios from "axios"
 import { useRouter } from "next/navigation"
 import DanceButton from "../buttons/DanceButton"
 
-export default function ProductCarousel() {
+export default function ProductCarousel({categories}) {
   const [carouselData, setCarouselData] = useState([])
   const [currentSlide, setCurrentSlide] = useState(0)
   const router = useRouter()
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let res = await axios.get('/api/getCategories')
-        if (res.data.success) {
-          const categoriesWithId = res.data.categories.map((category) => ({
-            id: category._id,
-            name: category.name,
-            link: category.link
-          }))
-          setCarouselData(categoriesWithId)
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error)
-      }
-    }
-
-    fetchData()
+    const categoriesWithId = categories.map((category) => ({
+      id: category._id,
+      name: category.name,
+      link: category.link
+    }))
+    setCarouselData(categoriesWithId)
   }, [])
 
   const nextSlide = () => {
