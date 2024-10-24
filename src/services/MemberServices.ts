@@ -8,8 +8,8 @@ export const createMember = async (email: string) => {
       data: { email },
     });
   } catch (error) {
-    console.log("Error creating member:", error);
-    return false; // Return false for any other errors
+  
+    return false;
   }
 };
 
@@ -20,3 +20,4 @@ export const getAllMembers = async () => {
 
 
 
+ 

@@ -5,9 +5,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ChevronRight } from "lucide-react"
 import Image from "next/image"
-import axios from "axios"
 import { useRouter } from "next/navigation"
-import DanceButton from "../buttons/DanceButton"
+import BorderButton from "../buttons/BorderButton"
 
 export default function ProductCarousel({categories}) {
   const [carouselData, setCarouselData] = useState([])
@@ -28,12 +27,11 @@ export default function ProductCarousel({categories}) {
   }
 
   return (
-    
-    <div className="w-full min-h-screen   bg-gradient-to-br  bg-white text-black p-4 md:p-6">
-      <h1 className="text-2xl  md:text-4xl font-bold mb-4 md:mb-8 text-center pt-10 text-black">
+    <div className="w-full bg-gradient-to-br bg-white text-black p-4 md:p-6 min-h-[80vh] md:min-h-screen">
+      <h1 className="text-2xl md:text-4xl font-bold mb-4 md:mb-8 text-center pt-6 md:pt-10 text-black">
         Explore Our Product Categories
       </h1>
-      <div className="flex flex-col lg:flex-row gap-6 md:gap-8 mt-10 max-w-5xl mx-auto">
+      <div className="flex flex-col lg:flex-row gap-6 md:gap-8 mt-6 md:mt-10 max-w-5xl mx-auto">
         <div className="w-full lg:w-2/3 relative overflow-hidden rounded-xl shadow-xl aspect-[16/9] bg-white">
           <AnimatePresence mode="wait">
             {carouselData.length > 0 && (
@@ -69,18 +67,17 @@ export default function ProductCarousel({categories}) {
               >
                 {carouselData[currentSlide].name}
               </motion.h2>
-              <DanceButton
+              <BorderButton text="Shop Now"
                 className="w-full md:w-auto px-6 py-2 text-base font-semibold rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white transition-all hover:shadow-lg hover:scale-105"
                 label="Shop Now"
-              onClick={() => {
-                localStorage.setItem('category', JSON.stringify(carouselData[currentSlide]));
-                router.push(`/Categories/${carouselData[currentSlide].id}`)
-              }}>
-                
-              </DanceButton>
+                onClick={() => {
+                  localStorage.setItem('category', JSON.stringify(carouselData[currentSlide]));
+                  router.push(`/Categories/${carouselData[currentSlide].id}`)
+                }}
+              />
             </div>
           )}
-          <div className="mt-6 relative">
+          <div className="relative">
             <div className="overflow-hidden rounded-lg bg-white p-3 shadow-inner">
               <motion.div
                 className="flex gap-3"

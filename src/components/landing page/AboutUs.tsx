@@ -9,6 +9,15 @@ const phrases = [
   "EMBRACE CHAOS",
   "REWRITE THE RULES",
   "IGNITE REVOLUTION",
+ ,"Be bold, wear freedom."  
+, "Fearless style, limitless freedom."  
+, "Dare more, wear free."  
+, "Fearless fashion, boundless you."  
+, "Own freedom, stay fearless."  
+, "Limitless threads for fearless souls."  
+, "Bold looks, free spirit."  
+, "Fearless by choice, free by style."  
+, "Wear bold, live free."
 ];
 
 export default function LimitZeroManifesto() {
@@ -48,7 +57,7 @@ export default function LimitZeroManifesto() {
               transition={{ duration: 0.5 }}
               className="absolute inset-0 flex items-center justify-center"
             >
-              <h3 className="text-2xl md:text-4xl font-bold text-red-900">
+              <h3 className="text-2xl md:text-4xl font-bold text-[#1b03a3]">
                 {phrases[currentPhrase]}
               </h3>
             </motion.div>
@@ -65,18 +74,7 @@ export default function LimitZeroManifesto() {
             Our Manifesto
           </h4>
           <p className="text-base md:text-lg text-white leading-relaxed">
-            At Limit Zero, we don&apos;t just create clothing; we forge a revolution.
-            We are the voice of the unbound, the anthem of the audacious. Our
-            designs are not mere fabric and thread, but a battle cry against
-            conformity. We believe in pushing beyond the edge of possibility, in
-            shattering the chains of convention. Every stitch, every seam is a
-            testament to our unwavering commitment to fearless self-expression.
-            We don&apos;t follow trends; we obliterate them. We are for the dreamers,
-            the rebels, the ones who refuse to be defined by society&apos;s narrow
-            vision. Wear Limit Zero, and become the limitless version of
-            yourself. Together, we&apos;ll rewrite the rules of fashion and leave an
-            indelible mark on the world. Are you ready to break free?
-          </p>
+          At Zero Limit, our clothes aren’t just worn—they are experienced. We craft fashion that transcends trends, creating bold expressions of individuality, confidence, and empowerment. Every piece is designed to inspire those who wear it to break boundaries, embrace their uniqueness, and make a statement that resonates beyond the fabric.  </p>
         </motion.div>
       </div>
     </section>

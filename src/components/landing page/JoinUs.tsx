@@ -1,20 +1,33 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { z } from 'zod'
 import axios from 'axios'
-import { AlertCircle, CheckCircle2, X } from 'lucide-react'
+import { AlertCircle, CheckCircle2, X, Zap } from 'lucide-react'
 
 const emailSchema = z.object({
   email: z.string().email("Invalid email format"),
 })
 
-export default function JoinUs() {
+const fearlessQuotes = [
+  "Courage is fear that has said its prayers.",
+  "Fear is a reaction. Courage is a decision.",
+  "Bravery is the solution to regret.",
+  "To be fearless is to be fully alive.",
+  "Your fear is 100% dependent on you for its survival.",
+]
+
+export default function BecomeFearless() {
   const [email, setEmail] = useState('')
   const [isModalOpen, setModalOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [quote, setQuote] = useState('')
+
+  useEffect(() => {
+    setQuote(fearlessQuotes[Math.floor(Math.random() * fearlessQuotes.length)])
+  }, [])
 
   const closeModal = () => setModalOpen(false)
 
@@ -37,11 +50,11 @@ export default function JoinUs() {
         setModalOpen(true)
         setEmail('')
       } else {
-        setErrorMessage("Subscription failed. Please try again.")
+        setErrorMessage("Email Already Exists.")
       }
     } catch (error) {
       console.error(error)
-      setErrorMessage("An error occurred while subscribing. Please try again.")
+      setErrorMessage("Email Already Exists");
     }
 
     setIsLoading(false)
@@ -55,23 +68,43 @@ export default function JoinUs() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-2xl p-8">
-          <h2 className="text-4xl font-bold mb-6 text-center text-white">Join Our Community</h2>
-          <p className="text-lg mb-8 text-center text-gray-300">
-           Be a member of our Fearless community and break the limits with us!
-          </p>
+        <motion.div 
+          className="bg-white bg-opacity-5 backdrop-filter backdrop-blur-lg rounded-xl shadow-2xl p-8 relative overflow-hidden"
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <motion.div
+            className="absolute -top-16 -right-16 w-32 h-32 bg-[#1b03a3] rounded-full opacity-20"
+            animate={{ scale: [1, 1.2, 1], rotate: 360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div
+            className="absolute -bottom-16 -left-16 w-32 h-32 bg-[#1b03a3] rounded-full opacity-20"
+            animate={{ scale: [1, 1.2, 1], rotate: -360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          />
+          <h2 className="text-4xl font-bold mb-6 text-center text-white">Become a Fearless</h2>
+          <motion.p 
+            className="text-lg mb-8 text-center text-gray-300 italic"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            "{quote}"
+          </motion.p>
           <form onSubmit={submit} className="space-y-4">
             <div className="relative">
-              <input
+              <motion.input
                 type="email"
-                placeholder="Your Email"
+                placeholder="Your Fearless Email"
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value)
                   setErrorMessage('')
                 }}
-                className="w-full p-4 pr-12 rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                className="w-full p-4 pr-12 rounded-lg border border-gray-700 bg-black text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1b03a3] transition"
                 required
+                whileFocus={{ scale: 1.02 }}
               />
               <motion.span
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -79,27 +112,44 @@ export default function JoinUs() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                {errorMessage ? <AlertCircle className="text-red-500" /> : email && <CheckCircle2 className="text-green-500" />}
+                {errorMessage ? <AlertCircle className="text-red-500" /> : email && <CheckCircle2 className="text-[#1b03a3]" />}
               </motion.span>
             </div>
-            {errorMessage && (
-              <motion.p 
-                className="text-red-500 text-sm"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                {errorMessage}
-              </motion.p>
-            )}
-            <button
+            <AnimatePresence>
+              {errorMessage && (
+                <motion.p 
+                  className="text-red-500 text-sm"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  {errorMessage}
+                </motion.p>
+              )}
+            </AnimatePresence>
+            <motion.button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white font-semibold py-4 rounded-lg hover:bg-blue-500 transition ease-in-out duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#1b03a3] text-white font-semibold py-4 rounded-lg transition ease-in-out duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              whileHover={{ scale: 1.05, boxShadow: '0 0 15px #1b03a3' }}
+              whileTap={{ scale: 0.95 }}
             >
-              {isLoading ? 'Joining...' : 'Join Now'}
-            </button>
+              {isLoading ? (
+                <motion.span
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                >
+                  <Zap className="w-6 h-6" />
+                </motion.span>
+              ) : (
+                <>
+                  Become Fearless Now
+                  <Zap className="w-6 h-6 ml-2" />
+                </>
+              )}
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
       </motion.div>
 
       <AnimatePresence>
@@ -111,12 +161,22 @@ export default function JoinUs() {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white rounded-lg p-8 max-w-md w-full relative"
+              className="bg-white rounded-lg p-8 max-w-md w-full relative overflow-hidden"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: 'spring', damping: 15 }}
             >
+              <motion.div
+                className="absolute -top-16 -right-16 w-32 h-32 bg-[#1b03a3] rounded-full opacity-20"
+                animate={{ scale: [1, 1.2, 1], rotate: 360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div
+                className="absolute -bottom-16 -left-16 w-32 h-32 bg-[#1b03a3] rounded-full opacity-20"
+                animate={{ scale: [1, 1.2, 1], rotate: -360 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              />
               <button
                 onClick={closeModal}
                 className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -124,10 +184,30 @@ export default function JoinUs() {
               >
                 <X size={24} />
               </button>
-              <h3 className="text-2xl font-bold mb-4">Subscription Successful</h3>
-              <p className="text-gray-600">
-                You have successfully subscribed to our newsletter. We will keep you updated with the latest news and offers.
-              </p>
+              <motion.h3 
+                className="text-2xl font-bold mb-4 text-[#1b03a3]"
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                Welcome, Fearless!
+              </motion.h3>
+              <motion.p 
+                className="text-gray-600"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                You've taken the first step towards becoming truly Fearless. Get ready for an extraordinary journey filled with challenges, growth, and limitless possibilities.
+              </motion.p>
+              <motion.div
+                className="mt-6 text-center"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.6, type: 'spring' }}
+              >
+                <Zap className="w-12 h-12 mx-auto text-[#1b03a3]" />
+              </motion.div>
             </motion.div>
           </motion.div>
         )}

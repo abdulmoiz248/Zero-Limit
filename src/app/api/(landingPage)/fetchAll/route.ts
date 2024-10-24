@@ -40,7 +40,10 @@ const getCategories=async()=>{
 }
 
 const getProducts=async()=>{
-    const products=await ProductModel.find({featured:true});
+    const products = await ProductModel.find({ 
+        featured: true,
+        quantity: { $gt: 0 } 
+      });
     
     if(!products){
         return null;
