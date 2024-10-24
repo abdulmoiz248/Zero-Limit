@@ -4,10 +4,10 @@ import { useEffect, useState, useRef } from "react"
 import { motion, useAnimation } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Star, ShoppingCart } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Star } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+
 import { Product } from "@/Models/Product"
 
 
@@ -63,14 +63,14 @@ function FeaturedProductCard({ product }: { product: Product }) {
 
 export default function ContinuousCarousel({ featuredProducts}: { featuredProducts: Product[] }) {
   const router = useRouter()
-  const [products, setProducts] = useState<Product[]>(featuredProducts)
+  const [products, setProducts] = useState<Product[]>([])
   const [width, setWidth] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const controls = useAnimation()
   const duration = 60 
 
   useEffect(() => {
-    console.log(featuredProducts);
+    setProducts(featuredProducts)
     if (products.length > 0) {
       setWidth(calculateWidth())
     }

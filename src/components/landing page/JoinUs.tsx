@@ -90,7 +90,7 @@ export default function BecomeFearless() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            "{quote}"
+            &quot{quote}&quot
           </motion.p>
           <form onSubmit={submit} className="space-y-4">
             <div className="relative">
@@ -198,7 +198,7 @@ export default function BecomeFearless() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                You've taken the first step towards becoming truly Fearless. Get ready for an extraordinary journey filled with challenges, growth, and limitless possibilities.
+                You&apos;ve taken the first step towards becoming truly Fearless. Get ready for an extraordinary journey filled with challenges, growth, and limitless possibilities.
               </motion.p>
               <motion.div
                 className="mt-6 text-center"

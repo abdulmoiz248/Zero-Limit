@@ -71,6 +71,7 @@ export default function Home() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       } catch (error) {
+        console.log(error);
         window.location.reload();
       }
     };
