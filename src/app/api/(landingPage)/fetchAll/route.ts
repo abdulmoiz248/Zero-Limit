@@ -43,7 +43,7 @@ const getProducts=async()=>{
     const products = await ProductModel.find({ 
         featured: true,
         quantity: { $gt: 0 } 
-      });
+      }).limit(3);
     
     if(!products){
         return null;

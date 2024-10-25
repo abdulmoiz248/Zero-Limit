@@ -18,7 +18,7 @@ const LimitZeroManifesto = dynamic(() => import('@/components/landing page/About
   loading: () => <LionLoader/>,
 });
 
-const ContinuousCarousel = dynamic(() => import('@/components/landing page/Featured'), {
+const StableCarousel = dynamic(() => import('@/components/landing page/Featured'), {
   ssr: false,
   loading: () => <LionLoader/>,
 });
@@ -116,7 +116,7 @@ export default function Home() {
             transition={{ duration: 0.5 }}
             className="overflow-hidden"
           >
-            <ContinuousCarousel featuredProducts={products} />
+            <StableCarousel featuredProducts={products} />
           </motion.div>
 
           <motion.div

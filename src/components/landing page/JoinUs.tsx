@@ -90,7 +90,7 @@ export default function BecomeFearless() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            &quot{quote}&quot
+            `&quot`{quote}`&quot`
           </motion.p>
           <form onSubmit={submit} className="space-y-4">
             <div className="relative">
