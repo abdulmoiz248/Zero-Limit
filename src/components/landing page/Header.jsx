@@ -8,8 +8,9 @@ import Image from 'next/image'
 
 const menuItems = [
   { name: 'Profile', href: '/Profile' },
+  { name: 'Shop Now', href: '/all-products'  },
   { name: 'About', href: '/#about' },
-  { name: 'Contact', href: '#footer' },
+  { name: 'Contact', href: '#footer'  },
 ]
 
 export default function Header() {
@@ -51,7 +52,7 @@ export default function Header() {
                 <motion.a
                   key={item.name}
                   href={item.href}
-                  className="text-base font-medium text-gray-500 hover:text-gray-900"
+                  className="text-base font-medium text-gray-500 hover:text-gray-700"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: -20 }}
@@ -109,7 +110,7 @@ export default function Header() {
                           href={item.href}
                           className="-m-3 p-3 flex items-center rounded-md hover:bg-gray-50"
                         >
-                          <span className="ml-3 text-base font-medium text-gray-900">{item.name}</span>
+                          <span className="ml-3 text-base font-medium text-[#1b03a3]">{item.name}</span>
                         </a>
                       ))}
                     </nav>

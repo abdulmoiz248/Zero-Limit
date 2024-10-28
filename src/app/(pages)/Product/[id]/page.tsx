@@ -88,15 +88,16 @@ export default function Component({ params }: { params: { id: string } }) {
     }
   }
 
+  
   const handleCartToggle = () => {
     if (product) {
       if (isInCart) {
-        removeFromCart(product._id)
+        removeFromCart(product._id as string)
       } else {
         addToCart(product, 1)
       }
       setIsInCart(!isInCart)
-    }
+    } 
   }
 
   if (!product) {

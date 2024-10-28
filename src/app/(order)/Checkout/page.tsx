@@ -7,13 +7,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { getCart } from '@/helper/cart'
-import { CartItem } from '@/interfaces/interfaces';
-import { calDiscount } from '@/helper/order'
+//import { getCart } from '@/helper/cart'
+// import { CartItem } from '@/interfaces/interfaces';
+// import { calDiscount } from '@/helper/order'
 import { useRouter } from 'next/navigation'
-import axios from 'axios'
-import Cookies from 'js-cookie'
-import { toast } from 'react-hot-toast'
+// import axios from 'axios'
+// import Cookies from 'js-cookie'
+// import { toast } from 'react-hot-toast'
 
 
 interface FormData {
@@ -42,37 +42,37 @@ export default function LuxuryCheckoutPage() {
  
 
   const simulatePayment = async () => {
-    setIsProcessing(true)
-    setError(null)
-    try {
-      const cart: CartItem[] = getCart();
-      if (!cart || cart.length === 0) {
-        throw new Error('Your cart is empty')
-      }
+    // setIsProcessing(true)
+    // setError(null)
+    // try {
+    //   const cart: CartItem{}  = getCart() ;
+    //   if (!cart || cart.length === 0) {
+    //     throw new Error('Your cart is empty')
+    //   }
 
-      let total: number = 0;
-      const cartItems = Object.values(cart).map((item) => {
-        total += calDiscount(item.product.price, item.product.discountPercent) * item.quantity;
-        return item as CartItem
-      });
+    //   let total: number = 0;
+    //   const cartItems = Object.values(cart).map((item) => {
+    //     total += calDiscount(item.product.price, item.product.discountPercent) * item.quantity;
+    //     return item as CartItem
+    //   });
 
-      const res = await axios.post('/api/order', { formData, cartItems, paymentMethod, total })
+    //   const res = await axios.post('/api/order', { formData, cartItems, paymentMethod, total })
       
-      if (res.data.success) {
-        Cookies.set('order', res.data.id)
-        localStorage.removeItem('cart');
-        toast.success('Order placed successfully!')
-        router.push('/verify-order')
-      } else {
-        throw new Error(res.data.message || 'Failed to place order')
-      }
-    } catch (error) {
-      console.error('Order submission failed:', error)
-      setError('An unexpected error occurred. Please try again.')
-      toast.error( 'Failed to place order. Please try again.')
-    } finally {
-      setIsProcessing(false)
-    }
+    //   if (res.data.success) {
+    //     Cookies.set('order', res.data.id)
+    //     localStorage.removeItem('cart');
+    //     toast.success('Order placed successfully!')
+    //     router.push('/verify-order')
+    //   } else {
+    //     throw new Error(res.data.message || 'Failed to place order')
+    //   }
+    // } catch (error) {
+    //   console.error('Order submission failed:', error)
+    //   setError('An unexpected error occurred. Please try again.')
+    //   toast.error( 'Failed to place order. Please try again.')
+    // } finally {
+    //   setIsProcessing(false)
+    // }
   }
 
   const nextStep = () => {
@@ -92,6 +92,8 @@ export default function LuxuryCheckoutPage() {
   }
 
   const validateShippingInfo = () => {
+    setError(null);
+    setIsProcessing(false);
     const newErrors: Partial<FormData> = {}
     if (!formData.name) newErrors.name = 'Name is required'
     if (!formData.email) newErrors.email = 'Email is required'

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { z } from 'zod';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import  Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
+import { motion } from 'framer-motion';
+
 const emailSchema = z.string().email('Invalid email address');
 const nameSchema = z.string().min(6, 'Name must be at least 6 characters');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
@@ -23,9 +25,10 @@ export default function RegisterForm() {
   const [showRegisterButton, setShowRegisterButton] = useState(false);
   const [errors, setErrors] = useState({ email: '', name: '', password: '' });
   const [touched, setTouched] = useState({ email: false, name: false, password: false });
-  const [debounceTimeout, setDebounceTimeout] = useState< NodeJS.Timer | number>();
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timer | number>();
 
-  
+  const router = useRouter();
+
   const validateField = (value: string, schema: z.ZodSchema, field: keyof typeof errors) => {
     try {
       schema.parse(value);
@@ -44,74 +47,51 @@ export default function RegisterForm() {
       if (validateField(email, emailSchema, 'email')) {
         try {
           const response = await axios.post('/api/auth/verifyEmail', { email });
-          const { success } = response.data;
-          if (success) {
-            setShowNameField(true);
-          } else {
-            setErrors(prev => ({ ...prev, email: 'Email already exists' }));
-            setShowNameField(false);
-          }
-        } catch (error) {
-          console.log(error);
+          setShowNameField(response.data.success);
+        } catch {
           setErrors(prev => ({ ...prev, email: 'Email already exists' }));
           setShowNameField(false);
         }
-      } else {
-        setShowNameField(false);
       }
     };
 
     if (touched.email) {
       if (debounceTimeout) clearTimeout(debounceTimeout as number);
-      const timer = setTimeout(() => {
-        checkEmail();
-      }, 1000);
+      const timer = setTimeout(checkEmail, 500);
       setDebounceTimeout(timer);
-      return () => {
-        if (timer) clearTimeout(timer);
-      };
+      return () => clearTimeout(timer);
     }
   }, [email, touched.email]);
 
   useEffect(() => {
-    if (showNameField && validateField(name, nameSchema, 'name')) {
-      setShowPasswordField(true);
-    } else {
-      setShowPasswordField(false);
-    }
-  }, [name, showNameField]);
+    setShowPasswordField(validateField(name, nameSchema, 'name'));
+  }, [name]);
 
   useEffect(() => {
-    if (showPasswordField && validateField(password, passwordSchema, 'password')) {
-      setShowRegisterButton(true);
-    } else {
-      setShowRegisterButton(false);
-    }
-  }, [password, showPasswordField]);
+    setShowRegisterButton(validateField(password, passwordSchema, 'password'));
+  }, [password]);
 
-  const router=useRouter();
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (loading) return; // Prevent double submission
-    if (validateField(email, emailSchema, 'email') && 
-        validateField(name, nameSchema, 'name') && 
-        validateField(password, passwordSchema, 'password')) {
+    if (loading) return;
+
+    if (
+      validateField(email, emailSchema, 'email') &&
+      validateField(name, nameSchema, 'name') &&
+      validateField(password, passwordSchema, 'password')
+    ) {
       setLoading(true);
       try {
         const response = await axios.post('/api/auth/register', { email, name, password });
-         
         if (response.data.success) {
-          Cookies.set('OTP',email);
-           router.push(`/otp`);     
-          console.log("Registration successful!");
+          Cookies.set('OTP', email);
+          router.push(`/otp`);
         } else {
-        
           console.error(response.data.message);
-           
         }
       } catch (error) {
-        console.log(error);
-        setErrors(prev => ({ ...prev, email: 'Registeration Failed' }))
+        console.error('Registration error:', error);
+        setErrors(prev => ({ ...prev, email: 'Registration failed' }));
       } finally {
         setLoading(false);
       }
@@ -119,90 +99,111 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen ">
-      <Card className="w-[350px]  border-black border-2 rounded">
-        <CardHeader>
-          <CardTitle>Register</CardTitle>
-          <CardDescription>Hey Fearless! Create your account step by step.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            {/* Email Field */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
-              />
-              {touched.email && errors.email && (
-                <p className="text-sm text-red-500">{errors.email}</p>
+    <div className="flex items-center justify-center min-h-screen  px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+      >
+        <Card className="w-full max-w-md border-2 border-[#1b03a3] rounded-lg shadow-lg bg-white">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-[#1b03a3]">Register</CardTitle>
+            <CardDescription className="text-gray-600">
+              Hey Fearless! Create your account step by step.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="space-y-2"
+              >
+                <Label htmlFor="email" className="text-black">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
+                />
+                {touched.email && errors.email && (
+                  <p className="text-sm text-red-500">{errors.email}</p>
+                )}
+              </motion.div>
+
+              {showNameField && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="space-y-2"
+                >
+                  <Label htmlFor="name" className="text-black">Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
+                  />
+                  {touched.name && errors.name && (
+                    <p className="text-sm text-red-500">{errors.name}</p>
+                  )}
+                </motion.div>
               )}
-            </div>
 
-            {/* Name Field */}
-            {showNameField && (
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Enter your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
-                />
-                {touched.name && errors.name && (
-                  <p className="text-sm text-red-500">{errors.name}</p>
-                )}
-              </div>
-            )}
+              {showPasswordField && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="space-y-2"
+                >
+                  <Label htmlFor="password" className="text-black">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
+                  />
+                  {touched.password && errors.password && (
+                    <p className="text-sm text-red-500">{errors.password}</p>
+                  )}
+                </motion.div>
+              )}
 
-            {/* Password Field */}
-            {showPasswordField && (
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
-                />
-                {touched.password && errors.password && (
-                  <p className="text-sm text-red-500">{errors.password}</p>
-                )}
-              </div>
-            )}
-
-            {/* Register Button */}
-            {loading ? (
-              <div className="text-white py-2 rounded-lg transition duration-300 flex justify-center items-center">
-                Loading...
-              </div>
-            ) : (
-              showRegisterButton && (
-                <Button type="submit" className="w-full">
+              {loading ? (
+                <div className="text-center text-gray-500">Registering...</div>
+              ) : (
+                showRegisterButton && (
+                  <Button 
+                  type="submit" 
+                  className="w-full bg-[#1b03a3] text-white hover:text-[#1b03a3] hover:border-[#1b03a3] hover:border-2 transition-all"
+                >
                   Register
                 </Button>
-              )
-            )}
-          </form>
+                
+                )
+              )}
+            </form>
 
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-600">
-              Already registered?{' '}
-              <a href="/Login" className="text-blue-500 hover:underline">
-                Log In
-              </a>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                Already registered?{' '}
+                <a href="/Login" className="text-[#1b03a3] hover:underline">
+                  Log In
+                </a>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }
