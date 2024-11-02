@@ -1,74 +1,80 @@
 "use client"
-import { useState,useEffect } from "react"
-import { Minus, Plus, Trash2, ShoppingBag, Sparkles, AlertCircle } from "lucide-react"
+
+import { useState, useEffect } from "react"
+import { Minus, Plus, Trash2, ShoppingBag, Sparkles, Truck, LogIn, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { motion, AnimatePresence } from "framer-motion"
-import { toast } from "@/hooks/use-toast"
 import { CartItem } from "@/interfaces/interfaces"
-import  Cookies  from "js-cookie"
-import { getCart } from "@/helper/cart"
+import Cookies from "js-cookie"
+import { addToCart, getCart, removeFromCart } from "@/helper/cart"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-
-
+import { Product } from "@/Models/Product"
 
 export default function Component() {
-  const router=useRouter();
+  const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [isCustomer, setIsCustomer] = useState(false);
 
- 
-    useEffect(() => {
- 
-      
-    const customerCookie = !!Cookies.get('customer');
-    setIsCustomer(customerCookie);
-
+  
+  const updateCart=()=>{
     const cart = getCart();
     const cartItems = Object.values(cart).map(item => item as CartItem);
     setCartItems(cartItems);
-
+  }
+  useEffect(() => {
+    const customerCookie = !!Cookies.get('customer');
+    setIsCustomer(customerCookie);
+    updateCart();
+   
   }, []);
+
+
   const handleCheckout = () => {
     if (isCustomer) {
       router.push('/Checkout');
     } else {
-      router.push('/Login?redirect=Checkout');
+      router.push('/Login');
     }
   };
-
-
-  const updateQuantity = (id: string, newQuantity: number) => {
-    setCartItems(items =>
-      items.map(item => {
-        if (item.product._id === id) {
-          if (newQuantity > item.product.quantity) {
-            toast({
-              title: "Quantity Limit Reached",
-              description: `Only ${item.product.quantity} ${item.product.name}(s) available.`,
-              variant: "destructive",
-            })
-            return item
-          }
-          return { ...item, quantity: Math.max(0, newQuantity) }
-        }
-        return item
-      })
-    )
-  }
   
+function updateQuantity(productId: string, newQuantity: number): void {
+  
+  const cart = getCart();
+  const item:CartItem = cart[productId];
+  
+    if (!item) {
+     
+      return;
+    }
+    console.log(item.product._id);
+    addToCart(item.product as Product, newQuantity);
+    updateCart();
+    
+   }
 
   const removeItem = (id: string) => {
-    setCartItems(items => items.filter(item => item.product.id !== id))
+  
+    removeFromCart(id);
+    updateCart()
   }
 
-  const total = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  const subtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  const deliveryFee = 100
+  const total = subtotal + deliveryFee
 
   return (
-    <div className="min-h-screen bg-white text-black font-sans">
+    <div className="min-h-screen bg-gradient-to-br pt-10 from-white to-gray-100 text-black font-sans">
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-5xl font-extrabold mb-12 text-center">Your Cart</h1>
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-5xl font-extrabold mb-12 text-center text-[#00000]"
+        >
+          Your Fearless Cart
+        </motion.h1>
         <AnimatePresence mode="wait">
           {cartItems.length > 0 ? (
             <motion.div
@@ -76,32 +82,34 @@ export default function Component() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-1 gap-12"
+              className="grid grid-cols-1 gap-8 max-w-3xl mx-auto"
             >
               {cartItems.map((item, index) => (
                 <motion.div
                   key={item.product._id as string}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 p-6 bg-gray-50 rounded-lg shadow-sm"
+                  className="flex items-center space-x-4 p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
                 >
-                  
-                  <Image src={item.product.link[0]} alt={item.product.name} width={40} height={40} className="object-cover rounded-md" />
+                  <div className="relative w-24 h-24 overflow-hidden rounded-md">
+                    <Image src={item.product.link[0]} alt={item.product.name} layout="fill" objectFit="cover" className="transition-transform duration-300 hover:scale-110" />
+                  </div>
                   <div className="flex-grow space-y-2">
-                    <h2 className="text-2xl font-bold">{item.product.name}</h2>
-                    <p className="text-xl font-semibold">${item.product.price.toFixed(2)}</p>
+                    <h2 className="text-xl font-bold text-[#1b03a3]">{item.product.name}</h2>
+                    <p className="text-lg font-semibold">Rs.{item.product.price.toFixed(2)}</p>
                     <div className="flex items-center space-x-2">
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateQuantity(item.product._id as string, item.quantity - 1)}
-                        className="rounded-full"
+                        onClick={() => updateQuantity(item.product._id as string,  - 1)}
+                        className="rounded-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80"
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
                       <Input
+                      readOnly
                         type="number"
                         min="0"
                         max={item.product.quantity}
@@ -112,20 +120,14 @@ export default function Component() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateQuantity(item.product._id as string, item.quantity + 1)}
-                        className="rounded-full"
+                        onClick={() => updateQuantity(item.product._id as string,  + 1)}
+                        className="rounded-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80"
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
-                    {item.quantity === item.product.quantity && (
-                      <p className="text-sm text-yellow-600 flex items-center">
-                        <AlertCircle className="h-4 w-4 mr-1" />
-                        Max quantity reached! You cannot add more Products
-                      </p>
-                    )}
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => removeItem(item.product._id as string)} className="self-start md:self-center">
+                  <Button variant="ghost" size="icon" onClick={() => removeItem(item.product._id as string)} className="text-[#1b03a3] hover:text-[#1b03a3]/80">
                     <Trash2 className="h-5 w-5" />
                   </Button>
                 </motion.div>
@@ -134,16 +136,36 @@ export default function Component() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="mt-8 text-right"
+                className="mt-8 p-6 bg-white rounded-lg shadow-md"
               >
-                <p className="text-2xl font-bold mb-4">Total: ${total.toFixed(2)}</p>
-                <Button onClick={()=>{
-                  localStorage.setItem('cart', JSON.stringify(cartItems));
-                 handleCheckout()
-                }}
-                className="bg-black text-white hover:bg-gray-800 transition-colors duration-300 text-lg font-bold py-6 px-12 rounded-full">
-                  Proceed to Checkout
-                </Button>
+                <div className="space-y-2 mb-4">
+                  <p className="text-xl flex justify-between"><span>Subtotal:</span> <span>Rs.{subtotal.toFixed(2)}</span></p>
+                  <p className="text-xl flex justify-between items-center">
+                    <span className="flex items-center"><Truck className="mr-2 h-5 w-5 text-[#1b03a3]" /> Delivery Fee:</span>
+                    <span>Rs.{deliveryFee.toFixed(2)}</span>
+                  </p>
+                  <p className="text-2xl font-bold flex justify-between"><span>Total:</span> <span>Rs.{total.toFixed(2)}</span></p>
+                </div>
+                {isCustomer ? (
+                  <Button 
+                    onClick={() => {
+                      handleCheckout()
+                    }}
+                    className="w-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80 transition-colors duration-300 text-lg font-bold py-4 rounded-full"
+                  >
+                    <CreditCard className="mr-2 h-5 w-5" /> Proceed to Checkout
+                  </Button>
+                ) : (
+                  <div className="space-y-4">
+                    <Button 
+                      onClick={() => router.push('/Login')}
+                      className="w-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80 transition-colors duration-300 text-lg font-bold py-4 rounded-full"
+                    >
+                      <LogIn className="mr-2 h-5 w-5" /> Login to Checkout
+                    </Button>
+                    
+                  </div>
+                )}
               </motion.div>
             </motion.div>
           ) : (
@@ -152,10 +174,10 @@ export default function Component() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="text-center py-16"
+              className="text-center py-16 max-w-md mx-auto"
             >
               <div className="relative inline-block">
-                <ShoppingBag className="w-32 h-32 text-gray-300" />
+                <ShoppingBag className="w-32 h-32 text-[#1b03a3]" />
                 <motion.div
                   animate={{
                     scale: [1, 1.2, 1],
@@ -171,12 +193,12 @@ export default function Component() {
                   <Sparkles className="w-12 h-12 text-yellow-400" />
                 </motion.div>
               </div>
-              <h2 className="text-3xl font-bold mt-8 mb-4">Your cart is empty</h2>
+              <h2 className="text-3xl font-bold mt-8 mb-4 text-[#1b03a3]">Your cart is empty</h2>
               <p className="text-xl text-gray-600 mb-8">But it doesn&apos;t have to be. Let&apos;s add some fearless style to your life!</p>
-              <Button onClick={()=>{
-            router.push('/')
-          }}
-              className="bg-black text-white hover:bg-gray-800 transition-colors duration-300 text-lg font-bold py-6 px-12 rounded-full">
+              <Button 
+                onClick={() => router.push('/')}
+                className="bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80 transition-colors duration-300 text-lg font-bold py-4 px-8 rounded-full"
+              >
                 Start Shopping
               </Button>
             </motion.div>
@@ -188,10 +210,11 @@ export default function Component() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="mt-12 text-center"
         >
-          <Button onClick={()=>{
-            router.push('/')
-          }}
-          variant="link" className="text-black hover:text-gray-600 transition-colors duration-300">
+          <Button 
+            onClick={() => router.push('/')}
+            variant="link" 
+            className="text-[#1b03a3] hover:text-[#1b03a3]/80 transition-colors duration-300"
+          >
             <ShoppingBag className="mr-2 h-5 w-5" />
             Continue Shopping
           </Button>

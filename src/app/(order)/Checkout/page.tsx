@@ -2,19 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { CreditCard,  DollarSign } from 'lucide-react'
+import { CreditCard, DollarSign, Truck, Lock } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-//import { getCart } from '@/helper/cart'
-// import { CartItem } from '@/interfaces/interfaces';
-// import { calDiscount } from '@/helper/order'
 import { useRouter } from 'next/navigation'
-// import axios from 'axios'
-// import Cookies from 'js-cookie'
-// import { toast } from 'react-hot-toast'
-
+import axios from 'axios'
+import { getCart } from '@/helper/cart'
+import {  AnimatePresence } from 'framer-motion'
+import {  CheckCircle } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 
 interface FormData {
   name: string;
@@ -27,6 +25,8 @@ interface FormData {
 }
 
 export default function LuxuryCheckoutPage() {
+
+ 
   const [step, setStep] = useState(1)
   const [paymentMethod, setPaymentMethod] = useState('online')
   const [formData, setFormData] = useState<FormData>({
@@ -34,45 +34,34 @@ export default function LuxuryCheckoutPage() {
   })
   const [errors, setErrors] = useState<Partial<FormData>>({})
   const [isProcessing, setIsProcessing] = useState(false)
-  const [showContactPrompt, setShowContactPrompt] = useState(false)
+  const [showContactPrompt, setShowContactPrompt] = useState(true)
   const router = useRouter()
-
   const [error, setError] = useState<string | null>(null)
-
- 
-
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [cart,setCart]=useState(false);
   const simulatePayment = async () => {
-    // setIsProcessing(true)
-    // setError(null)
-    // try {
-    //   const cart: CartItem{}  = getCart() ;
-    //   if (!cart || cart.length === 0) {
-    //     throw new Error('Your cart is empty')
-    //   }
+    setIsProcessing(true)
 
-    //   let total: number = 0;
-    //   const cartItems = Object.values(cart).map((item) => {
-    //     total += calDiscount(item.product.price, item.product.discountPercent) * item.quantity;
-    //     return item as CartItem
-    //   });
-
-    //   const res = await axios.post('/api/order', { formData, cartItems, paymentMethod, total })
+    try {
       
-    //   if (res.data.success) {
-    //     Cookies.set('order', res.data.id)
-    //     localStorage.removeItem('cart');
-    //     toast.success('Order placed successfully!')
-    //     router.push('/verify-order')
-    //   } else {
-    //     throw new Error(res.data.message || 'Failed to place order')
-    //   }
-    // } catch (error) {
-    //   console.error('Order submission failed:', error)
-    //   setError('An unexpected error occurred. Please try again.')
-    //   toast.error( 'Failed to place order. Please try again.')
-    // } finally {
-    //   setIsProcessing(false)
-    // }
+      const cart = getCart();
+      
+    
+      const res=await axios.post('/api/order',{formData, cart, paymentMethod})
+      if(res.data.success){
+        localStorage.removeItem('cart');
+        setShowContactPrompt(false);
+        setShowSuccessModal(true)
+ 
+      }
+  
+    } catch (error:unknown) {
+    setError('An error occurred ');
+    console.log(error);
+    }finally{
+      setIsProcessing(false)
+    }
+   
   }
 
   const nextStep = () => {
@@ -107,174 +96,169 @@ export default function LuxuryCheckoutPage() {
   }
 
   useEffect(() => {
-    // Retrieve and parse customer data from localStorage
     const customerData = localStorage.getItem('customerData');
     if (customerData) {
       const customer = JSON.parse(customerData);
-      setFormData(prev => ({ ...prev, email: customer.email }));
+      setFormData(prev => ({ ...prev, email: customer.email, name: customer.name}));
     }
 
-    // Check if the cart exists in localStorage
-    const cart = localStorage.getItem('cart');
-    if (!cart) {
-      router.push('/Cart');
+    const cart=getCart();
+    
+    if(Object.entries(cart).length === 0){
+      setCart(true);
     }
+
+    
   }, []);
 
   const validatePaymentInfo = () => {
-    return true // No additional validation needed as phone is now in step 1
+    return true;
   }
-
-  // const simulatePayment = async () => {
-  //   setIsProcessing(true)
-  //   try {
-  //     const cart:CartItem[] = getCart();
-  //     let total: number = 0;
-  //     const cartItems = Object.values(cart).map((item) => {
-  //       total += calDiscount(item.product.price,item.product.discountPercent) * item.quantity;
-
-  //     return  item as CartItem
-  //     });
-  //     const res = await axios.post('/api/order', { formData, cartItems, paymentMethod,total})
-  //     if (res.data.success) {
-  //       Cookies.set('order', res.data.id)
-  //       localStorage.removeItem('cart');
-  //       router.push('/verify-order')
-  //     }
-  //   } catch (error: any) {
-  //     console.error('Order submission failed:', error.message)
-  //   } finally {
-  //     setIsProcessing(false)
-  //   }
-  // }
 
   const handlePaymentMethodChange = (value: string) => {
     setPaymentMethod(value)
     setShowContactPrompt(value === 'online')
   }
 
+  if(cart){
+    router.push('/')
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12">
+    <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden"
+        className="max-w-4xl mx-auto bg-white mt-10 shadow-2xl rounded-3xl overflow-hidden"
       >
-        <div className="px-6 py-8 sm:px-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Secure Checkout</h1>
+        <div className="px-6 py-8 sm:px-10 sm:py-12">
+          <h1 className="text-4xl font-extrabold text-[#1b03a3] mb-8 text-center">Secure Checkout</h1>
 
-          <div className="mb-8">
-            <div className="flex justify-between items-center">
-              {[1, 2].map((i) => (
-                <div key={i} className="flex items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    step >= i ? 'bg-primary text-white' : 'bg-gray-200 text-gray-500'
-                  }`}>
-                    {i}
-                  </div>
-                  {i < 2 && (
-                    <div className={`h-1 w-full ${
-                      step > i ? 'bg-primary' : 'bg-gray-200'
-                    }`} />
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-between mt-2">
-              <span className="text-sm font-medium">Shipping</span>
-              <span className="text-sm font-medium">Payment</span>
-            </div>
-          </div>
+          <div className="mb-12">
+  <div className="flex items-center">
+    {[1, 2].map((i) => (
+      <div key={i} className={`flex items-center ${i === 2 ? 'ml-auto' : ''}`}>
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-semibold ${
+          step >= i ? 'bg-[#1b03a3] text-white' : 'bg-gray-200 text-gray-500'
+        }`}>
+          {i}
+        </div>
+        {i < 2 && (
+          <div className={`h-1 flex-1 mx-2 ${
+            step > i ? 'bg-[#1b03a3]' : 'bg-gray-200'
+          }`} />
+        )}
+      </div>
+    ))}
+  </div>
+  <div className="flex justify-between mt-2">
+    <span className="text-sm font-medium flex items-center"><Truck className="mr-1 w-4 h-4" /> Shipping</span>
+    <span className="text-sm font-medium flex items-center"><CreditCard className="mr-1 w-4 h-4" /> Payment</span>
+  </div>
+</div>
+     
 
           {step === 1 && (
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
+              className="space-y-6"
             >
-              <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <h2 className="text-2xl font-semibold mb-6 text-[#1b03a3]">Shipping Information</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name" className="text-sm font-medium text-gray-700">Name</Label>
                   <Input 
+                  readOnly
                     id="name" 
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
                     placeholder="John Doe"
+                    className="mt-1"
                   />
                   {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
                   <Input 
+                  readOnly
                     id="email" 
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="JohnDoe@gmail.com"
+                    placeholder="john@example.com"
+                    className="mt-1"
                   />
                   {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
                 </div>
-                <div className="col-span-2">
-                  <Label htmlFor="address">Address</Label>
+                <div className="sm:col-span-2">
+                  <Label htmlFor="address" className="text-sm font-medium text-gray-700">Address</Label>
                   <Input 
                     id="address" 
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
                     placeholder="123 Luxury Lane"
+                    className="mt-1"
                   />
                   {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="city">City</Label>
+                  <Label htmlFor="city" className="text-sm font-medium text-gray-700">City</Label>
                   <Input 
                     id="city" 
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
                     placeholder="New York"
+                    className="mt-1"
                   />
                   {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="zipCode">ZIP Code</Label>
+                  <Label htmlFor="zipCode" className="text-sm font-medium text-gray-700">ZIP Code</Label>
                   <Input 
                     id="zipCode" 
                     name="zipCode"
                     value={formData.zipCode}
                     onChange={handleInputChange}
                     placeholder="10001"
+                    className="mt-1"
                   />
                   {errors.zipCode && <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="country">Country</Label>
+                  <Label htmlFor="country" className="text-sm font-medium text-gray-700">Country</Label>
                   <Input 
                     id="country" 
                     name="country"
                     value={formData.country}
                     onChange={handleInputChange}
-                    placeholder="Enter your country"
+                    placeholder="United States"
+                    className="mt-1"
                   />
                   {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone Number</Label>
                   <Input 
                     id="phone" 
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="123-456-7890"
+                    placeholder="(123) 456-7890"
+                    className="mt-1"
                   />
                   {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                 </div>
               </div>
-              <div className="mt-6 flex justify-end">
-                <Button onClick={nextStep}>Continue to Payment</Button>
+              <div className="mt-8 flex justify-end">
+                <Button onClick={nextStep} className="bg-[#1b03a3] hover:bg-[#3b03a3] text-white font-semibold py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+                  Continue to Payment
+                </Button>
               </div>
             </motion.div>
           )}
@@ -284,26 +268,27 @@ export default function LuxuryCheckoutPage() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
+              className="space-y-6"
             >
-              <h2 className="text-xl font-semibold mb-4">Payment Details</h2>
-              <div className="space-y-4">
+              <h2 className="text-2xl font-semibold mb-6 text-[#1b03a3]">Payment Details</h2>
+              <div className="space-y-6">
                 <div>
-                  <Label className="text-base font-medium">Select Payment Method</Label>
-                  <RadioGroup value={paymentMethod} onValueChange={handlePaymentMethodChange} className="mt-2 space-y-2">
-                    <div className="flex items-center space-x-2">
+                  <Label className="text-base font-medium text-gray-700">Select Payment Method</Label>
+                  <RadioGroup value={paymentMethod} onValueChange={handlePaymentMethodChange} className="mt-4 space-y-4">
+                    <Label htmlFor='online' className="flex items-center space-x-3 bg-white p-4 rounded-lg border border-gray-200 transition duration-300 ease-in-out hover:border-[#1b03a3] cursor-pointer">
                       <RadioGroupItem value="online" id="online" />
-                      <Label htmlFor="online" className="flex items-center">
-                        <CreditCard className="w-4 h-4 mr-2" />
+                      <Label htmlFor="online" className="flex items-center cursor-pointer flex-1">
+                        <CreditCard className="w-5 h-5 mr-2 text-[#1b03a3]" />
                         Online Payment
                       </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
+                    </Label>
+                    <Label htmlFor='cod'  className="flex items-center space-x-3 bg-white p-4 rounded-lg border border-gray-200 transition duration-300 ease-in-out hover:border-[#1b03a3] cursor-pointer">
                       <RadioGroupItem value="cod" id="cod" />
-                      <Label htmlFor="cod" className="flex items-center">
-                        <DollarSign className="w-4 h-4 mr-2" />
+                      <Label htmlFor="cod" className="flex items-center cursor-pointer flex-1">
+                        <DollarSign className="w-5 h-5 mr-2 text-[#1b03a3]" />
                         Cash on Delivery
                       </Label>
-                    </div>
+                    </Label>
                   </RadioGroup>
                 </div>
 
@@ -311,20 +296,28 @@ export default function LuxuryCheckoutPage() {
                   <motion.p
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-primary"
+                    className="text-sm text-[#1b03a3] bg-blue-50 p-4 rounded-lg flex items-center"
                   >
-                    Our team will contact you shortly to process your online payment.
+                    <Lock className="w-5 h-5 mr-2" />
+                    Our team will contact you shortly to process your secure online payment.
                   </motion.p>
                 )}
 
-                <div className="mt-6 flex justify-between">
                 {error && (
-        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
-                  <Button variant="outline" onClick={prevStep}>Back to Shipping</Button>
-                  <Button onClick={nextStep} disabled={isProcessing}>
+                  <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    {error}
+                  </div>
+                )}
+
+                <div className="mt-8 flex justify-between">
+                  <Button variant="outline" onClick={prevStep} className="font-semibold py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+                    Back to Shipping
+                  </Button>
+                  <Button 
+                    onClick={nextStep} 
+                    disabled={isProcessing}
+                    className="bg-[#1b03a3] hover:bg-[#3b03a3] text-white font-semibold py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
                     {isProcessing ? 'Processing...' : 'Confirm Order'}
                   </Button>
                 </div>
@@ -333,6 +326,71 @@ export default function LuxuryCheckoutPage() {
           )}
         </div>
       </motion.div>
+
+
+      <AnimatePresence>
+        {showSuccessModal && (
+          <Dialog open={showSuccessModal} onOpenChange={()=>{
+            setShowSuccessModal(false);
+            router.push('/');
+          }}>
+            <DialogContent className="sm:max-w-md bg-white">
+              <DialogHeader>
+                <DialogTitle>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                    className="flex items-center justify-center mb-4"
+                  >
+                    <CheckCircle className="w-16 h-16 text-green-500" />
+                  </motion.div>
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{delay: 0.2}}
+                    className="text-2xl font-bold text-center text-[#1b03a3]"
+                  >
+                    Order Placed Successfully!
+                  </motion.h2>
+                </DialogTitle>
+                <DialogDescription>
+                  <motion.p
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{delay: 0.3}}
+                    className="text-center text-gray-600 mt-2"
+                  >
+                    Thank you for your order, Fearless!
+                  </motion.p>
+                  <motion.p
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{delay: 0.4}}
+                    className="text-center text-gray-600 mt-2"
+                  >
+                    Your order has been received and is being processed.
+                  </motion.p>
+                </DialogDescription>
+              </DialogHeader>
+              <motion.div
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{delay: 0.5}}
+                className="mt-6 flex justify-center"
+              >
+                <Button
+                  onClick={() => router.push('/')}
+                  className="bg-[#1b03a3] hover:bg-[#3b03a3] text-white font-semibold py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+                >
+                  Back to Home
+                </Button>
+              </motion.div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </AnimatePresence>
+    
     </div>
   )
 }

@@ -1,7 +1,10 @@
-import { createMember } from '@/services/MemberServices';
+import connect from '@/dbConfig/dbConfig';
+import MemberModel from '@/Models/Member';
+
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
+  await connect();
   try {
     const { email } = await req.json();
 
@@ -15,7 +18,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const member = await createMember(email);
+    const existingMember = await MemberModel.findOne({ email });
+    if(existingMember)
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Email already exists",
+        },
+        { status: 409 } 
+      );
+
+    const member =new MemberModel(email);
+    await member.save();
 
     if (member) {
       return NextResponse.json(

@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { useRouter } from 'next/navigation';
 
 export default function CustomerDashboard() {
-  const [customer, setCustomer] = useState<{ fullName: string; email: string; avatar: string } | null>(null);
+  const [customer, setCustomer] = useState<{ name: string; email: string; } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function CustomerDashboard() {
           <motion.div initial="hidden" animate="visible" variants={fadeIn} transition={{ duration: 0.5 }}>
             {customer ? (
               <div className="text-center">
-                <h2 className="text-2xl font-semibold text-gray-800">{customer.fullName}</h2>
+                <h2 className="text-2xl font-semibold text-gray-800">{customer.name}</h2>
                 <p className="text-sm text-gray-600">{customer.email}</p>
               </div>
             ) : (

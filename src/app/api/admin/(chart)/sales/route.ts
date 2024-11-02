@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
 import OrderModel from "@/Models/Order"; // Adjust the path if necessary
 import connect from "@/dbConfig/dbConfig";
-
-
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import CustomerModel from "@/Models/Customer";
 
 export async function GET() {
   try {
@@ -104,12 +100,7 @@ const getTopProducts = async () => {
 
 
 
-
-
-
-
-
-const getCustomers = async (): Promise<{ value: number; trend: number }> =>  {
+const getCustomers = async (): Promise<{ value: number; trend: number }> => {
   const currentDate = new Date();
   const startCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const endCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -119,22 +110,17 @@ const getCustomers = async (): Promise<{ value: number; trend: number }> =>  {
 
   try {
     // Count customers for the current month
-    const currentMonthCustomers = await prisma.customer.count({
-      where: {
-        createdAt: {
-          gte: startCurrentMonth,
-          lte: endCurrentMonth,
-        },
+    const currentMonthCustomers = await CustomerModel.countDocuments({
+      createdAt: {
+        $gte: startCurrentMonth,
+        $lte: endCurrentMonth,
       },
     });
 
-    // Count customers for the previous month
-    const previousMonthCustomers = await prisma.customer.count({
-      where: {
-        createdAt: {
-          gte: startPrevMonth,
-          lte: endPrevMonth,
-        },
+    const previousMonthCustomers = await CustomerModel.countDocuments({
+      createdAt: {
+        $gte: startPrevMonth,
+        $lte: endPrevMonth,
       },
     });
 
@@ -144,10 +130,51 @@ const getCustomers = async (): Promise<{ value: number; trend: number }> =>  {
   } catch (error) {
     console.error('Error fetching customer trend:', error);
     throw error;
-  } finally {
-    await prisma.$disconnect();
-  }
+  } 
 };
+
+
+
+
+// const getCustomers = async (): Promise<{ value: number; trend: number }> =>  {
+//   const currentDate = new Date();
+//   const startCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+//   const endCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+//   const startPrevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+//   const endPrevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+
+//   try {
+//     // Count customers for the current month
+//     const currentMonthCustomers = await prisma.customer.count({
+//       where: {
+//         createdAt: {
+//           gte: startCurrentMonth,
+//           lte: endCurrentMonth,
+//         },
+//       },
+//     });
+
+//     // Count customers for the previous month
+//     const previousMonthCustomers = await prisma.customer.count({
+//       where: {
+//         createdAt: {
+//           gte: startPrevMonth,
+//           lte: endPrevMonth,
+//         },
+//       },
+//     });
+
+//     const trend = currentMonthCustomers - previousMonthCustomers;
+
+//     return { value: currentMonthCustomers, trend };
+//   } catch (error) {
+//     console.error('Error fetching customer trend:', error);
+//     throw error;
+//   } finally {
+//     await prisma.$disconnect();
+//   }
+// };
 
 
 const getOrders = async () => {

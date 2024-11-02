@@ -1,15 +1,18 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
-import { getCustomerByEmail } from '@/services/CustomerServices';
 import bcrypt from 'bcryptjs';
+import CustomerModel from '@/Models/Customer';
+import connect from '@/dbConfig/dbConfig';
 
 
 export async function POST(req: Request) {
+    await connect();
     const { email, password } = await req.json();
     
     try {
-        const customer = await getCustomerByEmail(email);
+        const customer = await CustomerModel.findOne({ email });
+        console.log(customer,email)
         if (!customer) {
             return NextResponse.json({ message: 'User not found', success: false }, { status: 404 });
         }
@@ -21,7 +24,7 @@ export async function POST(req: Request) {
 
        
         const token = jwt.sign(
-            { id: customer.id, email: customer.email },
+            { id: customer.id, email: customer.email},
             process.env.jwtSecret!,
             { expiresIn: '7d' }
         );
@@ -39,7 +42,7 @@ export async function POST(req: Request) {
         const data={
             id:customer.id,
             email:customer.email,
-            fullName:customer.fullName
+            name:customer.name
 
         }
         const response = NextResponse.json(

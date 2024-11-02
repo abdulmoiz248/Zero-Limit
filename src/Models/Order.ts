@@ -11,28 +11,20 @@ export interface Order extends Document {
   city: string;
   zipCode: string;
   country: string;
-  products: string[]; // Updated to store product details
+  products: string[]; 
   phone: string;
   address: string;
-  otp: string;
   total: number;
-  isVerified: boolean;
+
 }
 
 
 const OrderSchema = new Schema<Order>({
-  isVerified:{
-    type: Boolean,
-    default: false,
-  },
   total: {
     type: Number,
     required: true,
   },
-  otp: {
-    type: String,
-    required: true,
-  },
+  
   status: {
     type: String,
     required: true,

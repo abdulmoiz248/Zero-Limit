@@ -19,8 +19,8 @@ const ProductSchema = new Schema<Product>({
     type: String,
     required: true,
   },
-  link: { // Corrected to 'link' without brackets
-    type: [String], // Define as an array of strings
+  link: { 
+    type: [String], 
     required: true,
   },
   categoryId: {

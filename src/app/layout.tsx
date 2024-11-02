@@ -1,3 +1,4 @@
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/react"
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -32,6 +33,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Analytics/>
+        <SpeedInsights />
         <Header></Header>
         {children}
         <Footer/>

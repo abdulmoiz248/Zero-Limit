@@ -28,10 +28,6 @@ const JoinUs = dynamic(() => import('@/components/landing page/JoinUs'), {
   loading: () => <LionLoader/>
 });
 
-const MarqueeDemo = dynamic(() => import('@/components/landing page/Reviews'), {
-  ssr: false,
-  loading: () => <LionLoader/>
-});
 
 
 const animationVariants = {
@@ -53,7 +49,6 @@ export default function Home() {
   const { ref: manifestoRef, inView: isManifestoInView } = useLazyInView();
   const { ref: featuredRef, inView: isFeaturedInView } = useLazyInView();
   const { ref: joinUsRef, inView: isJoinUsInView } = useLazyInView();
-  const { ref: reviewsRef, inView: isReviewsInView } = useLazyInView();
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState();
@@ -130,16 +125,7 @@ export default function Home() {
             <JoinUs />
           </motion.div>
 
-          <motion.div
-            ref={reviewsRef}
-            variants={animationVariants}
-            initial="hidden"
-            animate={isReviewsInView ? 'visible' : 'hidden'}
-            transition={{ duration: 0.5 }}
-            className="overflow-hidden"
-          >
-            <MarqueeDemo />
-          </motion.div>
+         
         </>
       )}
     </>

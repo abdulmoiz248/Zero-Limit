@@ -43,19 +43,7 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/', request.url));
       }
 
-    
-      const order=cookies.get('order');
-       if (!order && pathname === '/verify-order') {
-        return NextResponse.redirect(new URL('/Checkout', request.url));
-      }
-
-      if(order &&( pathname === '/Checkout' || pathname === '/Cart')){
-        return NextResponse.redirect(new URL('/verify-order', request.url));
-        
-      }
-
-      
-         
+       
     
   return NextResponse.next();
 }

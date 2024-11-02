@@ -5,11 +5,16 @@ export interface Review extends Document {
     body: string;
     date: Date;
     rating: number;
-   
+    productId: string;
 }
 
 const ReviewSchema = new Schema<Review>({
     username: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    productId: {
         type: String,
         required: true,
         unique: true,

@@ -1,7 +1,7 @@
 import { Product } from "@/Models/Product";
 import { CartItem } from "@/interfaces/interfaces";
 
-function getStoredCart(): Record<string, CartItem> {
+export function getStoredCart(): Record<string, CartItem> {
   try {
     const cart = JSON.parse(localStorage.getItem('cart') || '{}');
     return cart ?? {}; // Return an empty object if null
@@ -11,24 +11,32 @@ function getStoredCart(): Record<string, CartItem> {
   }
 }
 
-// Function to add a product to the cart
+
 export function addToCart(product: Product, quantity: number): void {
+  
   if (!product._id) {
     console.error("Product must have a valid ID.");
-    return;
+    return ;
   }
 
+  console.log(product._id);
   const cart = getStoredCart();
 
   if (cart[product._id as string]) {
-    // If the product is already in the cart, update the quantity
-    cart[product._id as string].quantity += quantity;
+
+    if( cart[product._id as string].product.quantity>= cart[product._id as string].quantity +quantity )
+          
+           {
+              cart[product._id as string].quantity += quantity;
+            }
+
+    if(cart[product._id as string].quantity<0) cart[product._id as string].quantity=0;
   } else {
-    // Add new product to cart
+
     cart[product._id as string] = { product, quantity };
   }
 
-  // Store updated cart in localStorage
+  
   localStorage.setItem('cart', JSON.stringify(cart));
 
 }
@@ -38,7 +46,7 @@ export function removeFromCart(productId: string): void {
   const cart = getStoredCart();
 
   if (cart[productId]) {
-    delete cart[productId]; // Remove the product from cart
+    delete cart[productId]; 
     localStorage.setItem('cart', JSON.stringify(cart));
     
   } 

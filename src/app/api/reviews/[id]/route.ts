@@ -1,4 +1,5 @@
-import { getReviewsByProductId } from "@/services/ReviewServices";
+import connect from "@/dbConfig/dbConfig";
+import ReviewModel from "@/Models/Review";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -13,8 +14,8 @@ export async function GET(req: Request) {
             }, { status: 400 });
         }
 
-      
-      const reviews=await getReviewsByProductId(productID);
+      await connect();
+      const reviews=await ReviewModel.find({productId:productID});
        return NextResponse.json({
             reviews,
             success: true
