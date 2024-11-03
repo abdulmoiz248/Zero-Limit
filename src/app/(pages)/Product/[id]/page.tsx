@@ -1,8 +1,7 @@
-
 'use client'
 
 import { motion } from 'framer-motion'
-import {  ShoppingCart } from 'lucide-react'
+import { ShoppingCart, Star } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
@@ -20,15 +19,15 @@ export default function Component({ params }: { params: { id: string } }) {
   const fullscreenRef = useRef<HTMLDivElement>(null)
   const [product, setProduct] = useState<Product>()
   const [isInCart, setIsInCart] = useState(false)
-  const [loading,setLoading]=useState(true);
+  const [loading, setLoading] = useState(true)
 
-  const router=useRouter();
+  const router = useRouter()
+
   useEffect(() => {
-    
-    if(isProductInCart(product?._id as string))
-       setIsInCart(true); 
+    if (isProductInCart(product?._id as string))
+      setIsInCart(true)
     console.log("cart")
-  }, [product]);
+  }, [product])
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -39,7 +38,6 @@ export default function Component({ params }: { params: { id: string } }) {
           if (data.success) {
             setProduct(data.product)
             localStorage.setItem('product', JSON.stringify(data.product))
-          
           }
         }
       } catch (error) {
@@ -53,35 +51,32 @@ export default function Component({ params }: { params: { id: string } }) {
         const parsedProduct: Product = JSON.parse(storedProduct)
         if (parsedProduct._id !== params.id) {
           fetchProduct()
-          setLoading(false);
+          setLoading(false)
           return
         }
         setProduct(parsedProduct)
-        setLoading(false);
+        setLoading(false)
       } catch (error) {
         console.error("Error parsing product from localStorage", error)
       }
     } else {
       fetchProduct()
-      setLoading(false);
+      setLoading(false)
     }
-  }, [])
+  }, [params.id])
 
   const handleCartToggle = (e: React.MouseEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     const cart = JSON.parse(localStorage.getItem('cart') || '{}')
 
     if (isInCart) {
- 
       delete cart[product?._id as string]
     } else {
-        addToCart(product!, 1);
+      addToCart(product!, 1)
     }
 
     setIsInCart(!isInCart)
   }
-  
-
 
   const toggleDescription = () => {
     setIsDescriptionExpanded((prev) => !prev)
@@ -107,9 +102,14 @@ export default function Component({ params }: { params: { id: string } }) {
     }
   }, [isFullscreen])
 
-  if(loading){
-    return <LionLoader/>
+  if (loading) {
+    return <LionLoader />
   }
+
+  const discountedPrice = product?.discountPercent
+    ? product.price - (product.price * product.discountPercent) / 100
+    : product?.price
+
   return (
     <div className="min-h-screen pt-20 bg-white p-8">
       <style jsx global>{`
@@ -149,7 +149,7 @@ export default function Component({ params }: { params: { id: string } }) {
             <div className="flex-grow cursor-pointer" onClick={handleImageClick}>
               <Image
                 src={product?.link[currentImageIndex] || "/images/logo.png"}
-                alt={product?.name || "img"}
+                alt={product?.name || "Product image"}
                 width={600}
                 height={600}
                 className="object-cover w-full h-auto"
@@ -175,33 +175,35 @@ export default function Component({ params }: { params: { id: string } }) {
                 )}
               </div>
               
-              <p className="text-3xl font-bold text-primary">Rs.{product?.price.toFixed(2)}</p>
+              <div className="flex items-center space-x-2">
+                <p className="text-3xl font-bold text-primary">Rs.{discountedPrice?.toFixed(2)}</p>
+                {product?.discountPercent && product.discountPercent > 0 && (
+                  <div className="flex items-center">
+                    <p className="text-xl text-gray-500 line-through">Rs.{product.price.toFixed(2)}</p>
+                    <p className="text-lg text-green-600 ml-2">({product.discountPercent}% off)</p>
+                  </div>
+                )}
+              </div>
               <div className="flex items-center space-x-1 text-yellow-500">
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    className="h-5 w-5 fill-current" 
-    viewBox="0 0 20 20"
-  >
-    <path d="M9.049 2.927a1 1 0 011.902 0l1.45 4.455a1 1 0 00.95.691h4.708a1 1 0 01.6 1.8l-3.812 2.766a1 1 0 00-.364 1.118l1.45 4.455a1 1 0 01-1.54 1.117L10 15.347l-3.942 2.882a1 1 0 01-1.54-1.118l1.45-4.455a1 1 0 00-.364-1.118L1.793 9.873a1 1 0 01.6-1.8h4.708a1 1 0 00.95-.691l1.45-4.455z" />
-  </svg>
-  <span className="text-lg font-semibold">{product?.ratings}/5</span>
-</div>
+                <Star className="h-5 w-5 fill-current" />
+                <span className="text-lg font-semibold">{product?.ratings}/5</span>
+              </div>
 
-          <motion.button
-            onClick={handleCartToggle}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`${
-              isInCart ? 'bg-red-600 hover:bg-red-700' : 'bg-black hover:bg-gray-800'
-            } text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 flex items-center justify-center`}
-          >
-            <ShoppingCart className="mr-2 h-5 w-5" />
-            {isInCart ? 'Remove' : 'Add to Cart'}
-          </motion.button>
+              <motion.button
+                onClick={handleCartToggle}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`${
+                  isInCart ? 'bg-red-600 hover:bg-red-700' : 'bg-black hover:bg-gray-800'
+                } text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 flex items-center justify-center`}
+              >
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                {isInCart ? 'Remove' : 'Add to Cart'}
+              </motion.button>
           
-              <Button onClick={(e)=>{
-                handleCartToggle(e);
-                router.push('/Cart');
+              <Button onClick={(e) => {
+                handleCartToggle(e)
+                router.push('/Cart')
               }}
                variant="outline" className="w-full border-primary text-primary hover:bg-primary/10">Buy Now</Button>
             </div>
@@ -213,7 +215,7 @@ export default function Component({ params }: { params: { id: string } }) {
               <div ref={fullscreenRef} className="max-w-4xl max-h-full overflow-auto hide-scrollbar">
                 <Image
                   src={product?.link[currentImageIndex] || "/images/logo.png"}
-                  alt={product?.name || "img"}
+                  alt={product?.name || "Full size product image"}
                   width={1200}
                   height={1200}
                   className="object-contain w-full h-auto"

@@ -1,35 +1,33 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Minus, Plus, Trash2, ShoppingBag, Sparkles, Truck, LogIn, CreditCard } from "lucide-react"
+import { Minus, Plus, Trash2, ShoppingBag, Sparkles, Truck, LogIn, CreditCard, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { motion, AnimatePresence } from "framer-motion"
-import { CartItem } from "@/interfaces/interfaces"
 import Cookies from "js-cookie"
 import { addToCart, getCart, removeFromCart } from "@/helper/cart"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Product } from "@/Models/Product"
+import { CartItem } from "@/interfaces/interfaces"
 
 export default function Component() {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [isCustomer, setIsCustomer] = useState(false);
 
-  
-  const updateCart=()=>{
+  const updateCart = () => {
     const cart = getCart();
     const cartItems = Object.values(cart).map(item => item as CartItem);
     setCartItems(cartItems);
   }
+
   useEffect(() => {
     const customerCookie = !!Cookies.get('customer');
     setIsCustomer(customerCookie);
     updateCart();
-   
   }, []);
-
 
   const handleCheckout = () => {
     if (isCustomer) {
@@ -39,28 +37,32 @@ export default function Component() {
     }
   };
   
-function updateQuantity(productId: string, newQuantity: number): void {
-  
-  const cart = getCart();
-  const item:CartItem = cart[productId];
-  
+  function updateQuantity(productId: string, newQuantity: number): void {
+    const cart = getCart();
+    const item: CartItem = cart[productId];
+    
     if (!item) {
-     
       return;
     }
-    console.log(item.product._id);
     addToCart(item.product as Product, newQuantity);
     updateCart();
-    
-   }
+  }
 
   const removeItem = (id: string) => {
-  
     removeFromCart(id);
     updateCart()
   }
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  const calculateItemTotal = (item: CartItem) => {
+    const basePrice = item.product.price * item.quantity;
+    if (item.product.discountPercent && item.product.discountPercent > 0) {
+      const discountAmount = (basePrice * item.product.discountPercent) / 100;
+      return basePrice - discountAmount;
+    }
+    return basePrice;
+  }
+
+  const subtotal = cartItems.reduce((sum, item) => sum + calculateItemTotal(item), 0)
   const deliveryFee = 100
   const total = subtotal + deliveryFee
 
@@ -86,6 +88,9 @@ function updateQuantity(productId: string, newQuantity: number): void {
             >
               {cartItems.map((item, index) => (
                 <motion.div
+                  onClick={()=>{
+                    router.push(`/Product/${item.product._id}`)
+                  }} 
                   key={item.product._id as string}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -98,18 +103,25 @@ function updateQuantity(productId: string, newQuantity: number): void {
                   </div>
                   <div className="flex-grow space-y-2">
                     <h2 className="text-xl font-bold text-[#1b03a3]">{item.product.name}</h2>
-                    <p className="text-lg font-semibold">Rs.{item.product.price.toFixed(2)}</p>
+                    <div className="flex items-center space-x-2">
+                      <p className="text-lg font-semibold">Rs.{item.product.price.toFixed(2)}</p>
+                      {item.product.discountPercent && item.product.discountPercent > 0 && (
+                        <span className="text-sm text-green-600 font-semibold">
+                          ({item.product.discountPercent}% off)
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center space-x-2">
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateQuantity(item.product._id as string,  - 1)}
+                        onClick={() => updateQuantity(item.product._id as string, item.quantity - 1)}
                         className="rounded-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80"
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
                       <Input
-                      readOnly
+                        readOnly
                         type="number"
                         min="0"
                         max={item.product.quantity}
@@ -120,16 +132,19 @@ function updateQuantity(productId: string, newQuantity: number): void {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateQuantity(item.product._id as string,  + 1)}
+                        onClick={() => updateQuantity(item.product._id as string, item.quantity + 1)}
                         className="rounded-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80"
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => removeItem(item.product._id as string)} className="text-[#1b03a3] hover:text-[#1b03a3]/80">
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
+                  <div className="text-right">
+                    <p className="text-lg font-semibold">Rs.{calculateItemTotal(item).toFixed(2)}</p>
+                    <Button variant="ghost" size="icon" onClick={() => removeItem(item.product._id as string)} className="text-[#1b03a3] hover:text-[#1b03a3]/80">
+                      <Trash2 className="h-5 w-5" />
+                    </Button>
+                  </div>
                 </motion.div>
               ))}
               <motion.div
@@ -148,9 +163,7 @@ function updateQuantity(productId: string, newQuantity: number): void {
                 </div>
                 {isCustomer ? (
                   <Button 
-                    onClick={() => {
-                      handleCheckout()
-                    }}
+                    onClick={handleCheckout}
                     className="w-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80 transition-colors duration-300 text-lg font-bold py-4 rounded-full"
                   >
                     <CreditCard className="mr-2 h-5 w-5" /> Proceed to Checkout
@@ -163,7 +176,6 @@ function updateQuantity(productId: string, newQuantity: number): void {
                     >
                       <LogIn className="mr-2 h-5 w-5" /> Login to Checkout
                     </Button>
-                    
                   </div>
                 )}
               </motion.div>
