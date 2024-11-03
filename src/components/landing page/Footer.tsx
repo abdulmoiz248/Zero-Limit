@@ -128,7 +128,7 @@ const Footer = () => {
               className="flex items-center space-x-3"
             >
               <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#1b03a3] to-[#3b23c3]">
-               <Image alt="logo" src='/images/lion.jpg' width={100} height={100}/>
+               <Image alt="logo" src='/images/Lion.jpg' width={100} height={100}/>
               </div>
               <span className="self-center text-2xl font-bold  text-black">
                 Limit Zero

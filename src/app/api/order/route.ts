@@ -18,12 +18,14 @@ export async function POST(req: Request) {
       const product = await ProductModel.findById(item.product._id);
 
       if (!product) {
+        console.log(`Product ${item.product.name} not found`);
         return NextResponse.json(
           { message: `Product ${item.product.name} not found`, success: false },
           { status: 404 }
         );
       }
 
+      console.log(`Not enough stock for ${item.product.name} Maximum quantity is ${product.quantity}`)
        if (product.quantity < item.quantity) {
         return Response.json(
           { message: `Not enough stock for ${item.product.name} Maximum quantity is ${product.quantity}`, success: false },

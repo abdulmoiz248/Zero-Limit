@@ -1,285 +1,246 @@
 'use client'
-import { useEffect, useState } from 'react'
+
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Star, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Plus, Minus, ChevronDown, ChevronUp, Star } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import ProductReviews from '@/components/ProductReviews'
-import { Product } from '@/Models/Product'
-import { Review } from '@/Models/Review'
-import { addToCart, removeFromCart, getCart } from '@/helper/cart'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-export default function Component({ params }: { params: { id: string } }) {
+// Mock product data
+const product = {
+  name: "Luxe Leather Tote",
+  description: "Elevate your everyday style with our Luxe Leather Tote. Crafted from premium, full-grain leather, this spacious bag combines functionality with sophisticated design.",
+  price: 299.99,
+  images: [
+    "/placeholder.svg?height=600&width=600&text=Image+1",
+    "/placeholder.svg?height=600&width=600&text=Image+2",
+    "/placeholder.svg?height=600&width=600&text=Image+3",
+    "/placeholder.svg?height=600&width=600&text=Image+4",
+    "/placeholder.svg?height=600&width=600&text=Image+5",
+  ],
+  sizes: ["Small", "Medium", "Large"],
+  types: ["Classic", "Vintage", "Modern"],
+  details: {
+    description: "Our Luxe Leather Tote is the perfect blend of style and functionality. The spacious interior easily accommodates your daily essentials, while the sturdy handles and detachable shoulder strap offer versatile carrying options.",
+    productInfo: "Made from full-grain leather\nInterior zip pocket and two slip pockets\nMagnetic closure\nDimensions: 14\"W x 11\"H x 5\"D",
+    shipping: "Free shipping on orders over $150\nEstimated delivery: 3-5 business days",
+    modelSize: "Model is 5'9\" and wearing size Medium",
+    notes: "Colors may vary slightly due to differences in screen displays\nLeather will develop a beautiful patina over time"
+  },
+  reviews: [
+    { id: 1, author: "Emily S.", rating: 5, comment: "Absolutely love this bag! The quality is outstanding and it's so versatile." },
+    { id: 2, author: "Michael T.", rating: 4, comment: "Great bag, but a bit pricey. Still, the craftsmanship is excellent." },
+    { id: 3, author: "Sarah L.", rating: 5, comment: "This tote is perfect for work. Fits my laptop and all my essentials easily." },
+  ]
+}
+
+export default function Component() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
-  const [product, setProduct] = useState<Product | null>(null)
-  const [showReviews, setShowReviews] = useState(false)
-  const [loadingReviews, setLoadingReviews] = useState(false)
-  const [reviews, setReviews] = useState<Review[]>([])
-  const [isInCart, setIsInCart] = useState(false)
+  const [quantity, setQuantity] = useState(1)
+  const [expandedSection, setExpandedSection] = useState<string | null>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const fullscreenRef = useRef<HTMLDivElement>(null)
+
+  const toggleSection = (section: string) => {
+    setExpandedSection(expandedSection === section ? null : section)
+  }
+
+  const handleImageClick = () => {
+    setIsFullscreen(true)
+  }
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await fetch(`/api/getProduct/${params.id}`)
-        if (res.ok) {
-          const data = await res.json()
-          if (data.success) {
-            setProduct(data.product)
-            localStorage.setItem('product', JSON.stringify(data.product))
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching product", error)
+    const handleClickOutside = (event: MouseEvent) => {
+      if (fullscreenRef.current && !fullscreenRef.current.contains(event.target as Node)) {
+        setIsFullscreen(false)
       }
     }
 
-    const storedProduct = localStorage.getItem('product')
-    if (storedProduct) {
-      try {
-        const parsedProduct: Product = JSON.parse(storedProduct)
-        if (parsedProduct._id !== params.id) {
-          fetchProduct()
-          return
-        }
-        setProduct(parsedProduct)
-      } catch (error) {
-        console.error("Error parsing product from localStorage", error)
-      }
-    } else {
-      fetchProduct()
+    if (isFullscreen) {
+      document.addEventListener('mousedown', handleClickOutside)
     }
-  }, [params.id])
 
-  useEffect(() => {
-    const cart = getCart()
-    setIsInCart(!!cart[params.id])
-  }, [params.id])
-
-  const nextImage = () => {
-    if (product && product.link) {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % product.link.length)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
     }
-  }
-
-  const prevImage = () => {
-    if (product && product.link) {
-      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + product.link.length) % product.link.length)
-    }
-  }
-
-  const handleShowReviews = async () => {
-    setLoadingReviews(true)
-    try {
-      const res = await fetch(`/api/reviews/${params.id}`)
-      if (res.ok) {
-        const data = await res.json()
-        if (data.success) {
-          setShowReviews(true)
-          setReviews(data.reviews)
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching reviews", error)
-    } finally {
-      setLoadingReviews(false)
-    }
-  }
-
-  
-  const handleCartToggle = () => {
-    if (product) {
-      if (isInCart) {
-        removeFromCart(product._id as string)
-      } else {
-        addToCart(product, 1)
-      }
-      setIsInCart(!isInCart)
-    } 
-  }
-
-  if (!product) {
-    return (
-      <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-        <Skeleton className="w-full max-w-4xl h-[600px] rounded-lg" />
-      </div>
-    )
-  }
+  }, [isFullscreen])
 
   return (
-    <div className="min-h-screen bg-white text-black py-6 px-4 sm:py-12 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto mt-10"
-      >
-        <Card className="bg-white shadow-xl rounded-lg overflow-hidden mb-8">
-          <CardContent className="p-0">
-            <div className="lg:flex">
-              <div className="lg:w-1/2 relative">
-                <div className="sticky top-0 h-[50vh] lg:h-[calc(100vh-2rem)]">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={currentImageIndex}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.5 }}
-                      className="relative w-full h-full"
-                    >
-                      <Image
-                        src={product.link[currentImageIndex]}
-                        alt={product.name}
-                        layout="fill"
-                        objectFit="cover"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-between p-4">
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          onClick={prevImage}
-                          className="rounded-full bg-white/80 text-black hover:bg-white"
-                        >
-                          <ChevronLeft className="w-6 h-6" />
-                        </Button>
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          onClick={nextImage}
-                          className="rounded-full bg-white/80 text-black hover:bg-white"
-                        >
-                          <ChevronRight className="w-6 h-6" />
-                        </Button>
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
-              <div className="lg:w-1/2 p-6 sm:p-8 flex flex-col justify-between">
-                <div>
-                  <motion.h2
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="text-3xl sm:text-4xl font-extrabold mb-4"
-                  >
-                    {product.name}
-                  </motion.h2>
-                  <div className="mb-4">
-                    {product.discountPercent && product.discountPercent > 0 ? (
-                      <div>
-                        <motion.p
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5, delay: 0.3 }}
-                          className="text-2xl sm:text-3xl font-bold text-red-600 line-through"
-                        >
-                          ${product.price}
-                        </motion.p>
-                        <motion.p
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5, delay: 0.3 }}
-                          className="text-2xl sm:text-3xl font-bold text-primary"
-                        >
-                          ${product.price - (product.price * product.discountPercent / 100)}
-                        </motion.p>
-                        <span className="text-red-600 font-semibold">
-                          {product.discountPercent}% off
-                        </span>
-                      </div>
-                    ) : (
-                      <motion.p
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                        className="text-2xl sm:text-3xl font-bold text-primary mb-4"
-                      >
-                        ${product.price}
-                      </motion.p>
-                    )}
-                  </div>
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
-                    className="flex items-center mb-6"
-                  >
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-5 h-5 ${i < Math.floor(product.ratings) ? 'text-yellow-400' : 'text-gray-300'}`}
-                        fill="currentColor"
-                      />
-                    ))}
-                    <span className="ml-2 text-sm sm:text-base text-gray-600">
-                      {product.ratings} out of 5 stars
-                    </span>
-                  </motion.div>
-                  <motion.div
-                    initial={{ height: 'auto' }}
-                    animate={{ height: isDescriptionExpanded ? 'auto' : '4.5em' }}
-                    transition={{ duration: 0.3 }}
-                    className="text-sm sm:text-base text-gray-600 overflow-hidden relative mb-4"
-                  >
-                    <p>{product.description}</p>
-                    {!isDescriptionExpanded && (
-                      <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent" />
-                    )}
-                  </motion.div>
-                  <Button
-                    variant="link"
-                    onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                    className="text-primary hover:text-primary/80"
-                  >
-                    {isDescriptionExpanded ? 'Read less' : 'Read more'}
-                  </Button>
-                </div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  className="mt-8"
+    <div className="min-h-screen bg-white p-8">
+      <style jsx global>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+      <Card className="max-w-7xl mx-auto">
+        <CardContent className="p-6">
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Vertical scrollable image column */}
+            <div className="w-full lg:w-24 lg:h-[600px] flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto lg:overflow-x-hidden hide-scrollbar">
+              {product.images.map((image, index) => (
+                <div
+                  key={index}
+                  className={`flex-shrink-0 cursor-pointer ${
+                    index === currentImageIndex ? 'border-2 border-primary' : 'border border-gray-200'
+                  }`}
+                  onClick={() => setCurrentImageIndex(index)}
                 >
-                  <Button
-                    onClick={handleCartToggle}
-                    className={`w-full ${isInCart ? 'bg-red-600 hover:bg-red-700' : 'bg-primary hover:bg-primary/90'} text-white`}
-                  >
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    {isInCart ? 'Remove from Cart' : 'Add to Cart'}
-                  </Button>
-                </motion.div>
-              </div>
+                  <Image
+                    src={image}
+                    alt={`${product.name} - Image ${index + 1}`}
+                    width={96}
+                    height={96}
+                    className="object-cover"
+                  />
+                </div>
+              ))}
             </div>
-          </CardContent>
-        </Card>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <Card className="bg-white shadow-md rounded-lg overflow-hidden">
-            <CardContent className="p-6">
-              <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
-              {!showReviews && (
-                <Button
-                  variant="outline"
-                  onClick={handleShowReviews}
-                  className="text-primary hover:text-primary/80"
-                >
-                  View Reviews
-                </Button>
-              )}
-              {loadingReviews && <Skeleton className="w-full h-20 rounded" />}
-              {showReviews && !loadingReviews && <ProductReviews reviews={reviews} />}
-            </CardContent>
-          </Card>
-        </motion.div>
-      </motion.div>
+            {/* Main product image */}
+            <div className="flex-grow cursor-pointer" onClick={handleImageClick}>
+              <Image
+                src={product.images[currentImageIndex]}
+                alt={product.name}
+                width={600}
+                height={600}
+                className="object-cover w-full h-auto"
+              />
+            </div>
+
+            {/* Product details */}
+            <div className="lg:w-1/3 space-y-6">
+              <h1 className="text-4xl font-bold text-gray-900">{product.name}</h1>
+              <p className="text-gray-600">{product.description}</p>
+              <p className="text-3xl font-bold text-primary">${product.price.toFixed(2)}</p>
+              
+              <div>
+                <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-2">
+                  Size
+                </label>
+                <Select>
+                  <SelectTrigger id="size">
+                    <SelectValue placeholder="Select size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {product.sizes.map((size) => (
+                      <SelectItem key={size} value={size.toLowerCase()}>{size}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-2">
+                  Type
+                </label>
+                <Select>
+                  <SelectTrigger id="type">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {product.types.map((type) => (
+                      <SelectItem key={type} value={type.toLowerCase()}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-2">
+                  Quantity
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-md">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="text-gray-500"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="px-4 py-2 text-center w-12">{quantity}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="text-gray-500"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <Button className="w-full bg-primary text-white hover:bg-primary/90">Add to Cart</Button>
+              <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary/10">Buy Now</Button>
+
+              {/* Expandable sections */}
+              {Object.entries(product.details).map(([key, value]) => (
+                <div key={key} className="border-t border-gray-200 pt-4">
+                  <button
+                    onClick={() => toggleSection(key)}
+                    className="flex justify-between items-center w-full text-left"
+                  >
+                    <span className="text-lg font-medium text-gray-900 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                    {expandedSection === key ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </button>
+                  {expandedSection === key && (
+                    <div className="mt-2 text-gray-600 whitespace-pre-line">
+                      {value}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Reviews section */}
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
+            <div className="space-y-4">
+              {product.reviews.map((review) => (
+                <div key={review.id} className="border-b border-gray-200 pb-4">
+                  <div className="flex items-center mb-2">
+                    <div className="flex mr-2">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-5 w-5 ${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="font-semibold">{review.author}</span>
+                  </div>
+                  <p className="text-gray-600">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Fullscreen image viewer */}
+      {isFullscreen && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div ref={fullscreenRef} className="max-w-4xl max-h-full overflow-auto hide-scrollbar">
+            <Image
+              src={product.images[currentImageIndex]}
+              alt={product.name}
+              width={1200}
+              height={1200}
+              className="object-contain w-full h-auto"
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

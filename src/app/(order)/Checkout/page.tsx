@@ -53,12 +53,25 @@ export default function LuxuryCheckoutPage() {
         setShowContactPrompt(false);
         setShowSuccessModal(true)
  
+      }else{
+        setError(res.data.message);
+      }
+        
+    } catch (error: unknown) {
+      let errorMessage = "An unexpected error occurred";  // Default message
+  
+      // Type guard to check for expected error structure
+      if (typeof error === "object" && error !== null && "error" in error) {
+          const nestedError = (error as { error: { message: string } }).error;
+          errorMessage = nestedError.message || errorMessage;
       }
   
-    } catch (error:unknown) {
-    setError('An error occurred ');
-    console.log(error);
-    }finally{
+      // Display the error to the user in a friendly way
+      setError(errorMessage);
+  
+      // Log the detailed error for debugging/monitoring
+      console.error("Error caught:", error); // Use a logging service here for production (e.g., Sentry)
+  }finally{
       setIsProcessing(false)
     }
    
