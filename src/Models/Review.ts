@@ -17,7 +17,7 @@ const ReviewSchema = new Schema<Review>({
     productId: {
         type: String,
         required: true,
-        unique: true,
+        
     },
     body: {
         type: String,

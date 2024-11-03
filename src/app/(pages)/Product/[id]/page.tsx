@@ -1,49 +1,90 @@
+
 'use client'
 
+import { motion } from 'framer-motion'
+import {  ShoppingCart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import { Plus, Minus, ChevronDown, ChevronUp, Star } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Product } from '@/Models/Product'
+import Reviews from '@/components/Review'
+import { addToCart, isProductInCart } from '@/helper/cart'
+import LionLoader from '@/components/LionLoader'
+import { useRouter } from 'next/navigation'
 
-// Mock product data
-const product = {
-  name: "Luxe Leather Tote",
-  description: "Elevate your everyday style with our Luxe Leather Tote. Crafted from premium, full-grain leather, this spacious bag combines functionality with sophisticated design.",
-  price: 299.99,
-  images: [
-    "/placeholder.svg?height=600&width=600&text=Image+1",
-    "/placeholder.svg?height=600&width=600&text=Image+2",
-    "/placeholder.svg?height=600&width=600&text=Image+3",
-    "/placeholder.svg?height=600&width=600&text=Image+4",
-    "/placeholder.svg?height=600&width=600&text=Image+5",
-  ],
-  sizes: ["Small", "Medium", "Large"],
-  types: ["Classic", "Vintage", "Modern"],
-  details: {
-    description: "Our Luxe Leather Tote is the perfect blend of style and functionality. The spacious interior easily accommodates your daily essentials, while the sturdy handles and detachable shoulder strap offer versatile carrying options.",
-    productInfo: "Made from full-grain leather\nInterior zip pocket and two slip pockets\nMagnetic closure\nDimensions: 14\"W x 11\"H x 5\"D",
-    shipping: "Free shipping on orders over $150\nEstimated delivery: 3-5 business days",
-    modelSize: "Model is 5'9\" and wearing size Medium",
-    notes: "Colors may vary slightly due to differences in screen displays\nLeather will develop a beautiful patina over time"
-  },
-  reviews: [
-    { id: 1, author: "Emily S.", rating: 5, comment: "Absolutely love this bag! The quality is outstanding and it's so versatile." },
-    { id: 2, author: "Michael T.", rating: 4, comment: "Great bag, but a bit pricey. Still, the craftsmanship is excellent." },
-    { id: 3, author: "Sarah L.", rating: 5, comment: "This tote is perfect for work. Fits my laptop and all my essentials easily." },
-  ]
-}
-
-export default function Component() {
+export default function Component({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [quantity, setQuantity] = useState(1)
-  const [expandedSection, setExpandedSection] = useState<string | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const fullscreenRef = useRef<HTMLDivElement>(null)
+  const [product, setProduct] = useState<Product>()
+  const [isInCart, setIsInCart] = useState(false)
+  const [loading,setLoading]=useState(true);
 
-  const toggleSection = (section: string) => {
-    setExpandedSection(expandedSection === section ? null : section)
+  const router=useRouter();
+  useEffect(() => {
+    
+    if(isProductInCart(product?._id as string))
+       setIsInCart(true); 
+    console.log("cart")
+  }, [product]);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`/api/getProduct/${params.id}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data.success) {
+            setProduct(data.product)
+            localStorage.setItem('product', JSON.stringify(data.product))
+          
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching product", error)
+      }
+    }
+
+    const storedProduct = localStorage.getItem('product')
+    if (storedProduct) {
+      try {
+        const parsedProduct: Product = JSON.parse(storedProduct)
+        if (parsedProduct._id !== params.id) {
+          fetchProduct()
+          setLoading(false);
+          return
+        }
+        setProduct(parsedProduct)
+        setLoading(false);
+      } catch (error) {
+        console.error("Error parsing product from localStorage", error)
+      }
+    } else {
+      fetchProduct()
+      setLoading(false);
+    }
+  }, [])
+
+  const handleCartToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const cart = JSON.parse(localStorage.getItem('cart') || '{}')
+
+    if (isInCart) {
+ 
+      delete cart[product?._id as string]
+    } else {
+        addToCart(product!, 1);
+    }
+
+    setIsInCart(!isInCart)
+  }
+  
+
+
+  const toggleDescription = () => {
+    setIsDescriptionExpanded((prev) => !prev)
   }
 
   const handleImageClick = () => {
@@ -66,8 +107,11 @@ export default function Component() {
     }
   }, [isFullscreen])
 
+  if(loading){
+    return <LionLoader/>
+  }
   return (
-    <div className="min-h-screen bg-white p-8">
+    <div className="min-h-screen pt-20 bg-white p-8">
       <style jsx global>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
@@ -82,7 +126,7 @@ export default function Component() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Vertical scrollable image column */}
             <div className="w-full lg:w-24 lg:h-[600px] flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto lg:overflow-x-hidden hide-scrollbar">
-              {product.images.map((image, index) => (
+              {product?.link.map((image, index) => (
                 <div
                   key={index}
                   className={`flex-shrink-0 cursor-pointer ${
@@ -104,8 +148,8 @@ export default function Component() {
             {/* Main product image */}
             <div className="flex-grow cursor-pointer" onClick={handleImageClick}>
               <Image
-                src={product.images[currentImageIndex]}
-                alt={product.name}
+                src={product?.link[currentImageIndex] || "/images/logo.png"}
+                alt={product?.name || "img"}
                 width={600}
                 height={600}
                 className="object-cover w-full h-auto"
@@ -114,133 +158,72 @@ export default function Component() {
 
             {/* Product details */}
             <div className="lg:w-1/3 space-y-6">
-              <h1 className="text-4xl font-bold text-gray-900">{product.name}</h1>
-              <p className="text-gray-600">{product.description}</p>
-              <p className="text-3xl font-bold text-primary">${product.price.toFixed(2)}</p>
+              <h1 className="text-4xl font-bold text-gray-900">{product?.name}</h1>
               
+              {/* Expandable Description */}
               <div>
-                <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-2">
-                  Size
-                </label>
-                <Select>
-                  <SelectTrigger id="size">
-                    <SelectValue placeholder="Select size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {product.sizes.map((size) => (
-                      <SelectItem key={size} value={size.toLowerCase()}>{size}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-2">
-                  Type
-                </label>
-                <Select>
-                  <SelectTrigger id="type">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {product.types.map((type) => (
-                      <SelectItem key={type} value={type.toLowerCase()}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-2">
-                  Quantity
-                </label>
-                <div className="flex items-center border border-gray-300 rounded-md">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="text-gray-500"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="px-4 py-2 text-center w-12">{quantity}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="text-gray-500"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              <Button className="w-full bg-primary text-white hover:bg-primary/90">Add to Cart</Button>
-              <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary/10">Buy Now</Button>
-
-              {/* Expandable sections */}
-              {Object.entries(product.details).map(([key, value]) => (
-                <div key={key} className="border-t border-gray-200 pt-4">
+                <p className={`text-gray-600 ${isDescriptionExpanded ? '' : 'line-clamp-5'}`}>
+                  {product?.description}
+                </p>
+                {product?.description && product.description.split('\n').length > 5 && (
                   <button
-                    onClick={() => toggleSection(key)}
-                    className="flex justify-between items-center w-full text-left"
+                    onClick={toggleDescription}
+                    className="text-primary hover:underline mt-2"
                   >
-                    <span className="text-lg font-medium text-gray-900 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                    {expandedSection === key ? (
-                      <ChevronUp className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
-                    )}
+                    {isDescriptionExpanded ? 'Read less' : 'Read more'}
                   </button>
-                  {expandedSection === key && (
-                    <div className="mt-2 text-gray-600 whitespace-pre-line">
-                      {value}
-                    </div>
-                  )}
-                </div>
-              ))}
+                )}
+              </div>
+              
+              <p className="text-3xl font-bold text-primary">Rs.{product?.price.toFixed(2)}</p>
+              <div className="flex items-center space-x-1 text-yellow-500">
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    className="h-5 w-5 fill-current" 
+    viewBox="0 0 20 20"
+  >
+    <path d="M9.049 2.927a1 1 0 011.902 0l1.45 4.455a1 1 0 00.95.691h4.708a1 1 0 01.6 1.8l-3.812 2.766a1 1 0 00-.364 1.118l1.45 4.455a1 1 0 01-1.54 1.117L10 15.347l-3.942 2.882a1 1 0 01-1.54-1.118l1.45-4.455a1 1 0 00-.364-1.118L1.793 9.873a1 1 0 01.6-1.8h4.708a1 1 0 00.95-.691l1.45-4.455z" />
+  </svg>
+  <span className="text-lg font-semibold">{product?.ratings}/5</span>
+</div>
+
+          <motion.button
+            onClick={handleCartToggle}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`${
+              isInCart ? 'bg-red-600 hover:bg-red-700' : 'bg-black hover:bg-gray-800'
+            } text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 flex items-center justify-center`}
+          >
+            <ShoppingCart className="mr-2 h-5 w-5" />
+            {isInCart ? 'Remove' : 'Add to Cart'}
+          </motion.button>
+          
+              <Button onClick={(e)=>{
+                handleCartToggle(e);
+                router.push('/Cart');
+              }}
+               variant="outline" className="w-full border-primary text-primary hover:bg-primary/10">Buy Now</Button>
             </div>
           </div>
 
-          {/* Reviews section */}
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
-            <div className="space-y-4">
-              {product.reviews.map((review) => (
-                <div key={review.id} className="border-b border-gray-200 pb-4">
-                  <div className="flex items-center mb-2">
-                    <div className="flex mr-2">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-5 w-5 ${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                        />
-                      ))}
-                    </div>
-                    <span className="font-semibold">{review.author}</span>
-                  </div>
-                  <p className="text-gray-600">{review.comment}</p>
-                </div>
-              ))}
+          {/* Fullscreen image viewer */}
+          {isFullscreen && (
+            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+              <div ref={fullscreenRef} className="max-w-4xl max-h-full overflow-auto hide-scrollbar">
+                <Image
+                  src={product?.link[currentImageIndex] || "/images/logo.png"}
+                  alt={product?.name || "img"}
+                  width={1200}
+                  height={1200}
+                  className="object-contain w-full h-auto"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
-
-      {/* Fullscreen image viewer */}
-      {isFullscreen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div ref={fullscreenRef} className="max-w-4xl max-h-full overflow-auto hide-scrollbar">
-            <Image
-              src={product.images[currentImageIndex]}
-              alt={product.name}
-              width={1200}
-              height={1200}
-              className="object-contain w-full h-auto"
-            />
-          </div>
-        </div>
-      )}
+      <Reviews productId={params.id}></Reviews>
     </div>
   )
 }
