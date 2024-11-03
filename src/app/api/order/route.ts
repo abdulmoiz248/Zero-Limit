@@ -11,42 +11,50 @@ export async function POST(req: Request) {
 
     const { formData, cart, paymentMethod } = await req.json();
     let total: number = 0;
-    const cartItems:CartItem[]= Object.values(cart);
+    const cartItems: CartItem[] = Object.values(cart);
     const method = paymentMethod === "online" ? "credit card" : "cash on delivery";
-    
-    for (const item of cartItems) {
+
+    if (!formData.email || !formData.phone || !formData.address) {
+      return NextResponse.json(
+        { message: "Incomplete form data", success: false },
+        { status: 400 }
+      );
+    }
+
+    // Prepare promises for product validation and stock update
+    const productPromises = cartItems.map(async (item) => {
       const product = await ProductModel.findById(item.product._id);
 
       if (!product) {
         console.log(`Product ${item.product.name} not found`);
-        return NextResponse.json(
-          { message: `Product ${item.product.name} not found`, success: false },
-          { status: 404 }
-        );
+        throw new Error(`Product ${item.product.name} not found`);
       }
 
-      console.log(`Not enough stock for ${item.product.name} Maximum quantity is ${product.quantity}`)
-       if (product.quantity < item.quantity) {
-        return Response.json(
-          { message: `Not enough stock for ${item.product.name} Maximum quantity is ${product.quantity}`, success: false },
-          { status: 400 }
-        );
-       
+      if (product.quantity < item.quantity) {
+        console.log(`Not enough stock for ${item.product.name}, maximum quantity is ${product.quantity}`);
+        throw new Error(`Not enough stock for ${item.product.name}, maximum quantity is ${product.quantity}`);
       }
 
-      total += item.product.price * item.quantity ;
+      total += item.product.price * item.quantity;
       product.quantity -= item.quantity;
       await product.save();
-    }
+    });
 
+    try {
+      await Promise.all(productPromises);
+    } catch (error) {
+      console.log(error);
+      return NextResponse.json(
+        { message: "An error occured", success: false },
+        { status: 400 }
+      );
+    }
 
     const products = cartItems.flatMap((item: CartItem) =>
       Array(item.quantity).fill(item.product._id)
     );
 
-
-
-    const order:Order = new OrderModel({
+    const order: Order = new OrderModel({
       email: formData.email,
       phone: formData.phone,
       products,
@@ -60,10 +68,7 @@ export async function POST(req: Request) {
       paymentStatus: "Pending",
     });
 
-  
     await order.save();
-
-  
 
     return NextResponse.json(
       {
@@ -76,7 +81,6 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Order processing error:", error);
 
-   
     return NextResponse.json(
       { message: "Order process failed", success: false },
       { status: 500 }
