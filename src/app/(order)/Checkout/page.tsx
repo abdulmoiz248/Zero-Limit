@@ -58,7 +58,7 @@ export default function LuxuryCheckoutPage() {
       }
         
     } catch (error: unknown) {
-      let errorMessage = "An unexpected error occurred";  // Default message
+      let errorMessage = "Network Error please try again";  // Default message
   
       // Type guard to check for expected error structure
       if (typeof error === "object" && error !== null && "error" in error) {

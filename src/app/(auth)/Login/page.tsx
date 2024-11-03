@@ -6,7 +6,7 @@ import axios from 'axios';
 import { ChevronRight, Mail, Lock, AlertCircle, Loader } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
+import Cookies from 'js-cookie';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,6 +28,12 @@ export default function LoginPage() {
       const response = await axios.post('/api/auth/login', { email, password });
       if (response.data.success) {
         localStorage.setItem('customerData', JSON.stringify(response.data.customerData));
+
+      const redirect=  Cookies.get('redirect');
+      if(redirect){
+        Cookies.remove('redirect');
+         router.push('/Checkout');
+      }else
         router.push('/');
       }
     } catch (error) {
@@ -48,7 +54,7 @@ export default function LoginPage() {
       >
         <div className="bg-white p-8 shadow-lg border-2 border-[#1b03a3] rounded-xl">
           <h2 className="text-3xl font-extrabold text-center text-[#1b03a3] mb-6">
-            Login to Limit Zero
+            Login to Zero Limit
           </h2>
           <p className="text-sm text-center text-gray-600 mb-6">
             Don&apos;t have an account?{' '}

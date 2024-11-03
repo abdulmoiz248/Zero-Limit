@@ -88,9 +88,7 @@ export default function Component() {
             >
               {cartItems.map((item, index) => (
                 <motion.div
-                  onClick={()=>{
-                    router.push(`/Product/${item.product._id}`)
-                  }} 
+                   
                   key={item.product._id as string}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -98,11 +96,16 @@ export default function Component() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="flex items-center space-x-4 p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
                 >
-                  <div className="relative w-24 h-24 overflow-hidden rounded-md">
+                  <div onClick={()=>{
+                    router.push(`/Product/${item.product._id}`)
+                  }}
+                   className="relative w-24 h-24 overflow-hidden rounded-md">
                     <Image src={item.product.link[0]} alt={item.product.name} layout="fill" objectFit="cover" className="transition-transform duration-300 hover:scale-110" />
                   </div>
                   <div className="flex-grow space-y-2">
-                    <h2 className="text-xl font-bold text-[#1b03a3]">{item.product.name}</h2>
+                    <h2 onClick={()=>{
+                    router.push(`/Product/${item.product._id}`)
+                  }}  className="text-xl font-bold text-[#1b03a3]">{item.product.name}</h2>
                     <div className="flex items-center space-x-2">
                       <p className="text-lg font-semibold">Rs.{item.product.price.toFixed(2)}</p>
                       {item.product.discountPercent && item.product.discountPercent > 0 && (
@@ -115,7 +118,7 @@ export default function Component() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateQuantity(item.product._id as string, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.product._id as string,  - 1)}
                         className="rounded-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80"
                       >
                         <Minus className="h-4 w-4" />
@@ -132,7 +135,7 @@ export default function Component() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateQuantity(item.product._id as string, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.product._id as string,  1)}
                         className="rounded-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80"
                       >
                         <Plus className="h-4 w-4" />
@@ -140,7 +143,7 @@ export default function Component() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-semibold">Rs.{calculateItemTotal(item).toFixed(2)}</p>
+                    <p className="text-lg font-semibold">Rs.{calculateItemTotal(item)}</p>
                     <Button variant="ghost" size="icon" onClick={() => removeItem(item.product._id as string)} className="text-[#1b03a3] hover:text-[#1b03a3]/80">
                       <Trash2 className="h-5 w-5" />
                     </Button>
@@ -171,7 +174,10 @@ export default function Component() {
                 ) : (
                   <div className="space-y-4">
                     <Button 
-                      onClick={() => router.push('/Login')}
+                      onClick={() => 
+                      {  Cookies.set('redirect','true')
+                        router.push('/Login')}
+                      }
                       className="w-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80 transition-colors duration-300 text-lg font-bold py-4 rounded-full"
                     >
                       <LogIn className="mr-2 h-5 w-5" /> Login to Checkout
@@ -208,7 +214,7 @@ export default function Component() {
               <h2 className="text-3xl font-bold mt-8 mb-4 text-[#1b03a3]">Your cart is empty</h2>
               <p className="text-xl text-gray-600 mb-8">But it doesn&apos;t have to be. Let&apos;s add some fearless style to your life!</p>
               <Button 
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/all-products')}
                 className="bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80 transition-colors duration-300 text-lg font-bold py-4 px-8 rounded-full"
               >
                 Start Shopping
@@ -223,7 +229,7 @@ export default function Component() {
           className="mt-12 text-center"
         >
           <Button 
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/all-products')}
             variant="link" 
             className="text-[#1b03a3] hover:text-[#1b03a3]/80 transition-colors duration-300"
           >
