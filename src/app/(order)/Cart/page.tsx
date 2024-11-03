@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Minus, Plus, Trash2, ShoppingBag, Sparkles, Truck, LogIn, CreditCard, Tag } from "lucide-react"
+import { Minus, Plus, Trash2, ShoppingBag, Sparkles, Truck, LogIn, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { motion, AnimatePresence } from "framer-motion"
