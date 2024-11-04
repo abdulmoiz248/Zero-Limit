@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { Minus, Plus, Trash2, ShoppingBag, Sparkles, Truck, LogIn, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -107,8 +106,8 @@ export default function Component() {
                     router.push(`/Product/${item.product._id}`)
                   }}  className="text-xl font-bold text-[#1b03a3]">{item.product.name}</h2>
                     <div className="flex items-center space-x-2">
-                      <p className="text-lg font-semibold">Rs.{item.product.price.toFixed(2)}</p>
-                      {item.product.discountPercent && item.product.discountPercent > 0 && (
+                      <p className="text-lg font-semibold">Rs.{item.product.price}</p>
+                      {item.product.discountPercent && item.product.discountPercent >0  && (
                         <span className="text-sm text-green-600 font-semibold">
                           ({item.product.discountPercent}% off)
                         </span>
