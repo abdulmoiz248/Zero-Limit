@@ -47,7 +47,9 @@ export default function LuxuryCheckoutPage() {
       const cart = getCart();
       
     
-      const res=await axios.post('/api/order',{formData, cart, paymentMethod})
+      const res1=await axios.post('/api/verify-products',{cart});
+      if(res1.data.success){
+      const res=await axios.post('/api/order',{total:res1.data.total,formData, cart, paymentMethod})
       if(res.data.success){
         localStorage.removeItem('cart');
         setShowContactPrompt(false);
@@ -56,6 +58,10 @@ export default function LuxuryCheckoutPage() {
       }else{
         setError(res.data.message);
       }
+    }else{
+      setError(res1.data.message);
+    }
+      
         
     } catch (error: unknown) {
       let errorMessage = "Network Error please try again";  // Default message

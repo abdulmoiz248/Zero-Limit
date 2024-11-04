@@ -22,7 +22,7 @@ class MapColoringConstraint(Constraint):
         return assignment[self.place1] != assignment[self.place2]
 
 
-# CSP class to handle variables, domains, and constraints
+
 class CSP:
     def _init_(self, variables, domains):
         self.variables = variables
