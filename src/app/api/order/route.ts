@@ -1,5 +1,5 @@
 import OrderModel, { Order } from "@/Models/Order";
-import ProductModel from "@/Models/Product";
+
 import connect from "@/dbConfig/dbConfig";
 
 import { CartItem } from "@/interfaces/interfaces";
