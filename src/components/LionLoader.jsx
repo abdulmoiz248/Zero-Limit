@@ -1,5 +1,5 @@
-'use client'
-import React from "react";
+'use client';
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 
 const LionLoader = () => {
@@ -26,6 +26,19 @@ const LionLoader = () => {
       },
     },
   };
+
+  // Effect to handle scrolling and body overflow
+  useEffect(() => {
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+    // Scroll to top
+    window.scrollTo(0, 0);
+    
+    // Cleanup function to reset overflow
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   return (
     <div className="flex items-center justify-center h-screen">
