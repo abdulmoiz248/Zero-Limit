@@ -5,10 +5,15 @@ export interface Customer extends Document {
     password: string;
     name:string;
     otp:string;
-  
+    createdAt:Date;
 }
 
 const CustomerSchema = new Schema<Customer>({
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
     email: {
         type: String,
         required: true,

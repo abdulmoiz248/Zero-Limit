@@ -1,8 +1,6 @@
 import connect from "@/dbConfig/dbConfig";
 import ProductModel from "@/Models/Product";
 import { NextResponse } from "next/server";
-import { promises as fs } from 'fs';
-import path from 'path';
 
 export async function DELETE(req: Request) {
     try {
@@ -22,18 +20,6 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ message: 'Product not found.' }, { status: 404 });
         }
 
-        // Construct the file path to the product image
-        const photoPath = path.join(process.cwd(), 'public', product.link);
-
-        // Delete the product image from the local filesystem
-        try {
-            await fs.unlink(photoPath);
-            console.log(`Deleted image: ${photoPath}`);
-        } catch (err) {
-            console.error('Failed to delete the product image:', err);
-        }
-
-        // Delete the product from the database
         const result = await ProductModel.deleteOne({ _id: productId });
 
         if (result.deletedCount === 0) {

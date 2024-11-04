@@ -102,9 +102,12 @@ const getTopProducts = async () => {
 
 const getCustomers = async (): Promise<{ value: number; trend: number }> => {
   const currentDate = new Date();
+
+  // Calculate the start and end dates for the current month
   const startCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const endCurrentMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
+  // Calculate the start and end dates for the previous month, accounting for January
   const startPrevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
   const endPrevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
 
@@ -117,6 +120,7 @@ const getCustomers = async (): Promise<{ value: number; trend: number }> => {
       },
     });
 
+   
     const previousMonthCustomers = await CustomerModel.countDocuments({
       createdAt: {
         $gte: startPrevMonth,
@@ -124,14 +128,16 @@ const getCustomers = async (): Promise<{ value: number; trend: number }> => {
       },
     });
 
+    // Calculate trend as the difference between current and previous month
     const trend = currentMonthCustomers - previousMonthCustomers;
 
     return { value: currentMonthCustomers, trend };
   } catch (error) {
     console.error('Error fetching customer trend:', error);
     throw error;
-  } 
+  }
 };
+
 
 
 

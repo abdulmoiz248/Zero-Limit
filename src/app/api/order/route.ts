@@ -21,13 +21,14 @@ export async function POST(req: Request) {
       );
     }
    
+
     const order: Order = new OrderModel({
       email: formData.email,
       phone: formData.phone,
       products: cartItems.flatMap((item: CartItem) =>
         Array(item.quantity).fill(item.product._id)
       ),
-      total,
+      total:total+100,
       name: formData.name,
       address: formData.address,
       city: formData.city,

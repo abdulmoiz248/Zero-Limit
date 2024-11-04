@@ -51,9 +51,9 @@ export default function OrdersPage() {
     setSelectedOrder(null)
   }
 
-  const handleStatusChange = async (orderId: string, newStatus: Order['status']) => {
+  const handleStatusChange = async (orderId: string, newStatus: Order['status'],shippingId?:string) => {
     try {
-      const res = await axios.post(`/api/admin/orders/${orderId}`, { status: newStatus })
+      const res = await axios.post(`/api/admin/orders/${orderId}`, { status: newStatus,email:selectedOrder?.email,shippingId:shippingId })
       if (res.data.success) {
         const tempOrders=orders.map(order => 
           order._id === orderId ? { ...order, status: newStatus } : order
@@ -127,7 +127,7 @@ export default function OrdersPage() {
                       <TableRow key={order._id as string}>
                         <TableCell className="font-medium">{order._id as string}</TableCell>
                         <TableCell>{order.email}</TableCell>
-                        <TableCell>${order.total}</TableCell>
+                        <TableCell>Rs.{order.total}</TableCell>
                         <TableCell>
                           <Badge variant={order.status === 'Pending' ? 'secondary' : 'outline' }>
                             {order.status}

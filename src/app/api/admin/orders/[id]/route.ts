@@ -1,15 +1,17 @@
 import OrderModel from '@/Models/Order';
 import connect from '@/dbConfig/dbConfig';
+import { sendOrderDeliveredEmail } from '@/helper/delieveredEmail';
+import { sendOrderShippedEmail } from '@/helper/shippedEmail';
 
-export async function POST(req: Request) {
-  // Connect to the database
+export async function POST(req: Request, { params }: { params: { id: string } }) {
   await connect();
 
   try {
-    // Parse the incoming request body
-    const { id, status } = await req.json(); // Ensure to parse the body as JSON
+  
+    const { status ,email,shippingId} = await req.json();
 
-    // Validate the ID (optional but recommended)
+    
+    const { id } = params;
     if (!id) {
       return new Response(JSON.stringify({
         message: "Order ID is required.",
@@ -28,7 +30,11 @@ export async function POST(req: Request) {
       }), { status: 404, headers: { 'Content-Type': 'application/json' } });
     }
 
-    // Return the updated order
+    if(shippingId && email){
+     await sendOrderShippedEmail(email,"2-3 days",shippingId);
+    }else if(status=='Delivered'){
+      await sendOrderDeliveredEmail(email);
+    }
     return new Response(JSON.stringify({
       order: updatedOrder,
       success: true,

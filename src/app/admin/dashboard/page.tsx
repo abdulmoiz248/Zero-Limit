@@ -10,7 +10,7 @@ import {
   Star, 
   Trash2, 
   Package, 
-  Truck, 
+  
   LogOut,
   DollarSign,
   Users,
@@ -228,8 +228,7 @@ export default function Dashboard() {
             { title: "Feature a Product", icon: Star, handler: () => handleOpenModal(setIsFeatureModalOpen) },
             { title: "Delete a Product", icon: Trash2, handler: () => handleOpenModal(setIsDeleteModalOpen) },
             { title: "View Pending Orders", icon: ShoppingCart, handler: () => router.push('/admin/order/pending')},
-            { title: "Change Order Status", icon: Truck, handler: () => console.log("Change Order Status") },
-            { title: "View All Orders", icon: Package, handler: () => router.push('/admin/order/all') },
+           { title: "View All Orders", icon: Package, handler: () => router.push('/admin/order/all') },
           ].map((item, index) => (
             <motion.div
               key={item.title}

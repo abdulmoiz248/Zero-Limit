@@ -1,28 +1,29 @@
 import ProductModel from "@/Models/Product";
 import connect from "@/dbConfig/dbConfig";
-
 import { CartItem } from "@/interfaces/interfaces";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
     await connect();
-
-    const {  cart } = await req.json();
-  
+    
+    const { cart } = await req.json();
     const cartItems: CartItem[] = Object.values(cart);
 
- 
-    // Gather all product IDs and fetch them in one go
+    // Gather product IDs for a batch query
     const productIds = cartItems.map((item) => item.product._id);
-    const products = await ProductModel.find({ _id: { $in: productIds } });
 
- 
+    // Fetch required products with stock in one go
+    const products = await ProductModel.find({ _id: { $in: productIds } }, "price quantity");
+
     let total = 0;
     const updateOperations = [];
 
+    // Mapping product quantities for quicker access
+    const productMap = new Map(products.map((p) => [p._id.toString(), p]));
+
     for (const item of cartItems) {
-      const product = products.find((p) => p._id.toString() === item.product._id);
+      const product = productMap.get(item.product._id);
 
       if (!product) {
         return NextResponse.json(
@@ -34,16 +35,16 @@ export async function POST(req: Request) {
       if (product.quantity < item.quantity) {
         return NextResponse.json(
           {
-            message: `Not enough stock for ${item.product.name}, maximum quantity is ${product.quantity}`,
+            message: `Not enough stock for ${item.product.name}. Available: ${product.quantity}`,
             success: false,
           },
           { status: 400 }
         );
       }
 
-      total += item.product.price * item.quantity;
+      total += product.price * item.quantity;
 
-      // Prepare stock decrement operation for batch update
+      // Prepare the stock update in batch
       updateOperations.push({
         updateOne: {
           filter: { _id: item.product._id },
@@ -52,16 +53,16 @@ export async function POST(req: Request) {
       });
     }
 
- 
+    // Bulk update products to decrement stock in one operation
     if (updateOperations.length > 0) {
       await ProductModel.bulkWrite(updateOperations);
     }
 
-   
+    // Return the total amount and success response
     return NextResponse.json(
       {
         total,
-        message: "Product verified successfully",
+        message: "Products verified successfully",
         success: true,
       },
       { status: 200 }

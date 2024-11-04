@@ -1,25 +1,27 @@
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/react"
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+
 import "./globals.css";
 
 import Header from "@/components/landing page/Header";
 import Footer from '@/components/landing page/Footer'
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+
 
 export const metadata: Metadata = {
-  title: "Zero Limit",
-  description: "Explore the latest trends and shop from a wide range of products at Zero Limit, your one-stop e-commerce destination.",
+  title: "Limit Zero - Unleash Your Fearless Style",
+  description:
+    "Explore bold and boundary-breaking clothing that redefines fashion. Be part of a community that wears rebellion as a badge of honor.",
+  keywords:
+    "Limit Zero, fearless fashion, bold clothing, streetwear, luxury apparel",
+  robots: "index, follow",
+
+};
+
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1.0,
 };
 
 export default function RootLayout({
@@ -29,9 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body>
         <Analytics/>
         <SpeedInsights />
         <Header></Header>

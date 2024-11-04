@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { ShoppingCart, Star } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ShoppingCart, Star, ChevronDown, ChevronUp, X } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
@@ -26,10 +26,10 @@ export default function Component({ params }: { params: { id: string } }) {
   useEffect(() => {
     if (isProductInCart(product?._id as string))
       setIsInCart(true)
-    console.log("cart")
   }, [product])
 
   useEffect(() => {
+    
     const fetchProduct = async () => {
       try {
         const res = await fetch(`/api/getProduct/${params.id}`)
@@ -42,6 +42,8 @@ export default function Component({ params }: { params: { id: string } }) {
         }
       } catch (error) {
         console.error("Error fetching product", error)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -51,30 +53,28 @@ export default function Component({ params }: { params: { id: string } }) {
         const parsedProduct: Product = JSON.parse(storedProduct)
         if (parsedProduct._id !== params.id) {
           fetchProduct()
-          setLoading(false)
           return
         }
         setProduct(parsedProduct)
         setLoading(false)
       } catch (error) {
         console.error("Error parsing product from localStorage", error)
+        fetchProduct()
       }
     } else {
       fetchProduct()
-      setLoading(false)
     }
   }, [params.id])
 
   const handleCartToggle = (e: React.MouseEvent) => {
     e.preventDefault()
-    const cart = JSON.parse(localStorage.getItem('cart') || '{}')
-
     if (isInCart) {
+      const cart = JSON.parse(localStorage.getItem('cart') || '{}')
       delete cart[product?._id as string]
+      localStorage.setItem('cart', JSON.stringify(cart))
     } else {
       addToCart(product!, 1)
     }
-
     setIsInCart(!isInCart)
   }
 
@@ -111,7 +111,7 @@ export default function Component({ params }: { params: { id: string } }) {
     : product?.price
 
   return (
-    <div className="min-h-screen pt-20 bg-white p-8">
+    <div className="min-h-screen pt-20 bg-gradient-to-b from-gray-50 to-white p-8">
       <style jsx global>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
@@ -121,14 +121,16 @@ export default function Component({ params }: { params: { id: string } }) {
           scrollbar-width: none;
         }
       `}</style>
-      <Card className="max-w-7xl mx-auto">
+      <Card className="max-w-7xl mx-auto shadow-lg">
         <CardContent className="p-6">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Vertical scrollable image column */}
             <div className="w-full lg:w-24 lg:h-[600px] flex lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto lg:overflow-x-hidden hide-scrollbar">
               {product?.link.map((image, index) => (
-                <div
+                <motion.div
                   key={index}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   className={`flex-shrink-0 cursor-pointer ${
                     index === currentImageIndex ? 'border-2 border-primary' : 'border border-gray-200'
                   }`}
@@ -139,43 +141,72 @@ export default function Component({ params }: { params: { id: string } }) {
                     alt={`${product.name} - Image ${index + 1}`}
                     width={96}
                     height={96}
-                    className="object-cover"
+                    className="object-cover rounded-md"
                   />
-                </div>
+                </motion.div>
               ))}
             </div>
 
             {/* Main product image */}
-            <div className="flex-grow cursor-pointer" onClick={handleImageClick}>
+            <motion.div 
+              className="flex-grow cursor-pointer"
+              onClick={handleImageClick}
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
               <Image
                 src={product?.link[currentImageIndex] || "/images/logo.png"}
                 alt={product?.name || "Product image"}
                 width={600}
                 height={600}
-                className="object-cover w-full h-auto"
+                className="object-cover w-full h-auto rounded-lg shadow-md"
               />
-            </div>
+            </motion.div>
 
             {/* Product details */}
             <div className="lg:w-1/3 space-y-6">
-              <h1 className="text-4xl font-bold text-gray-900">{product?.name}</h1>
+              <motion.h1 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="text-4xl font-bold text-gray-900"
+              >
+                {product?.name}
+              </motion.h1>
               
               {/* Expandable Description */}
-              <div>
+              <motion.div layout>
                 <p className={`text-gray-600 ${isDescriptionExpanded ? '' : 'line-clamp-5'}`}>
                   {product?.description}
                 </p>
                 {product?.description && product.description.split('\n').length > 5 && (
-                  <button
+                  <motion.button
                     onClick={toggleDescription}
-                    className="text-primary hover:underline mt-2"
+                    className="text-primary hover:underline mt-2 flex items-center"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    {isDescriptionExpanded ? 'Read less' : 'Read more'}
-                  </button>
+                    {isDescriptionExpanded ? (
+                      <>
+                        Read less
+                        <ChevronUp className="ml-1 h-4 w-4" />
+                      </>
+                    ) : (
+                      <>
+                        Read more
+                        <ChevronDown className="ml-1 h-4 w-4" />
+                      </>
+                    )}
+                  </motion.button>
                 )}
-              </div>
+              </motion.div>
               
-              <div className="flex items-center space-x-2">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex items-center space-x-2"
+              >
                 <p className="text-3xl font-bold text-primary">Rs.{discountedPrice?.toFixed(2)}</p>
                 {product?.discountPercent && product.discountPercent > 0 && (
                   <div className="flex items-center">
@@ -183,11 +214,16 @@ export default function Component({ params }: { params: { id: string } }) {
                     <p className="text-lg text-green-600 ml-2">({product.discountPercent}% off)</p>
                   </div>
                 )}
-              </div>
-              <div className="flex items-center space-x-1 text-yellow-500">
+              </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex items-center space-x-1 text-yellow-500"
+              >
                 <Star className="h-5 w-5 fill-current" />
                 <span className="text-lg font-semibold">{product?.ratings}/5</span>
-              </div>
+              </motion.div>
 
               <motion.button
                 onClick={handleCartToggle}
@@ -195,37 +231,63 @@ export default function Component({ params }: { params: { id: string } }) {
                 whileTap={{ scale: 0.95 }}
                 className={`${
                   isInCart ? 'bg-red-600 hover:bg-red-700' : 'bg-black hover:bg-gray-800'
-                } text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 flex items-center justify-center`}
+                } text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 flex items-center justify-center w-full`}
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
-                {isInCart ? 'Remove' : 'Add to Cart'}
+                {isInCart ? 'Remove from Cart' : 'Add to Cart'}
               </motion.button>
           
-              <Button onClick={(e) => {
-                handleCartToggle(e)
-                router.push('/Cart')
-              }}
-               variant="outline" className="w-full border-primary text-primary hover:bg-primary/10">Buy Now</Button>
+              <Button 
+                onClick={(e) => {
+                  handleCartToggle(e)
+                  router.push('/Cart')
+                }}
+                variant="outline" 
+                className="w-full border-primary text-primary hover:bg-primary/10"
+              >
+                Buy Now
+              </Button>
             </div>
           </div>
 
           {/* Fullscreen image viewer */}
-          {isFullscreen && (
-            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-              <div ref={fullscreenRef} className="max-w-4xl max-h-full overflow-auto hide-scrollbar">
-                <Image
-                  src={product?.link[currentImageIndex] || "/images/logo.png"}
-                  alt={product?.name || "Full size product image"}
-                  width={1200}
-                  height={1200}
-                  className="object-contain w-full h-auto"
-                />
-              </div>
-            </div>
-          )}
+          <AnimatePresence>
+            {isFullscreen && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+              >
+                <motion.div 
+                  ref={fullscreenRef}
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0.9 }}
+                  className="max-w-4xl max-h-full overflow-auto hide-scrollbar relative"
+                >
+                  <Image
+                    src={product?.link[currentImageIndex] || "/images/logo.png"}
+                    alt={product?.name || "Full size product image"}
+                    width={1200}
+                    height={1200}
+                    className="object-contain w-full h-auto"
+                  />
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="absolute top-4 right-4 text-white bg-black bg-opacity-50 p-2 rounded-full"
+                    onClick={() => setIsFullscreen(false)}
+                  >
+                    <X className="h-6 w-6" />
+                  </motion.button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </CardContent>
       </Card>
-      <Reviews productId={params.id}></Reviews>
+      <Reviews productId={params.id} />
     </div>
   )
 }
