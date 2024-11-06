@@ -33,7 +33,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     if(shippingId && email){
      await sendOrderShippedEmail(email,"2-3 days",shippingId);
     }else if(status=='Delivered'){
-      await sendOrderDeliveredEmail(email);
+      await sendOrderDeliveredEmail(email,id);
     }
     return new Response(JSON.stringify({
       order: updatedOrder,

@@ -36,7 +36,7 @@ export default function ProductCatalog() {
         console.error(error);
       } finally {
         setLoading(false);
-        // Scroll to the top of the page after loading finishes
+       
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };

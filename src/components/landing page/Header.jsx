@@ -29,11 +29,22 @@ export default function Header() {
       <div className={`relative ${scrollPosition > 50 ? 'bg-white shadow-md' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6 md:justify-start md:space-x-10">
-            <div className="flex justify-start lg:w-0 lg:flex-1">
-              <a href="/" className="flex items-center">
-                <Image src="/images/logo.png" alt='logo' width={200} height={200} />
-              </a>
-            </div>
+         
+          <div 
+  className="flex justify-start lg:w-0 lg:flex-1" 
+  
+>
+  <a href="/" className="flex items-center">
+    <Image 
+      src="/images/logo.png" 
+      alt="logo" 
+      width={200} 
+      height={200} 
+      priority 
+      style={{ width: '200px'}}
+    />
+  </a>
+</div>
 
             {/* Mobile Icons */}
             <div className="flex items-center md:hidden space-x-4">

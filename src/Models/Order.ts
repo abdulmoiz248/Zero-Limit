@@ -15,16 +15,26 @@ export interface Order extends Document {
   phone: string;
   address: string;
   total: number;
+  review:string;
+ rating: number;
 
 }
 
 
 const OrderSchema = new Schema<Order>({
+
   total: {
     type: Number,
     required: true,
   },
-  
+   review: {
+    type: String,
+
+  }, 
+  rating: {
+    type: Number,
+    
+  },
   status: {
     type: String,
     required: true,
