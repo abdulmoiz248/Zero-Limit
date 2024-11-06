@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Product } from '@/Models/Product'
 import Reviews from '@/components/Review'
-import { addToCart, isProductInCart } from '@/helper/cart'
+import { addToCart, isProductInCart, removeFromCart } from '@/helper/cart'
 import LionLoader from '@/components/LionLoader'
 import { useRouter } from 'next/navigation'
 
@@ -69,9 +69,7 @@ export default function Component({ params }: { params: { id: string } }) {
   const handleCartToggle = (e: React.MouseEvent) => {
     e.preventDefault()
     if (isInCart) {
-      const cart = JSON.parse(localStorage.getItem('cart') || '{}')
-      delete cart[product?._id as string]
-      localStorage.setItem('cart', JSON.stringify(cart))
+      removeFromCart(product?._id as string);
     } else {
       addToCart(product!, 1)
     }

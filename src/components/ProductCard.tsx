@@ -6,8 +6,8 @@ import { ShoppingCart, Star } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Product } from '@/Models/Product'
-import {  addToCart, isProductInCart } from '@/helper/cart'
-
+import {  addToCart, isProductInCart, removeFromCart } from '@/helper/cart'
+import { toast } from 'react-hot-toast';
 interface ProductCardProps {
   product: Product
 }
@@ -24,13 +24,29 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const handleCartToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
-    const cart = JSON.parse(localStorage.getItem('cart') || '{}')
-
     if (isInCart) {
  
-      delete cart[product._id as string]
+     removeFromCart(product._id as string);
+     toast.error(`Product removed from cart!`, {
+      duration: 2000, 
+      position: 'top-right', // Position of the toast
+      style: {
+        backgroundColor: '#F44336', // Red background for error
+        color: 'white',
+        fontSize: '16px',
+      },
+    });
     } else {
         addToCart(product, 1);
+        toast.success(`Product added to cart!`, {
+          duration: 2000, // Display for 3 seconds
+          position: 'top-right', // Position of the toast
+          style: {
+            backgroundColor: '#4CAF50', // Green background for success
+            color: 'white',
+            fontSize: '18px',
+          },
+        });
     }
 
     setIsInCart(!isInCart)

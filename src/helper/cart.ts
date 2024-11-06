@@ -1,6 +1,5 @@
 import { Product } from "@/Models/Product";
 import { CartItem } from "@/interfaces/interfaces";
-
 export function getStoredCart(): Record<string, CartItem> {
   try {
     const cart = JSON.parse(localStorage.getItem('cart') || '{}');
@@ -36,7 +35,6 @@ export function addToCart(product: Product, quantity: number): void {
     cart[product._id as string] = { product, quantity };
   }
 
-  
   localStorage.setItem('cart', JSON.stringify(cart));
 
 }

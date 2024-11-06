@@ -7,6 +7,7 @@ import BelowHeader from '@/components/landing page/BelowHeader';
 import LionLoader from '@/components/LionLoader';
 import axios from 'axios';
 import { Product } from '@/Models/Product';
+import { Toaster } from 'react-hot-toast';
 
 const CatCarousel = dynamic(() => import('@/components/landing page/CategoriesCarousel'), {
   ssr: false,
@@ -79,6 +80,7 @@ export default function Home() {
         <LionLoader />
       ) : (
         <>
+        <Toaster/>
           <BelowHeader />
 
           <motion.div
