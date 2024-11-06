@@ -1,3 +1,4 @@
+
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from "@vercel/analytics/react"
 import type { Metadata } from "next";
@@ -6,6 +7,10 @@ import "./globals.css";
 
 import Header from "@/components/landing page/Header";
 import Footer from '@/components/landing page/Footer'
+import OneSignalClient from '@/components/OneSignalClient'
+
+
+
 
 export const metadata: Metadata = {
   title: "Zero Limit - Unleash Your Fearless Style",
@@ -39,6 +44,8 @@ export const viewport = {
   initialScale: 1.0,
 };
 
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,6 +56,7 @@ export default function RootLayout({
       <body>
         <Analytics/>
         <SpeedInsights />
+        <OneSignalClient/>
         <Header></Header>
         {children}
         <Footer/>

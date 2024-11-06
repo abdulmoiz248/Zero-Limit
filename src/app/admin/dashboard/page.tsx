@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
+import useOneSignal from '@/hooks/usOneSignal';
 import { 
   PlusCircle, 
   Tag, 
@@ -62,6 +63,7 @@ interface topProducts{
 }
 
 export default function Dashboard() {
+  useOneSignal();
   const router = useRouter()
   let ordernumber=0;
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)

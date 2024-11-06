@@ -54,7 +54,7 @@ export default function LuxuryCheckoutPage() {
         localStorage.removeItem('cart');
         setShowContactPrompt(false);
         setShowSuccessModal(true)
- 
+       await axios.post('/api/notifyOrder');  
       }else{
         setError(res.data.message);
       }
