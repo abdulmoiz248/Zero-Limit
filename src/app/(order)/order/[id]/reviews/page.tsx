@@ -18,6 +18,7 @@ import axios from 'axios'
 import { Product } from '@/Models/Product'
 import NotFound from '@/app/not-found'
 import LionLoader from '@/components/LionLoader';
+import { useRouter } from 'next/navigation';
 
 const preWrittenMessages = [
   "Absolutely love this product!",
@@ -39,6 +40,7 @@ export default function EnhancedCustomerReviewPage({ params }: { params: { id: s
   const [products, setProducts] = useState<Product[] | undefined>();
   const [submitted, setSubmitted] = useState(false);
   const [loading ,setloading]=useState(true);
+  const router=useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -278,7 +280,12 @@ export default function EnhancedCustomerReviewPage({ params }: { params: { id: s
           </DialogHeader>
           <div className="mt-4">
             <Button
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => 
+               {
+                setIsModalOpen(false)
+                router.push('/');
+               }
+              }
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
             >
               Close
