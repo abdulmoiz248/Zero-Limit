@@ -104,10 +104,10 @@ export default function Component() {
                   <div className="flex-grow space-y-2">
                     <h2 onClick={()=>{
                     router.push(`/Product/${item.product._id}`)
-                  }}  className="text-xl font-bold text-[#1b03a3]">{item.product.name}</h2>
+                  }}  className="text-xl font-bold text-[#1b03a3]">{item.product.name} | {item.product.size}</h2>
                     <div className="flex items-center space-x-2">
                       <p className="text-lg font-semibold">Rs.{item.product.price}</p>
-                      {item.product.discountPercent && item.product.discountPercent >0  && (
+                      {item.product.discountPercent!=0 && item.product.discountPercent >0  && (
                         <span className="text-sm text-green-600 font-semibold">
                           ({item.product.discountPercent}% off)
                         </span>

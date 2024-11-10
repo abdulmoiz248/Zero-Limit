@@ -12,10 +12,11 @@ export async function POST(req: Request) {
     const category = formData.get("category");
     const price = formData.get("price");
     const quantity = formData.get("quantity");
-    const description = formData.get("description");
+    const description = formData.get("description");    
+    const size = formData.get("size");
 
     // Validate input
-    if (!productName || photos.length === 0 || !category || !price || !quantity || !description) {
+    if (!productName || photos.length === 0 ||!size || !category || !price || !quantity || !description) {
       return new Response(
         JSON.stringify({ message: "Invalid data", success: false }),
         { status: 400 }
@@ -48,6 +49,7 @@ export async function POST(req: Request) {
       categoryId: category,
       price: Number(price),
       quantity: Number(quantity),
+      size,
       description,
     });
 

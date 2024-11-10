@@ -171,7 +171,7 @@ export default function OrderDetailsModal({ order, onClose, onStatusChange }: Or
                 <TableBody>
                   {products && products.map((product: Product, index: number) => (
                     <TableRow key={index}>
-                      <TableCell>{product.name}</TableCell>
+                      <TableCell>{product.name} | {product.size}</TableCell>
                       <TableCell className="text-right">{countItems(product._id as string, order.products)}</TableCell>
                     </TableRow>
                   ))}

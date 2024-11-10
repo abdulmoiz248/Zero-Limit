@@ -22,7 +22,7 @@ export default function ProductReviews({ reviews }:{reviews:Review[] } ) {
   }
 
   return (
-    <div className="bg-white shadow-xl rounded-lg overflow-hidden">
+    <div className="bg-white shadow-xl  rounded-lg overflow-hidden">
       <div className="p-8">
         <h3 className="text-3xl font-bold text-gray-900 mb-8">Customer Reviews</h3>
         <div className="space-y-6">

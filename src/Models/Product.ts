@@ -12,9 +12,14 @@ export interface Product extends Document {
   description: string;
   ratings: number;
   numReviews: number;
+  size:string;
 }
 
 const ProductSchema = new Schema<Product>({
+  size: {
+    type: String,
+    required: true,
+  },
   name: {
     type: String,
     required: true,

@@ -7,7 +7,6 @@ import "./globals.css";
 
 import Header from "@/components/landing page/Header";
 import Footer from '@/components/landing page/Footer'
-import OneSignalClient from '@/components/OneSignalClient'
 
 
 
@@ -56,7 +55,7 @@ export default function RootLayout({
       <body>
         <Analytics/>
         <SpeedInsights />
-        <OneSignalClient/>
+       
         <Header></Header>
         {children}
         <Footer/>

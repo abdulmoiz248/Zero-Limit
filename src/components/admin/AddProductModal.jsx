@@ -9,6 +9,8 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [description, setDescription] = useState('');
+  
+  const [size, setSize] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -18,6 +20,7 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
       setQuantity('');
       setSelectedCategory('');
       setPrice('');
+      setSize('');
     }
   }, [isOpen]);
 
@@ -52,6 +55,8 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
     formData.append('quantity', quantity);
     formData.append('description', description);
 
+ formData.append('size', size);
+    
     onSubmit(formData);
   };
 
@@ -152,6 +157,26 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
                 placeholder="Enter quantity"
               />
             </div>
+
+            <div className="mb-4">
+  <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-2">
+    Size
+  </label>
+  <select
+    id="size"
+    value={size}
+    onChange={(e) => setSize(e.target.value)}
+    required
+    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+  >
+    <option value="" disabled>Select size</option>
+    <option value="S">Small</option>
+    <option value="M">Medium</option>
+    <option value="L">Large</option>
+    <option value="XL">Extra Large</option>
+  </select>
+</div>
+
 
             {/* Description */}
             <div className="mb-4">

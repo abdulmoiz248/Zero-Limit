@@ -232,7 +232,7 @@ export default function OrderPage() {
                           >
                             <div className="flex items-center">
                               <Package className="w-5 h-5 mr-3 text-[#1b03a3]" />
-                              <span className="text-gray-700 group-hover:text-[#1b03a3] transition-colors duration-300">{product.name}</span>
+                              <span className="text-gray-700 group-hover:text-[#1b03a3] transition-colors duration-300">{product.name} | {product.size}</span>
                             </div>
                             <div className="flex items-center">
                               <span className="font-medium text-gray-600 mr-2">x {quantity}</span>

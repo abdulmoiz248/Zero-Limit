@@ -33,7 +33,7 @@ export default function Reviews({ productId }: { productId: string }) {
   }, [productId])
 
   return (
-    <div className="relative max-w-4xl mx-auto p-4 overflow-hidden">
+    <div className="relative max-w-4xl mt-3 mx-auto p-4 overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

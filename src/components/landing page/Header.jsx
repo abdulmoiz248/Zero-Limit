@@ -47,7 +47,7 @@ export default function Header() {
 </div>
 
             {/* Mobile Icons */}
-            <div className="flex items-center md:hidden space-x-4">
+            <div className="flex items-center  md:hidden space-x-4">
               
               <motion.a
                 href="/Profile"

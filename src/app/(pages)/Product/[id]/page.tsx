@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Product } from '@/Models/Product'
 import Reviews from '@/components/Review'
-import { addToCart, isProductInCart, removeFromCart } from '@/helper/cart'
+import {  isProductInCart, removeFromCart } from '@/helper/cart'
 import LionLoader from '@/components/LionLoader'
 import { useRouter } from 'next/navigation'
+import ProductModal from '@/components/ProductModal'
 
 export default function Component({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -20,6 +21,7 @@ export default function Component({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product>()
   const [isInCart, setIsInCart] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const router = useRouter()
 
@@ -70,10 +72,11 @@ export default function Component({ params }: { params: { id: string } }) {
     e.preventDefault()
     if (isInCart) {
       removeFromCart(product?._id as string);
+      setIsInCart(!isInCart)
     } else {
-      addToCart(product!, 1)
+      setIsModalOpen(true);
     }
-    setIsInCart(!isInCart)
+  
   }
 
   const toggleDescription = () => {
@@ -119,6 +122,8 @@ export default function Component({ params }: { params: { id: string } }) {
           scrollbar-width: none;
         }
       `}</style>
+    
+       <ProductModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} Product={product!} />
       <Card className="max-w-7xl mx-auto shadow-lg">
         <CardContent className="p-6">
           <div className="flex flex-col lg:flex-row gap-8">
@@ -206,10 +211,10 @@ export default function Component({ params }: { params: { id: string } }) {
                 className="flex items-center space-x-2"
               >
                 <p className="text-3xl font-bold text-primary">Rs.{discountedPrice?.toFixed(2)}</p>
-                {product?.discountPercent && product.discountPercent > 0 && (
+                {(product?.discountPercent!=0 ) && (
                   <div className="flex items-center">
-                    <p className="text-xl text-gray-500 line-through">Rs.{product.price.toFixed(2)}</p>
-                    <p className="text-lg text-green-600 ml-2">({product.discountPercent}% off)</p>
+                    <p className="text-xl text-gray-500 line-through">Rs.{product?.price.toFixed(2)}</p>
+                    <p className="text-lg text-green-600 ml-2">({product?.discountPercent}% off)</p>
                   </div>
                 )}
               </motion.div>
@@ -222,7 +227,7 @@ export default function Component({ params }: { params: { id: string } }) {
                 <Star className="h-5 w-5 fill-current" />
                 <span className="text-lg font-semibold">{product?.ratings}/5</span>
               </motion.div>
-
+  
               <motion.button
                 onClick={handleCartToggle}
                 whileHover={{ scale: 1.05 }}

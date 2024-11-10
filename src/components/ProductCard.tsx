@@ -6,8 +6,9 @@ import { ShoppingCart, Star } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Product } from '@/Models/Product'
-import {  addToCart, isProductInCart, removeFromCart } from '@/helper/cart'
-import { toast } from 'react-hot-toast';
+import { addToCart, isProductInCart, removeFromCart } from '@/helper/cart'
+import { toast } from 'react-hot-toast'
+
 interface ProductCardProps {
   product: Product
 }
@@ -15,38 +16,49 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const router = useRouter()
   const [isInCart, setIsInCart] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   useEffect(() => {
-    if(isProductInCart(product._id as string))
-       setIsInCart(true); 
+    if (isProductInCart(product._id as string))
+      setIsInCart(true)
+  }, [product])
 
-  }, [product]);
+  useEffect(() => {
+    if (isHovered && product.link.length > 1) {
+      const timer = setTimeout(() => {
+        setCurrentImageIndex(1)
+      }, 300) // Delay the image change by 300ms
+      return () => clearTimeout(timer)
+    } else {
+      setCurrentImageIndex(0)
+    }
+  }, [isHovered, product.link])
 
   const handleCartToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (isInCart) {
- 
-     removeFromCart(product._id as string);
-     toast.error(`Product removed from cart!`, {
-      duration: 2000, 
-      position: 'top-right', // Position of the toast
-      style: {
-        backgroundColor: '#F44336', // Red background for error
-        color: 'white',
-        fontSize: '16px',
-      },
-    });
+      removeFromCart(product._id as string)
+      toast.error(`Product removed from cart!`, {
+        duration: 2000,
+        position: 'top-right',
+        style: {
+          backgroundColor: '#F44336',
+          color: 'white',
+          fontSize: '16px',
+        },
+      })
     } else {
-        addToCart(product, 1);
-        toast.success(`Product added to cart!`, {
-          duration: 2000, // Display for 3 seconds
-          position: 'top-right', // Position of the toast
-          style: {
-            backgroundColor: '#4CAF50', // Green background for success
-            color: 'white',
-            fontSize: '18px',
-          },
-        });
+      addToCart(product, 1)
+      toast.success(`Product added to cart!`, {
+        duration: 2000,
+        position: 'top-right',
+        style: {
+          backgroundColor: '#4CAF50',
+          color: 'white',
+          fontSize: '18px',
+        },
+      })
     }
 
     setIsInCart(!isInCart)
@@ -65,22 +77,28 @@ export default function ProductCard({ product }: ProductCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       whileHover={{ scale: 1.03 }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
       className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl cursor-pointer"
     >
-      <div className="relative">
-        <Image
-          src={product.link[0] || '/placeholder.svg'}
-          alt={product.name}
-          width={400}
-          height={300}
-          className="w-full h-56 object-cover"
-        />
+      <div className="relative w-full h-56">
+        {product.link.slice(0, 2).map((src, index) => (
+          <Image
+            key={index}
+            src={src || '/placeholder.svg'}
+            alt={`${product.name} - Image ${index + 1}`}
+            fill
+            className={`object-cover transition-opacity duration-300 ${
+              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        ))}
         {product.discountPercent > 0 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="absolute top-0 left-0 bg-black text-white px-3 py-1 m-3 rounded-full text-sm font-semibold"
+            className="absolute top-0 left-0 bg-black text-white px-3 py-1 m-3 rounded-full text-sm font-semibold z-10"
           >
             -{product.discountPercent}%
           </motion.div>
