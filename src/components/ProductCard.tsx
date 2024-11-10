@@ -20,8 +20,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   useEffect(() => {
-    if (isProductInCart(product._id as string))
-      setIsInCart(true)
+    if (isProductInCart(product._id as string)) setIsInCart(true)
   }, [product])
 
   useEffect(() => {
@@ -81,18 +80,22 @@ export default function ProductCard({ product }: ProductCardProps) {
       onHoverEnd={() => setIsHovered(false)}
       className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl cursor-pointer"
     >
-      <div className="relative w-full h-56">
-        {product.link.slice(0, 2).map((src, index) => (
-          <Image
-            key={index}
-            src={src || '/placeholder.svg'}
-            alt={`${product.name} - Image ${index + 1}`}
-            fill
-            className={`object-cover transition-opacity duration-300 ${
-              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
-        ))}
+      <div className="relative w-full pt-[100%]"> {/* Changed height to padding-top for aspect ratio */}
+        <div className="absolute inset-0 overflow-hidden">
+          {product.link.slice(0, 2).map((src, index) => (
+            <Image
+              key={index}
+              src={src || '/placeholder.svg'}
+              alt={`${product.name} - Image ${index + 1}`}
+              layout="fill"
+              objectFit="cover"
+              objectPosition="center 20%" // Adjust this value to move the focal point up
+              className={`transition-opacity duration-300 ${
+                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          ))}
+        </div>
         {product.discountPercent > 0 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}

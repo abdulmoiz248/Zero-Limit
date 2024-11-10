@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Star, ChevronDown, ChevronUp, X } from 'lucide-react'
+import { ShoppingCart, Star,  X } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
@@ -12,11 +12,12 @@ import {  isProductInCart, removeFromCart } from '@/helper/cart'
 import LionLoader from '@/components/LionLoader'
 import { useRouter } from 'next/navigation'
 import ProductModal from '@/components/ProductModal'
+import Description from '@/components/Description'
 
 export default function Component({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
+ 
   const fullscreenRef = useRef<HTMLDivElement>(null)
   const [product, setProduct] = useState<Product>()
   const [isInCart, setIsInCart] = useState(false)
@@ -79,9 +80,7 @@ export default function Component({ params }: { params: { id: string } }) {
   
   }
 
-  const toggleDescription = () => {
-    setIsDescriptionExpanded((prev) => !prev)
-  }
+ 
 
   const handleImageClick = () => {
     setIsFullscreen(true)
@@ -178,31 +177,7 @@ export default function Component({ params }: { params: { id: string } }) {
               </motion.h1>
               
               {/* Expandable Description */}
-              <motion.div layout>
-                <p className={`text-gray-600 ${isDescriptionExpanded ? '' : 'line-clamp-5'}`}>
-                  {product?.description}
-                </p>
-                {product?.description && product.description.split('\n').length > 5 && (
-                  <motion.button
-                    onClick={toggleDescription}
-                    className="text-primary hover:underline mt-2 flex items-center"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {isDescriptionExpanded ? (
-                      <>
-                        Read less
-                        <ChevronUp className="ml-1 h-4 w-4" />
-                      </>
-                    ) : (
-                      <>
-                        Read more
-                        <ChevronDown className="ml-1 h-4 w-4" />
-                      </>
-                    )}
-                  </motion.button>
-                )}
-              </motion.div>
+             <Description description={product?.description}/>
               
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}

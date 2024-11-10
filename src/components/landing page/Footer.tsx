@@ -13,9 +13,9 @@ const Footer = () => {
   const [modalContent, setModalContent] = useState<string | null>(null);
 
   const socialIcons = [
-    { Icon: FaFacebook, title: 'Facebook' ,link:''},
-    { Icon: FaInstagram, title: 'Instagram',link:'' },
-    { Icon: SiTiktok, title: 'TikTok',link:'' },
+    { Icon: FaFacebook, title: 'Facebook' ,link:'https://www.facebook.com/profile.php?id=61566883464221&mibextid=LQQJ4d'},
+    { Icon: FaInstagram, title: 'Instagram',link:'https://www.instagram.com/zerolimit.apparel/profilecard/?igsh=NHNvdnY4bGxveW1w' },
+    { Icon: SiTiktok, title: 'TikTok',link:'https://www.tiktok.com/@zer0limit.apparel?_t=8rCPplMQmYS&_r=1' },
   ];
 
   const modalContents = {
@@ -98,6 +98,10 @@ const Footer = () => {
         <p>
           The materials on Limit Zero&apos;s website are provided on an &apos;as is&apos; basis. Limit Zero makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties.
         </p>
+        <h3 className="text-xl font-semibold mb-2">4. Return Policy</h3>
+        <p>
+         Return should be within day of delievery and tag broken will not be accepted
+           </p>
       </div>
     ),
   };
@@ -113,7 +117,7 @@ const Footer = () => {
   };
 
   return (
-    <footer id="footer" className="py-12 bg-gradient-to-b border-t-2 border-[#1b03a3] from-white to-gray-100">
+    <footer id="footer" className="py-12 bg-gradient-to-b  from-white to-gray-100">
       <div className="container px-6 mx-auto space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <motion.div

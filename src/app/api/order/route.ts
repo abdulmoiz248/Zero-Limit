@@ -1,7 +1,7 @@
 import OrderModel, { Order } from "@/Models/Order";
 
 import connect from "@/dbConfig/dbConfig";
-
+import {sendOrderPlacedEmail} from '@/helper/orderPlace'
 import { CartItem } from "@/interfaces/interfaces";
 import { NextResponse } from "next/server";
 
@@ -39,6 +39,7 @@ export async function POST(req: Request) {
     });
 
     await order.save();
+    await sendOrderPlacedEmail(formData.email);
 
     return NextResponse.json(
       {

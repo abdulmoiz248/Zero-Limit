@@ -4,7 +4,7 @@ import Card from "./ZeroCard"; // Assuming the Card component is in the same dir
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen flex flex-col md:flex-row md:pt-0 pt-14">
+    <div className="min-h-screen  flex flex-col md:flex-row md:pt-0 mt-0  ">
       {/* Left Section */}
       <div
   style={{ backgroundImage: 'url(/images/front.jpeg)' }}
@@ -24,7 +24,7 @@ const HomePage = () => {
 
       {/* Right Section */}
       <div 
-       className="md:w-1/2 w-full  flex items-center justify-center p-8  bg-black flex-grow">
+       className="md:w-1/2 w-full  flex items-center justify-center p-8  bg-[#000000] flex-grow">
         <Card />
       </div>
     </div>
