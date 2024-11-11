@@ -20,7 +20,7 @@ export default function ProductCarousel({ categories = [] }) {
   }
 
   return (
-    <div className="w-full bg-gradient-to-br from-gray-100 to-white text-gray-900 p-4 md:p-6 min-h-[80vh] mb-4 sm:mb-6 lg:mb-10">
+    <div className="w-full bg-gradient-to-br from-gray-100 to-white text-gray-900 p-0 md:p-6 min-h-[70vh] sm:min-h-[60vh] mb-0 lg:mb-6">
       <h1 className="text-2xl md:text-4xl font-bold mb-6 text-center">
         Explore Our Product Categories
       </h1>

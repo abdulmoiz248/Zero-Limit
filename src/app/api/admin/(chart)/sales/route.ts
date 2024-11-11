@@ -43,12 +43,12 @@ const getTopProducts = async () => {
   try {
     const topProducts = await OrderModel.aggregate([
       // Unwind the products array
-       { $unwind: "$products" },
+      { $unwind: "$products" },
 
-      // Convert product IDs from string to ObjectId for proper matching
+      // Ensure that the product is an object with an ID field that can be converted to ObjectId
       {
         $set: {
-          productId: { $toObjectId: "$products" },
+          productId: { $toObjectId: "$products.productId" }, // Assuming products are objects with productId field
         },
       },
 
@@ -97,6 +97,7 @@ const getTopProducts = async () => {
     throw error;
   }
 };
+
 
 
 

@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Eye,  Calendar, DollarSign, ShoppingBag, ArrowRight } from 'lucide-react'
+import { X, Eye, Calendar, DollarSign, ShoppingBag, ArrowRight, AlertTriangle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import axios from 'axios'
 import LionLoader from '@/components/LionLoader'
@@ -16,7 +15,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge"
 import Image from 'next/image'
 
-
 export default function OrderPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
@@ -25,6 +23,7 @@ export default function OrderPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([])
   const [unfilteredProducts, setUnfilteredProducts] = useState<string[]>([])
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -56,16 +55,15 @@ export default function OrderPage() {
   const handleOpenModal = async (order: Order) => {
     try {
       setSelectedOrder(order)
-
-     
+      
       const res = await axios.post('/api/order-products', {
         products: order.products.map((item) => ({
-          productId: item.productId,  // Only send productId
+          productId: item.productId,
         }))
       })
       const products: string[] = order.products.map((item) => item.productId);
 
-       setUnfilteredProducts(products);
+      setUnfilteredProducts(products);
       if (res.data.success) {
         const products = res.data.products
         setSelectedProducts(removeDuplicateProducts(products))
@@ -94,7 +92,13 @@ export default function OrderPage() {
   }
 
   const router = useRouter()
+
   const handleCancelOrder = async () => {
+    if (!selectedOrder) return
+    setIsConfirmationModalOpen(true)
+  }
+
+  const confirmCancelOrder = async () => {
     if (!selectedOrder) return
     try {
       await axios.post(`/api/order/cancel`, { id: selectedOrder._id })
@@ -103,10 +107,34 @@ export default function OrderPage() {
       )
       setOrders(updatedOrders as Order[])
       setSelectedOrder({ ...selectedOrder, status: 'Cancelled' } as Order)
+      setIsConfirmationModalOpen(false)
     } catch {
       console.error('Failed to cancel order.')
     }
   }
+
+  const ConfirmationModal = () => (
+    <Dialog open={isConfirmationModalOpen} onOpenChange={setIsConfirmationModalOpen}>
+      <DialogContent className="sm:max-w-[425px] bg-white p-0 overflow-hidden flex flex-col">
+        <DialogHeader className="p-6 pb-2 bg-red-600 text-white">
+          <DialogTitle className="text-2xl font-bold flex items-center">
+            <AlertTriangle className="mr-2" /> Confirm Cancellation
+          </DialogTitle>
+        </DialogHeader>
+        <div className="p-6">
+          <p className="text-gray-700 mb-4">Are you sure you want to cancel this order? This action cannot be undone.</p>
+          <div className="flex justify-end space-x-4">
+            <Button variant="outline" onClick={() => setIsConfirmationModalOpen(false)}>
+              No, Keep Order
+            </Button>
+            <Button variant="destructive" onClick={confirmCancelOrder}>
+              Yes, Cancel Order
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1b03a3]/5 to-white pt-20">
@@ -220,7 +248,6 @@ export default function OrderPage() {
                           return (
                             <li key={product._id as string} className="flex justify-between items-center">
                               <div className="flex items-center">
-                                
                                 <Image src={product.link[0]} alt={product.name} width={12} height={12} className="w-12 h-12 object-cover rounded-lg mr-4" />
                                 <span className="font-medium">{product.name}</span>
                               </div>
@@ -233,16 +260,15 @@ export default function OrderPage() {
                   </div>
                 </div>
                 
-              
-                    {selectedOrder.status === 'Pending' && (
-                      <Button
-                        variant="destructive"
-                        onClick={handleCancelOrder}
-                        className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white transition-colors duration-300"
-                      >
-                        Cancel Order
-                      </Button>
-                    )}
+                {selectedOrder.status === 'Pending' && (
+                  <Button
+                    variant="destructive"
+                    onClick={handleCancelOrder}
+                    className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white transition-colors duration-300"
+                  >
+                    Cancel Order
+                  </Button>
+                )}
                 <div className="flex justify-between items-center p-6 bg-gray-100">
                   <Button onClick={() => router.push('/')} variant="link" className="text-[#1b03a3] hover:bg-[#1b03a3]/10">
                     Continue Shopping <ArrowRight className="ml-2 w-4 h-4" />
@@ -252,11 +278,9 @@ export default function OrderPage() {
             </Dialog>
           )}
         </AnimatePresence>
+
+        <ConfirmationModal />
       </div>
     </div>
   )
 }
-
-
-
-
