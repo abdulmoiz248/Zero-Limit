@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Product } from '@/Models/Product'
 import Reviews from '@/components/Review'
-import {  isProductInCart, removeFromCart } from '@/helper/cart'
 import LionLoader from '@/components/LionLoader'
 import { useRouter } from 'next/navigation'
 import ProductModal from '@/components/ProductModal'
@@ -20,16 +19,13 @@ export default function Component({ params }: { params: { id: string } }) {
  
   const fullscreenRef = useRef<HTMLDivElement>(null)
   const [product, setProduct] = useState<Product>()
-  const [isInCart, setIsInCart] = useState(false)
+
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const router = useRouter()
 
-  useEffect(() => {
-    if (isProductInCart(product?._id as string))
-      setIsInCart(true)
-  }, [product])
+
 
   useEffect(() => {
     
@@ -71,12 +67,9 @@ export default function Component({ params }: { params: { id: string } }) {
 
   const handleCartToggle = (e: React.MouseEvent) => {
     e.preventDefault()
-    if (isInCart) {
-      removeFromCart(product?._id as string);
-      setIsInCart(!isInCart)
-    } else {
+    
       setIsModalOpen(true);
-    }
+    
   
   }
 
@@ -208,11 +201,11 @@ export default function Component({ params }: { params: { id: string } }) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`${
-                  isInCart ? 'bg-red-600 hover:bg-red-700' : 'bg-black hover:bg-gray-800'
+                 'bg-black hover:bg-gray-800'
                 } text-white font-semibold py-2 px-4 rounded-full transition-colors duration-300 flex items-center justify-center w-full`}
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
-                {isInCart ? 'Remove from Cart' : 'Add to Cart'}
+                { 'Add to Cart'}
               </motion.button>
           
               <Button 

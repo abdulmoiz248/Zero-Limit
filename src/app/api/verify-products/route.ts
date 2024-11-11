@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const productIds = cartItems.map((item) => item.product._id);
 
     // Fetch required products with stock in one go
-    const products = await ProductModel.find({ _id: { $in: productIds } }, "price quantity");
+    const products = await ProductModel.find({ _id: { $in: productIds } }, "price quantity size");
 
     let total = 0;
     const updateOperations = [];
@@ -32,10 +32,13 @@ export async function POST(req: Request) {
         );
       }
 
-      if (product.quantity < item.quantity) {
+      const [size, quantity] = Object.entries(item.product.size)[0];  // Get the first (and only) size and quantity pair
+      console.log(quantity);
+      // Check if there is enough stock for the selected size
+      if (product.size[size] < item.quantity) {
         return NextResponse.json(
           {
-            message: `Not enough stock for ${item.product.name}. Available: ${product.quantity}`,
+            message: `Not enough stock for ${item.product.name} size ${size}. Available: ${product.size[size]}`,
             success: false,
           },
           { status: 400 }
@@ -48,7 +51,11 @@ export async function POST(req: Request) {
       updateOperations.push({
         updateOne: {
           filter: { _id: item.product._id },
-          update: { $inc: { quantity: -item.quantity } },
+          update: { 
+            $inc: { 
+              [`size.${size}`]: -item.quantity, // Decrement the stock for the selected size
+            },
+          },
         },
       });
     }

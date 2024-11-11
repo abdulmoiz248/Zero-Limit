@@ -7,7 +7,8 @@ export async function GET() {
   try {
     await connect();
 
-    const products = await ProductModel.find({ quantity: { $gt: 0 },size:'M' });
+    const products = await ProductModel.find();
+    
     return NextResponse.json({
       products,
       success: true,

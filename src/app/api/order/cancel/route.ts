@@ -1,7 +1,7 @@
 import OrderModel from "@/Models/Order";
 import connect from "@/dbConfig/dbConfig";
 import { sendOrderCancelledEmail } from "@/helper/ordercancel";
-import ProductModel  from "@/Models/Product";
+
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -24,29 +24,9 @@ export async function POST(req: Request) {
     // Update order status to 'Cancelled'
     order.status = 'Cancelled';
     await order.save();
-
-    // Update product quantities based on the cancelled order
-    const productCounts: Record<string, number> = {};
-
-    // Count occurrences of each product ID in the order
-    order.products.forEach((productId: string) => {
-      productCounts[productId] = (productCounts[productId] || 0) + 1;
-    });
-
-    // Increment quantity for each unique product ID in the Product model
-    await Promise.all(
-      Object.entries(productCounts).map(async ([productId, count]) => {
-        await ProductModel.findByIdAndUpdate(
-          productId,
-          { $inc: { quantity: count } },
-          { new: true }
-        );
-      })
-    );
-
-    // Send cancellation email notification
+    
     await sendOrderCancelledEmail(order.email);
-
+    //await sendOrderCancelledEmail('moiz20920@gmail.com'); 
     return new Response(
       JSON.stringify({
         id: order._id,

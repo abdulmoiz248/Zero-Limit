@@ -36,18 +36,13 @@ export default function Component() {
     }
   };
   
-  function updateQuantity(productId: string, newQuantity: number): void {
-    const cart = getCart();
-    const item: CartItem = cart[productId];
-    
-    if (!item) {
-      return;
-    }
-    addToCart(item.product as Product, newQuantity);
+  function updateQuantity(product: Product, newQuantity: number): void {
+
+    addToCart(product as Product, newQuantity);
     updateCart();
   }
 
-  const removeItem = (id: string) => {
+  const removeItem = (id: Product) => {
     removeFromCart(id);
     updateCart()
   }
@@ -88,7 +83,7 @@ export default function Component() {
               {cartItems.map((item, index) => (
                 <motion.div
                    
-                  key={item.product._id as string}
+                  key={index}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
@@ -104,7 +99,9 @@ export default function Component() {
                   <div className="flex-grow space-y-2">
                     <h2 onClick={()=>{
                     router.push(`/Product/${item.product._id}`)
-                  }}  className="text-xl font-bold text-[#1b03a3]">{item.product.name} | {item.product.size}</h2>
+                  }}  className="text-xl font-bold text-[#1b03a3]">
+                     {item.product.name} | {Object.keys(item.product.size)[0]}
+                  </h2>
                     <div className="flex items-center space-x-2">
                       <p className="text-lg font-semibold">Rs.{item.product.price}</p>
                       {item.product.discountPercent!=0 && item.product.discountPercent >0  && (
@@ -117,7 +114,7 @@ export default function Component() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateQuantity(item.product._id as string,  - 1)}
+                        onClick={() => updateQuantity(item.product,  - 1)}
                         className="rounded-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80"
                       >
                         <Minus className="h-4 w-4" />
@@ -126,15 +123,14 @@ export default function Component() {
                         readOnly
                         type="number"
                         min="0"
-                        max={item.product.quantity}
                         value={item.quantity}
-                        onChange={(e) => updateQuantity(item.product._id as string, parseInt(e.target.value))}
+                        onChange={(e) => updateQuantity(item.product, parseInt(e.target.value))}
                         className="w-16 text-center"
                       />
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateQuantity(item.product._id as string,  1)}
+                        onClick={() => updateQuantity(item.product,  1)}
                         className="rounded-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80"
                       >
                         <Plus className="h-4 w-4" />
@@ -143,7 +139,7 @@ export default function Component() {
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-semibold">Rs.{calculateItemTotal(item)}</p>
-                    <Button variant="ghost" size="icon" onClick={() => removeItem(item.product._id as string)} className="text-[#1b03a3] hover:text-[#1b03a3]/80">
+                    <Button variant="ghost" size="icon" onClick={() => removeItem(item.product)} className="text-[#1b03a3] hover:text-[#1b03a3]/80">
                       <Trash2 className="h-5 w-5" />
                     </Button>
                   </div>

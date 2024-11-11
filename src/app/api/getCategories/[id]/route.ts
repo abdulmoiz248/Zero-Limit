@@ -26,8 +26,8 @@ export async function GET(req: Request) {
                 success: false
             }, { status: 404 });
         }
-        let  products:Product[]=await ProductModel.find({ categoryId: categoryId,size:'S'})
-        products=products.filter((product:Product) => product.quantity!==0);
+        const  products:Product[]=await ProductModel.find({ categoryId: categoryId})
+        
         return NextResponse.json({
             category,
             products,

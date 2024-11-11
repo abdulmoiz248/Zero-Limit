@@ -3,24 +3,31 @@ import { useState, useEffect } from 'react';
 
 export default function AddProductModal({ isOpen, onClose, onSubmit }) {
   const [productName, setProductName] = useState('');
-  const [photos, setPhotos] = useState([]); // Updated to hold multiple photos
+  const [photos, setPhotos] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [price, setPrice] = useState('');
-  const [quantity, setQuantity] = useState('');
+
   const [description, setDescription] = useState('');
   
-  const [size, setSize] = useState('');
+  // Size quantities
+  const [smallQty, setSmallQty] = useState('');
+  const [mediumQty, setMediumQty] = useState('');
+  const [largeQty, setLargeQty] = useState('');
+  const [extraLargeQty, setExtraLargeQty] = useState('');
 
   useEffect(() => {
     if (isOpen) {
       setProductName('');
       setPhotos([]);
       setDescription('');
-      setQuantity('');
+      
       setSelectedCategory('');
       setPrice('');
-      setSize('');
+      setSmallQty('');
+      setMediumQty('');
+      setLargeQty('');
+      setExtraLargeQty('');
     }
   }, [isOpen]);
 
@@ -44,7 +51,7 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
     e.preventDefault();
     const formData = new FormData();
     formData.append('productName', productName);
-    
+
     // Append all selected photos to formData
     photos.forEach((photo) => {
       formData.append('photo', photo);
@@ -52,20 +59,27 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
 
     formData.append('category', selectedCategory);
     formData.append('price', price);
-    formData.append('quantity', quantity);
+  
     formData.append('description', description);
 
- formData.append('size', size);
+    // Append size quantities as an object
+    const sizeData = {
+      S: smallQty ? parseInt(smallQty, 10) : 0,
+      M: mediumQty ? parseInt(mediumQty, 10) : 0,
+      L: largeQty ? parseInt(largeQty, 10) : 0,
+      XL: extraLargeQty ? parseInt(extraLargeQty, 10) : 0,
+    };
+    formData.append('size', JSON.stringify(sizeData));
     
     onSubmit(formData);
   };
 
   // Handle photo input change
   const handlePhotoChange = (e) => {
-    setPhotos([...e.target.files]); // Set selected files to state
+    setPhotos([...e.target.files]);
   };
 
-  if (!isOpen) return null; // Return null if modal is not open
+  if (!isOpen) return null;
 
   return (
     <div className="fixed z-50 inset-0 bg-gray-800 bg-opacity-75 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300">
@@ -99,7 +113,7 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
                 id="photos"
                 accept="image/*"
                 onChange={handlePhotoChange}
-                multiple // Allow multiple file selection
+                multiple
                 required
                 className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer shadow-sm focus:ring-blue-500 focus:border-blue-500"
               />
@@ -142,41 +156,41 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
               />
             </div>
 
-            {/* Quantity */}
+          
+            {/* Size and Quantity */}
             <div className="mb-4">
-              <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-2">
-                Quantity
-              </label>
-              <input
-                type="number"
-                id="quantity"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                required
-                className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter quantity"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-2">Size Quantities</label>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="number"
+                  placeholder="Small (S)"
+                  value={smallQty}
+                  onChange={(e) => setSmallQty(e.target.value)}
+                  className="block w-full px-4 py-2 border border-gray-300 rounded-md"
+                />
+                <input
+                  type="number"
+                  placeholder="Medium (M)"
+                  value={mediumQty}
+                  onChange={(e) => setMediumQty(e.target.value)}
+                  className="block w-full px-4 py-2 border border-gray-300 rounded-md"
+                />
+                <input
+                  type="number"
+                  placeholder="Large (L)"
+                  value={largeQty}
+                  onChange={(e) => setLargeQty(e.target.value)}
+                  className="block w-full px-4 py-2 border border-gray-300 rounded-md"
+                />
+                <input
+                  type="number"
+                  placeholder="Extra Large (XL)"
+                  value={extraLargeQty}
+                  onChange={(e) => setExtraLargeQty(e.target.value)}
+                  className="block w-full px-4 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
             </div>
-
-            <div className="mb-4">
-  <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-2">
-    Size
-  </label>
-  <select
-    id="size"
-    value={size}
-    onChange={(e) => setSize(e.target.value)}
-    required
-    className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-  >
-    <option value="" disabled>Select size</option>
-    <option value="S">Small</option>
-    <option value="M">Medium</option>
-    <option value="L">Large</option>
-    <option value="XL">Extra Large</option>
-  </select>
-</div>
-
 
             {/* Description */}
             <div className="mb-4">
@@ -205,7 +219,7 @@ export default function AddProductModal({ isOpen, onClose, onSubmit }) {
           </button>
           <button
             type="submit"
-            form="addProductForm" // Correctly links the form
+            form="addProductForm"
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-md transition-all duration-200"
           >
             Confirm

@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Product } from '@/Models/Product'
-import axios from 'axios'
+
 import { Ruler, ShoppingCart } from 'lucide-react'
 import { addToCart } from '@/helper/cart'
 
@@ -34,28 +34,29 @@ export default function ProductModal({ isOpen, setIsOpen, Product }: ProductModa
   const [size, setSize] = useState('')
   const [sizes, setSizes] = useState<string[]>([])
   const [showSizeChart, setShowSizeChart] = useState(false)
-  const [products,setproducts] = useState<Product[]>([])
+ 
 ;
-  useEffect(() => {
-    if (isOpen) {
-      axios.get(`/api/sizes/${Product.name}`)
-        .then(response => {
-          const sizeOptions = response.data.products.map((product: Product) => product.size)
-          setSizes(sizeOptions)
-          setproducts(response.data.products);
-        })
-        .catch(error => {
-          console.error("Error fetching sizes:", error)
-        })
-    }
-  }, [isOpen, Product.name])
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    const cartProduct=products.find(product => product.size==size);
-    addToCart(cartProduct!,1);
-    setIsOpen(false)
+useEffect(() => {
+  if (isOpen) {
+    const availableSizes = Object.entries(Product.size)
+      .filter(([, quantity]) => quantity > 0)
+      .map(([size]) => size);
+    setSizes(availableSizes);
   }
+}, [isOpen, Product.size]);
+
+
+const handleSubmit = (e: FormEvent) => {
+  e.preventDefault();
+  const cartProduct = {
+    ...Product,
+    size: { [size]: Product.size[size] as number  },  // Set the size quantity from the selected size
+  };
+
+  addToCart(cartProduct as Product, 1);
+  setIsOpen(false);
+};
+
 
   const sizeChartData = [
     { size: 'S', chest: '36-38', waist: '30-32', hips: '37-39' },

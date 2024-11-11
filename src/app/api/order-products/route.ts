@@ -8,9 +8,10 @@ export async function POST(req: Request) {
     const {products}=await req.json();
 
     const productsArr = await ProductModel.find({
-        _id: { $in: products },
-      });
-      
+      _id: { $in: products.map((item: { productId: string }) => item.productId) },
+    });
+    
+     
     return Response.json({ products: productsArr ,success: true},{status: 200});
 
   }catch(err){

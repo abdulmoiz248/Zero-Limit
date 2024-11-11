@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import axios from 'axios'
 import { Product } from '@/Models/Product'
-import { countItems } from '@/helper/order'
+
 
 interface OrderDetailsModalProps {
   order: Order
@@ -30,9 +30,14 @@ export default function OrderDetailsModal({ order, onClose, onStatusChange }: Or
   useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await axios.post('/api/order-products', { products: order.products })
+        const res = await axios.post('/api/order-products', {
+          products: order.products.map((item) => ({
+            productId: item.productId,  // Only send productId
+          }))
+        })
         if (res.data.success) {
           setProducts(res.data.products)
+          console.log(res.data.products);
         }
       } catch (error) {
         console.log(error)
@@ -144,7 +149,6 @@ export default function OrderDetailsModal({ order, onClose, onStatusChange }: Or
                   />
                 </div>
               )}
-             
             </div>
 
             <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
@@ -160,24 +164,39 @@ export default function OrderDetailsModal({ order, onClose, onStatusChange }: Or
             </div>
 
             <div className="space-y-2">
-              <h4 className="font-semibold text-blue-600">Order Items</h4>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead className="text-right">Quantity</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {products && products.map((product: Product, index: number) => (
-                    <TableRow key={index}>
-                      <TableCell>{product.name} | {product.size}</TableCell>
-                      <TableCell className="text-right">{countItems(product._id as string, order.products)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+  <h4 className="font-semibold text-blue-600">Order Items</h4>
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHead>Product</TableHead>
+        <TableHead className="text-right">Quantity</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {products && products.map((product: Product) => {
+        // Iterate over each size in the product
+        return Object.keys(product.size).map((sizeKey) => {
+          // Calculate how many times this size appears in the order
+          const sizeOccurrences = order.products.reduce((total, orderProduct) => {
+            // Check if the order product has the same productId and size
+            if (orderProduct.productId === product._id && orderProduct.size === sizeKey) {
+              total += 1;  // Increment by 1 for each occurrence of this size
+            }
+            return total;
+          }, 0);
+
+          return (
+            <TableRow key={`${product._id}-${sizeKey}`}>
+              <TableCell>{product.name} | {sizeKey}</TableCell>
+              <TableCell className="text-right">{sizeOccurrences}</TableCell>
+            </TableRow>
+          );
+        });
+      })}
+    </TableBody>
+  </Table>
+</div>
+
 
             <div className="flex justify-between items-center font-semibold text-lg bg-blue-50 p-4 rounded-lg">
               <span>Total</span>

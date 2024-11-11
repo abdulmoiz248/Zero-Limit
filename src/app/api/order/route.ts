@@ -26,9 +26,12 @@ export async function POST(req: Request) {
       email: formData.email,
       phone: formData.phone,
       products: cartItems.flatMap((item: CartItem) =>
-        Array(item.quantity).fill(item.product._id)
+        Array(item.quantity).fill({
+          productId: item.product._id,
+          size: Object.keys(item.product.size)[0] // Extract the first key (size)
+        })
       ),
-      total:total+100,
+      total: total + 100, // Add any additional charges, like shipping
       name: formData.name,
       address: formData.address,
       city: formData.city,
@@ -37,6 +40,9 @@ export async function POST(req: Request) {
       paymentMethod: method,
       paymentStatus: "Pending",
     });
+    
+    await order.save();
+    
 
     await order.save();
     await sendOrderPlacedEmail(formData.email);

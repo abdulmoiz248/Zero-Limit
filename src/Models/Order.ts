@@ -1,6 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-
 export interface Order extends Document {
   status: 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled';
   paymentMethod: 'credit card' | 'cash on delivery';
@@ -11,29 +10,24 @@ export interface Order extends Document {
   city: string;
   zipCode: string;
   country: string;
-  products: string[]; 
+  products: Array<{ productId: string, size: string }>;  // Updated to store productId and size
   phone: string;
   address: string;
   total: number;
-  review:string;
- rating: number;
-
+  review: string;
+  rating: number;
 }
 
-
 const OrderSchema = new Schema<Order>({
-
   total: {
     type: Number,
     required: true,
   },
-   review: {
+  review: {
     type: String,
-
-  }, 
+  },
   rating: {
     type: Number,
-    
   },
   status: {
     type: String,
@@ -81,7 +75,16 @@ const OrderSchema = new Schema<Order>({
     required: true,
   },
   products: {
-    type: [String], 
+    type: [{
+      productId: {
+        type: String,
+        required: true,
+      },
+      size: {
+        type: String,
+        required: true,
+      },
+    }],
     required: true,
   },
   phone: {
@@ -89,7 +92,6 @@ const OrderSchema = new Schema<Order>({
     required: true,
   },
 });
-
 
 const OrderModel = mongoose.models.Order || mongoose.model<Order>('Order', OrderSchema);
 

@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendOrderPlacedEmail(toEmail: string) {
     const mailOptions = {
-        from: process.env.EMAIL,
+        from: process.env.email,
         to: toEmail,
         subject: 'Thank You for Your Order!',
         html: `

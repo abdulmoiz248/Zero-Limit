@@ -8,6 +8,7 @@ import LionLoader from '@/components/LionLoader';
 import axios from 'axios';
 import { Product } from '@/Models/Product';
 import { Toaster } from 'react-hot-toast';
+import HoodieShowcase from '@/components/landing page/Down';
 
 
 const CatCarousel = dynamic(() => import('@/components/landing page/CategoriesCarousel'), {
@@ -94,7 +95,7 @@ export default function Home() {
           >
             <CatCarousel categories={categories} />
           </motion.div>
-
+          <HoodieShowcase/>
           <motion.div
             ref={manifestoRef}
             variants={animationVariants}

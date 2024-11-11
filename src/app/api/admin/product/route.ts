@@ -11,12 +11,11 @@ export async function POST(req: Request) {
     const photos = formData.getAll("photo");
     const category = formData.get("category");
     const price = formData.get("price");
-    const quantity = formData.get("quantity");
     const description = formData.get("description");    
     const size = formData.get("size");
-
+    const parsedSize = size ? JSON.parse(size as string) : null;
     // Validate input
-    if (!productName || photos.length === 0 ||!size || !category || !price || !quantity || !description) {
+    if (!productName || photos.length === 0 ||!size || !category || !price  || !description) {
       return new Response(
         JSON.stringify({ message: "Invalid data", success: false }),
         { status: 400 }
@@ -48,8 +47,8 @@ export async function POST(req: Request) {
       link: [...photoUrls], // Explicitly recognized as an array
       categoryId: category,
       price: Number(price),
-      quantity: Number(quantity),
-      size,
+
+      size:parsedSize,
       description,
     });
 

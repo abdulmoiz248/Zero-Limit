@@ -2,22 +2,22 @@ import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface Product extends Document {
   name: string;
-  link: string[]; // Corrected to just 'link' (array of strings)
+  link: string[];
   categoryId: Types.ObjectId;
   price: number;
   featured: boolean;
   discount: boolean;
   discountPercent: number;
-  quantity: number;
   description: string;
   ratings: number;
   numReviews: number;
-  size:string;
+  size: Record<string, number>; // Defines an object with size keys and quantity values
 }
 
 const ProductSchema = new Schema<Product>({
   size: {
-    type: String,
+    type: Map, // Use a Map to store size and quantity pairs
+    of: Number,
     required: true,
   },
   name: {
@@ -30,13 +30,13 @@ const ProductSchema = new Schema<Product>({
   },
   categoryId: {
     type: Schema.Types.ObjectId,
-    ref: 'Categories', // Reference to the Product Categories schema
+    ref: 'Categories',
     required: true,
   },
   price: {
     type: Number,
     required: true,
-    min: 0, // Optional: You can enforce non-negative price
+    min: 0,
   },
   featured: {
     type: Boolean,
@@ -49,13 +49,8 @@ const ProductSchema = new Schema<Product>({
   discountPercent: {
     type: Number,
     default: 0,
-    min: 0, // Ensures discount percent is not negative
-    max: 100, // Optional: You can enforce maximum discount percentage
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 0, // Ensure quantity is not negative
+    min: 0,
+    max: 100,
   },
   description: {
     type: String,
@@ -70,7 +65,7 @@ const ProductSchema = new Schema<Product>({
   numReviews: {
     type: Number,
     default: 0,
-    min: 0, // Optional: Ensure the number of reviews is non-negative
+    min: 0,
   },
 });
 

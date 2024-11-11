@@ -28,8 +28,8 @@ export default function ProductCatalog() {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        let products = await fetchAllProducts();
-        products = products.filter((product: Product) => product.quantity !== 0);
+        const products = await fetchAllProducts();
+      //  products = products.filter((product: Product) => product.quantity !== 0);
         setAllProducts(products);
         setDisplayedProducts(products); // Show all products initially
       } catch (error) {

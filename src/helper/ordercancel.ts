@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendOrderCancelledEmail(toEmail: string) {
     const mailOptions = {
-        from: process.env.EMAIL,
+        from: process.env.email,
         to: toEmail,
         subject: 'Your Order Has Been Cancelled',
         html: `

@@ -2,12 +2,11 @@
 
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { ShoppingCart, Star } from 'lucide-react'
+import {  Star } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Product } from '@/Models/Product'
-import { addToCart, isProductInCart, removeFromCart } from '@/helper/cart'
-import { toast } from 'react-hot-toast'
+
 
 interface ProductCardProps {
   product: Product
@@ -15,13 +14,11 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const router = useRouter()
-  const [isInCart, setIsInCart] = useState(false)
+
   const [isHovered, setIsHovered] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  useEffect(() => {
-    if (isProductInCart(product._id as string)) setIsInCart(true)
-  }, [product])
+
 
   useEffect(() => {
     if (isHovered && product.link.length > 1) {
@@ -34,34 +31,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
   }, [isHovered, product.link])
 
-  const handleCartToggle = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (isInCart) {
-      removeFromCart(product._id as string)
-      toast.error(`Product removed from cart!`, {
-        duration: 2000,
-        position: 'top-right',
-        style: {
-          backgroundColor: '#F44336',
-          color: 'white',
-          fontSize: '16px',
-        },
-      })
-    } else {
-      addToCart(product, 1)
-      toast.success(`Product added to cart!`, {
-        duration: 2000,
-        position: 'top-right',
-        style: {
-          backgroundColor: '#4CAF50',
-          color: 'white',
-          fontSize: '18px',
-        },
-      })
-    }
-
-    setIsInCart(!isInCart)
-  }
+    
 
   const discountAmount = (product.price * product.discountPercent) / 100
   const discountedPrice = product.price - discountAmount
@@ -131,7 +101,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               Rs {(product.discountPercent > 0 ? discountedPrice : product.price).toFixed(2)}
             </p>
           </div>
-          <motion.button
+          {/* <motion.button
             onClick={handleCartToggle}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -141,7 +111,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
             {isInCart ? 'Remove' : 'Add to Cart'}
-          </motion.button>
+          </motion.button> */}
         </div>
       </div>
     </motion.div>
