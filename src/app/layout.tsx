@@ -9,8 +9,6 @@ import Header from "@/components/landing page/Header";
 import Footer from '@/components/landing page/Footer'
 
 
-
-
 export const metadata: Metadata = {
   title: "Zero Limit - Unleash Your Fearless Style",
   description:

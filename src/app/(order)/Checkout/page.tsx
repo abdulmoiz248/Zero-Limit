@@ -52,7 +52,7 @@ export default function LuxuryCheckoutPage() {
       const res=await axios.post('/api/order',{total:res1.data.total,formData, cart, paymentMethod})
       if(res.data.success){
         localStorage.removeItem('cart');
-        await axios.post('/api/sendmsg');
+      //  await axios.post('/api/sendmsg');
         setShowContactPrompt(false);
         setShowSuccessModal(true)
      

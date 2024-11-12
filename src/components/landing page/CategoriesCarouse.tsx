@@ -29,8 +29,8 @@ export default function Component({ categories = [] }: { categories: Array<{ _id
 
   return (
     <div className="w-full bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900 p-4 md:p-8 min-h-[80vh] lg:min-h-[60vh] flex flex-col justify-center">
-    <h1 className="text-3xl md:text-5xl font-bold mb-8 text-center bg-clip-text text-transparent bg-[#1b03a3]">
-        Explore Our Product Categories
+    <h1 className="text-3xl md:text-5xl font-bold mb-8 text-center bg-clip-text text-transparent bg-black">
+        Explore Our Collections
       </h1>
       <div className="max-w-4xl mx-auto w-full">
         <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-white">
