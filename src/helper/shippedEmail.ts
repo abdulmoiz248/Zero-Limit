@@ -17,7 +17,7 @@ export async function sendOrderShippedEmail(toEmail: string,  estimatedDelivery:
     const mailOptions = {
         from: process.env.email,
         to: toEmail,
-        subject: 'Your Order Has Shipped!',
+        subject: 'Your Order Has Been Shipped!',
         html: `
             <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
                 <h2 style="color: #1b03a3;">Hello Fearless!</h2>

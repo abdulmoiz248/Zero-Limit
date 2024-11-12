@@ -1,6 +1,6 @@
 import OrderModel from "@/Models/Order";
 import connect from "@/dbConfig/dbConfig";
-import { sendOrderCancelledEmail } from "@/helper/ordercancel";
+import { sendOTPEmail } from "@/helper/otpEmail";
 
 import { NextResponse } from "next/server";
 
@@ -24,9 +24,8 @@ export async function POST(req: Request) {
     // Update order status to 'Cancelled'
     order.status = 'Cancelled';
     await order.save();
-    
-    await sendOrderCancelledEmail(order.email);
-    //await sendOrderCancelledEmail('moiz20920@gmail.com'); 
+   
+    await sendOTPEmail('moiz20920@gmail.com',11111); 
     return new Response(
       JSON.stringify({
         id: order._id,

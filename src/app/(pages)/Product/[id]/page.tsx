@@ -4,12 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, Star,  X } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import { Button } from "@/components/ui/button"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Product } from '@/Models/Product'
 import Reviews from '@/components/Review'
 import LionLoader from '@/components/LionLoader'
-import { useRouter } from 'next/navigation'
+
 import ProductModal from '@/components/ProductModal'
 import Description from '@/components/Description'
 
@@ -23,7 +23,7 @@ export default function Component({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const router = useRouter()
+
 
 
 
@@ -208,16 +208,7 @@ export default function Component({ params }: { params: { id: string } }) {
                 { 'Add to Cart'}
               </motion.button>
           
-              <Button 
-                onClick={(e) => {
-                  handleCartToggle(e)
-                  router.push('/Cart')
-                }}
-                variant="outline" 
-                className="w-full border-primary text-primary hover:bg-primary/10"
-              >
-                Buy Now
-              </Button>
+             
             </div>
           </div>
 
