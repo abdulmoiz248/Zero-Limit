@@ -13,6 +13,9 @@ import LionLoader from '@/components/LionLoader'
 import ProductModal from '@/components/ProductModal'
 import Description from '@/components/Description'
 
+
+
+
 export default function Component({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -178,10 +181,10 @@ export default function Component({ params }: { params: { id: string } }) {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="flex items-center space-x-2"
               >
-                <p className="text-3xl font-bold text-primary">Rs.{discountedPrice?.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-primary">Rs.{discountedPrice}</p>
                 {(product?.discountPercent!=0 ) && (
                   <div className="flex items-center">
-                    <p className="text-xl text-gray-500 line-through">Rs.{product?.price.toFixed(2)}</p>
+                    <p className="text-xl text-gray-500 line-through">Rs.{product?.price}</p>
                     <p className="text-lg text-green-600 ml-2">({product?.discountPercent}% off)</p>
                   </div>
                 )}

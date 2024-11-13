@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     url: "https://www.zerolimitapparel.com",
     images: [
       {
-        url: "https://www.zerolimitapparel.com/Lion.JPG",  // Adjust to the actual filename in public folder
+        url: "https://www.zerolimitapparel.com/images/Lion.JPG",  // Adjust to the actual filename in public folder
         width: 1200,
         height: 630,
         alt: "Zero Limit Clothing",
