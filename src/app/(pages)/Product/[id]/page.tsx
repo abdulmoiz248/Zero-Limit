@@ -119,7 +119,7 @@ export default function Component({ params }: { params: { id: string } }) {
       `}</style>
     
     <Head>
-    <script
+  <script
     type="application/ld+json"
     dangerouslySetInnerHTML={{
       __html: JSON.stringify({
@@ -145,15 +145,18 @@ export default function Component({ params }: { params: { id: string } }) {
       }),
     }}
   />
-        <title>{product?.name} - Zero Limit Apparel</title>
-        <meta name="description" content={product?.description} />
-        <meta name="keywords" content={`fearless,zero limit, clothing, fashion`} />
-        <meta property="og:title" content={`${product?.name} - Zero Limit Apparel`} />
-        <meta property="og:description" content={product?.description} />
-        <meta property="og:image" content={product?.link[0]} />
-        <meta property="og:url" content={`https://www.zerolimitapparel.com/Product/${params.id}`} />
-        <meta name="robots" content="index, follow" />
-      </Head>
+  <title>{product?.name} - Zero Limit Apparel</title>
+  <meta name="description" content={product?.description} />
+  <meta name="keywords" content={`fearless, zero limit, clothing, fashion`} />
+  <meta property="og:title" content={`${product?.name} - Zero Limit Apparel`} />
+  <meta property="og:description" content={product?.description} />
+  <meta property="og:image" content={product?.link[0]} />
+  <meta property="og:url" content={`https://www.zerolimitapparel.com/Product/${params.id}`} />
+  <meta property="og:type" content="product" />
+  <meta property="og:site_name" content="Zero Limit Apparel" />
+  <meta name="robots" content="index, follow" />
+</Head>
+
 
        <ProductModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} Product={product!} />
       <Card className="max-w-7xl mx-auto shadow-lg">
