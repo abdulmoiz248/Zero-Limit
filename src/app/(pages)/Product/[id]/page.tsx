@@ -119,6 +119,32 @@ export default function Component({ params }: { params: { id: string } }) {
       `}</style>
     
     <Head>
+    <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{
+      __html: JSON.stringify({
+        "@context": "http://schema.org",
+        "@type": "Product",
+        "name": product?.name,
+        "image": product?.link[0],
+        "description": product?.description,
+        "sku": product?._id,
+        "brand": {
+          "@type": "Brand",
+          "name": "Zero Limit"
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": `https://www.zerolimitapparel.com/Product/${params.id}`,
+          "priceCurrency": "USD",
+          "price": discountedPrice,
+          "priceValidUntil": "2024-12-31",
+          "itemCondition": "http://schema.org/NewCondition",
+          "availability": "http://schema.org/InStock"
+        }
+      }),
+    }}
+  />
         <title>{product?.name} - Zero Limit Apparel</title>
         <meta name="description" content={product?.description} />
         <meta name="keywords" content={`fearless,zero limit, clothing, fashion`} />
