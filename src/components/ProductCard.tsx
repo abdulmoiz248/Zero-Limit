@@ -94,11 +94,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div>
             {product.discountPercent > 0 && (
               <p className="text-gray-500 text-sm line-through">
-                Rs{product.price.toFixed(2)}
+                Rs. {product.price.toFixed(2)}
               </p>
             )}
             <p className="text-2xl font-bold text-gray-800">
-              Rs {(product.discountPercent > 0 ? discountedPrice.toFixed(0) : product.price)}
+              Rs. {(product.discountPercent > 0 ? discountedPrice.toFixed(0) : product.price)}
             </p>
           </div>
           {/* <motion.button

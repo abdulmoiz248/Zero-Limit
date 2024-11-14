@@ -28,7 +28,7 @@ export async function POST(req: Request) {
         { status: 409 } 
       );
 
-    const member =new MemberModel(email);
+    const member =await new MemberModel({email});
     await member.save();
 
     if (member) {

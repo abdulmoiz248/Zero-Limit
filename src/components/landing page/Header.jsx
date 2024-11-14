@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ShoppingBag, User } from 'lucide-react'
+import { Package   } from 'lucide-react';
 import Image from 'next/image'
 
 const menuItems = [
@@ -57,6 +58,16 @@ export default function Header() {
               >
                 <User className="h-6 w-6 text-gray-800" aria-hidden="true" />
                 <span className="sr-only">Profile</span>
+              </motion.a>
+
+              <motion.a
+                href="/all-products"
+                className="whitespace-nowrap  inline-flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Package   className="h-6 w-6 text-gray-800" aria-hidden="true" />
+                <span className="sr-only">Shop Now</span>
               </motion.a>
 
               <motion.a

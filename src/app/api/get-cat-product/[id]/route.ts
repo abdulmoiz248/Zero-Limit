@@ -1,6 +1,5 @@
 import connect from "@/dbConfig/dbConfig";
-import CategoriesModel from "@/Models/Categories";
-
+import ProductModel, { Product } from "@/Models/Product";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -18,17 +17,13 @@ export async function GET(req: Request) {
         }
 
        
-        const category = await CategoriesModel.findById(categoryId);
+
       
-        if (!category) {
-            return NextResponse.json({
-                message: "Category not found.",
-                success: false
-            }, { status: 404 });
-        }
       
+        const  products:Product[]=await ProductModel.find({ categoryId: categoryId})
+        
         return NextResponse.json({
-            category,
+            products,
             success: true
         }, { status: 200 });
 

@@ -21,7 +21,11 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
         const response = await axios.get(`/api/getCategories/${params.id}`)
         if (response.data.success) {
           setCategory(response.data.category)
-          setProducts(response.data.products)
+          const res=await axios.get(`/api/get-cat-product/${params.id}`)
+         if(res.data.success) {
+          setProducts(res.data.products)
+         }
+          
         } else {
           setError("Failed to load category data.")
         }

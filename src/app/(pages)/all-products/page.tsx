@@ -76,7 +76,7 @@ export default function ProductCatalog() {
 
   return (
     <div className="container mx-auto px-4 py-8 pt-20">
-      <h1 className="text-4xl font-bold mb-8 text-center text-[#1b03a3]">Product Catalog</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center text-[#1b03a3]">Fearless Collection Vol 1</h1>
 
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div className="flex w-full md:w-auto">
