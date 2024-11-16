@@ -46,9 +46,14 @@ export default function RegisterForm() {
       const emailResponse = await axios.post('/api/auth/verifyEmail', { email: data.email })
       
       if (!emailResponse.data.success) {
+
+
+const emailResponse1 = await axios.post('/api/auth/verifyEmail', { email: data.email })
+
+      if (!emailResponse1.data.success){
         setError('email', { type: 'manual', message: 'Email already exists' })
         setIsLoading(false)
-        return
+        return}
       }
 
       // Register user
