@@ -19,7 +19,10 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/api/getCategories/${params.id}`)
-        if (response.data.success) {
+const response1;
+if(!response.data.success)
+const response1 = await axios.get(`/api/getCategories/${params.id}`)
+        if (response1.data.success) {
           setCategory(response.data.category)
           const res=await axios.get(`/api/get-cat-product/${params.id}`)
          if(res.data.success) {
