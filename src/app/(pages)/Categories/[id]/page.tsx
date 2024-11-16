@@ -15,52 +15,48 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`/api/getCategories/${params.id}`)
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`/api/getCategories/${params.id}`);
+      
+      if (response.data.success) {
+        setCategory(response.data.category);
 
-if(!response.data.success)
-{
-   const response1 = await axios.get(`/api/getCategories/${params.id}`)
-   if (response1.data.success) {
-          setCategory(response.data.category)
-          const res=await axios.get(`/api/get-cat-product/${params.id}`)
-         if(res.data.success) {
-          setProducts(res.data.products)
-         }
-          return
+        const res = await axios.get(`/api/get-cat-product/${params.id}`);
+        if (res.data.success) {
+          setProducts(res.data.products);
         } else {
-          setError("Failed to load category data.")
+          setError("Failed to load product data.");
         }
-}else{
+      } else {
+        // Retry fetching the category if the first attempt fails
+        const retryResponse = await axios.get(`/api/getCategories/${params.id}`);
+        if (retryResponse.data.success) {
+          setCategory(retryResponse.data.category);
 
-          setCategory(response.data.category)
-          const res=await axios.get(`/api/get-cat-product/${params.id}`)
-         if(res.data.success) {
-          setProducts(res.data.products)
-         }
-          
+          const res = await axios.get(`/api/get-cat-product/${params.id}`);
+          if (res.data.success) {
+            setProducts(res.data.products);
+          } else {
+            setError("Failed to load product data.");
+          }
         } else {
-          setError("Failed to load category data.")
+          setError("Failed to load category data.");
         }
-  
-}
-       
-      } catch (error) {
-        console.log(error)
-        setError("An error occurred while fetching data.")
-      } finally {
-        setLoading(false)
       }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("An error occurred while fetching data.");
+    } finally {
+      setLoading(false);
     }
+  };
 
-   
-      fetchData()
-    
+  fetchData();
+}, [params.id]);
 
-  }, [params.id])
-
+  
   if (loading) return <LionLoader />
   if (error) return (
     <motion.div
