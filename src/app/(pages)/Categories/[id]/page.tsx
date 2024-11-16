@@ -19,10 +19,22 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/api/getCategories/${params.id}`)
-let response1;
+
 if(!response.data.success)
- response1 = await axios.get(`/api/getCategories/${params.id}`)
-        if (response1.data.success) {
+{
+   const response1 = await axios.get(`/api/getCategories/${params.id}`)
+   if (response1.data.success) {
+          setCategory(response.data.category)
+          const res=await axios.get(`/api/get-cat-product/${params.id}`)
+         if(res.data.success) {
+          setProducts(res.data.products)
+         }
+          return
+        } else {
+          setError("Failed to load category data.")
+        }
+}else{
+
           setCategory(response.data.category)
           const res=await axios.get(`/api/get-cat-product/${params.id}`)
          if(res.data.success) {
@@ -32,6 +44,9 @@ if(!response.data.success)
         } else {
           setError("Failed to load category data.")
         }
+  
+}
+       
       } catch (error) {
         console.log(error)
         setError("An error occurred while fetching data.")
