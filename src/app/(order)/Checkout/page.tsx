@@ -116,11 +116,7 @@ export default function LuxuryCheckoutPage() {
   }
 
   useEffect(() => {
-    const customerData = localStorage.getItem('customerData');
-    if (customerData) {
-      const customer = JSON.parse(customerData);
-      setFormData(prev => ({ ...prev, email: customer.email, name: customer.name}));
-    }
+   
 
     const cart=getCart();
     
@@ -191,7 +187,7 @@ export default function LuxuryCheckoutPage() {
                 <div>
                   <Label htmlFor="name" className="text-sm font-medium text-gray-700">Name</Label>
                   <Input 
-                  readOnly
+                  
                     id="name" 
                     name="name"
                     value={formData.name}
@@ -204,7 +200,7 @@ export default function LuxuryCheckoutPage() {
                 <div>
                   <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
                   <Input 
-                  readOnly
+                  
                     id="email" 
                     name="email"
                     value={formData.email}

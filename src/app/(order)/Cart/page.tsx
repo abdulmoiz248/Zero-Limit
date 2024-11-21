@@ -1,10 +1,10 @@
 "use client"
 import { useState, useEffect } from "react"
-import { Minus, Plus, Trash2, ShoppingBag, Sparkles, Truck, LogIn, CreditCard } from "lucide-react"
+import { Minus, Plus, Trash2, ShoppingBag, Sparkles, Truck,  CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { motion, AnimatePresence } from "framer-motion"
-import Cookies from "js-cookie"
+
 import { addToCart, getCart, removeFromCart } from "@/helper/cart"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -14,7 +14,7 @@ import { CartItem } from "@/interfaces/interfaces"
 export default function Component() {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([])
-  const [isCustomer, setIsCustomer] = useState(false);
+  
 
   const updateCart = () => {
     const cart = getCart();
@@ -23,17 +23,14 @@ export default function Component() {
   }
 
   useEffect(() => {
-    const customerCookie = !!Cookies.get('customer');
-    setIsCustomer(customerCookie);
+   
     updateCart();
   }, []);
 
   const handleCheckout = () => {
-    if (isCustomer) {
+    
       router.push('/Checkout');
-    } else {
-      router.push('/Login');
-    }
+  
   };
   
   function updateQuantity(product: Product, newQuantity: number): void {
@@ -159,26 +156,14 @@ export default function Component() {
                   </p>
                   <p className="text-2xl font-bold flex justify-between"><span>Total:</span> <span>Rs.{total}</span></p>
                 </div>
-                {isCustomer ? (
+                
                   <Button 
                     onClick={handleCheckout}
                     className="w-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80 transition-colors duration-300 text-lg font-bold py-4 rounded-full"
                   >
                     <CreditCard className="mr-2 h-5 w-5" /> Proceed to Checkout
                   </Button>
-                ) : (
-                  <div className="space-y-4">
-                    <Button 
-                      onClick={() => 
-                      {  Cookies.set('redirect','true')
-                        router.push('/Login')}
-                      }
-                      className="w-full bg-[#1b03a3] text-white hover:bg-[#1b03a3]/80 transition-colors duration-300 text-lg font-bold py-4 rounded-full"
-                    >
-                      <LogIn className="mr-2 h-5 w-5" /> Login to Checkout
-                    </Button>
-                  </div>
-                )}
+               
               </motion.div>
             </motion.div>
           ) : (

@@ -17,28 +17,9 @@ export function middleware(request: NextRequest) {
 
 
     const cookies = request.cookies;
-    const email = cookies.get('OTP');
-
-    if(pathname==='/otp' && !email){
-      return NextResponse.redirect(new URL('/Register', request.url));
-    }
-    if(pathname==='/Register' && email){
-      return NextResponse.redirect(new URL('/otp', request.url));
-    }
-
-    const customer=cookies.get('customer');
-    
-
-      if (!customer && pathname === '/Checkout') {
-        return NextResponse.redirect(new URL('/Login', request.url));
-      }
-      if(customer && pathname === '/Login'){
-        return NextResponse.redirect(new URL('/', request.url));
-      }
  
-      if(customer && pathname === '/Register'){
-        return NextResponse.redirect(new URL('/', request.url));
-      }
+
+      const customer = cookies.get('customerData');
       if(!customer && pathname === '/order'){
         return NextResponse.redirect(new URL('/', request.url));
       }

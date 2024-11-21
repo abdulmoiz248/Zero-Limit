@@ -1,20 +1,30 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { ShoppingBag, User } from 'lucide-react'
-import { Package   } from 'lucide-react';
+import { ShoppingBag, Menu, User, Package } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 const menuItems = [
-  { name: 'Profile', href: '/Profile' },
-  { name: 'Shop Now', href: '/all-products' },
+  { name: 'Profile', href: '/Profile', icon: User },
+  { name: 'Shop Now', href: '/all-products', icon: Package },
   { name: 'About', href: '/#about' },
   { name: 'Contact', href: '#footer' },
 ]
 
+
+
 export default function Header() {
   const [scrollPosition, setScrollPosition] = useState(0)
+  const [isOpen, setIsOpen] = useState(false) // State for Sheet
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,92 +35,95 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Function to close the Sheet
+  const closeSidebar = () => setIsOpen(false)
+
   return (
-    <header className="fixed w-full z-50 transition-all duration-300 ease-in-out">
-      <div className={`relative ${scrollPosition > 50 ? 'bg-white shadow-md' : 'bg-transparent'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6 md:justify-start md:space-x-10">
-         
-          <div 
-  className="flex justify-start lg:w-0 lg:flex-1" 
-  
->
-  <a href="/" className="flex items-center">
-    <Image 
-      src="/images/logo.png" 
-      alt="logo" 
-      width={200} 
-      height={200} 
-      priority 
-      style={{ width: '200px'}}
-    />
-  </a>
-</div>
-
-            {/* Mobile Icons */}
-            <div className="flex items-center  md:hidden space-x-4">
-              
-              <motion.a
-                href="/Profile"
-                className="whitespace-nowrap  inline-flex items-center justify-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <User className="h-6 w-6 text-gray-800" aria-hidden="true" />
-                <span className="sr-only">Profile</span>
-              </motion.a>
-
-              <motion.a
-                href="/all-products"
-                className="whitespace-nowrap  inline-flex items-center justify-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Package   className="h-6 w-6 text-gray-800" aria-hidden="true" />
-                <span className="sr-only">Shop Now</span>
-              </motion.a>
-
-              <motion.a
-                href="/Cart"
-                className="whitespace-nowrap inline-flex items-center justify-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <ShoppingBag className="h-6 w-6 text-gray-800" aria-hidden="true" />
-                <span className="sr-only">Cart</span>
-              </motion.a>
-              
+    <header className="fixed top-0 left-0 right-0 z-50">
+      <div className={`h-16 transition-all duration-300 ${scrollPosition > 50 ? 'bg-white shadow-md' : 'bg-transparent'}`}>
+        <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="h-full flex items-center justify-between">
+            <div className="flex-shrink-0">
+              <Link href="/" className="flex items-center">
+                <Image 
+                  src="/images/logo.png" 
+                  alt="Zero Limit" 
+                  width={120} 
+                  height={40} 
+                  priority 
+                  className="h-8 w-auto"
+                />
+              </Link>
             </div>
 
-            {/* Desktop Menu */}
-            <nav className="hidden md:flex space-x-10">
-              {menuItems.map((item, index) => (
-                <motion.a
+            <nav className="hidden md:flex items-center space-x-8">
+              {menuItems.map((item) => (
+                <Link 
                   key={item.name}
-                  href={item.href}
-                  className="text-base font-medium text-gray-500 hover:text-gray-900"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  href={item.href} 
+                  className={`text-sm font-medium ${scrollPosition > 50 ? 'text-gray-700 hover:text-gray-900' : 'text-gray-700 hover:text-gray-200'}`}
                 >
                   {item.name}
-                </motion.a>
+                </Link>
               ))}
             </nav>
 
-            {/* Desktop Cart */}
-            <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-              <motion.a
-                href="/Cart"
-                className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+            <div className="flex items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`ml-4 ${scrollPosition > 50 ? 'text-gray-700' : 'text-gray-700'}`}
+                asChild
               >
-                <ShoppingBag className="h-5 w-5 mr-2" aria-hidden="true" />
-                Cart
-              </motion.a>
+                <Link href="/Cart">
+                  <ShoppingBag className="h-5 w-5" />
+                  <span className="sr-only">Cart</span>
+                </Link>
+              </Button>
+
+              <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                <SheetTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={`ml-2 md:hidden ${scrollPosition > 50 ? 'text-gray-700' : 'text-gray-700'}`}
+                  >
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Open menu</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="bg-white">
+                  <SheetHeader>
+                    <SheetTitle>Menu</SheetTitle>
+                  </SheetHeader>
+                  <nav className="flex flex-col space-y-4 mt-4">
+                    {menuItems.map((item) => (
+                      <Link 
+                        key={item.name}
+                        href={item.href} 
+                        className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                        onClick={closeSidebar} // Close Sheet on click
+                      >
+                        {item.icon && <item.icon className="h-5 w-5" />}
+                        <span>{item.name}</span>
+                      </Link>
+                    ))}
+                    <div className="pt-4 border-t">
+                      {/* <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Categories</h3> */}
+                      {/* {categories.map((category) => (
+                        <Link 
+                          key={category.name}
+                          href={category.href} 
+                          className="block py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                          onClick={closeSidebar} // Close Sheet on click
+                        >
+                          {category.name}
+                        </Link>
+                      ))} */}
+                    </div>
+                  </nav>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
         </div>

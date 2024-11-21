@@ -93,10 +93,7 @@ export default function OrderPage() {
 
   const router = useRouter()
 
-  const handleCancelOrder = async () => {
-    if (!selectedOrder) return
-    setIsConfirmationModalOpen(true)
-  }
+ 
 
   const confirmCancelOrder = async () => {
     if (!selectedOrder) return
@@ -260,15 +257,7 @@ export default function OrderPage() {
                   </div>
                 </div>
                 
-                {selectedOrder.status === 'Pending' && (
-                  <Button
-                    variant="destructive"
-                    onClick={handleCancelOrder}
-                    className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white transition-colors duration-300"
-                  >
-                    Cancel Order
-                  </Button>
-                )}
+              
                 <div className="flex justify-between items-center p-6 bg-gray-100">
                   <Button onClick={() => router.push('/')} variant="link" className="text-[#1b03a3] hover:bg-[#1b03a3]/10">
                     Continue Shopping <ArrowRight className="ml-2 w-4 h-4" />
