@@ -1,5 +1,6 @@
-import ProductModel from "@/Models/Product";
+import ProductModel, { Product } from "@/Models/Product";
 import connect from "@/dbConfig/dbConfig";
+ 
 import { CartItem } from "@/interfaces/interfaces";
 import { NextResponse } from "next/server";
 
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
     const productMap = new Map(products.map((p) => [p._id.toString(), p]));
 
     for (const item of cartItems) {
-      const product = productMap.get(item.product._id);
+      const product:Product = productMap.get(item.product._id);
 
       if (!product) {
         return NextResponse.json(
@@ -44,8 +45,9 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
-
-      total += product.price * item.quantity;
+      console.log(product); 
+      total +=  (item.product.price - (item.product.price * item.product.discountPercent / 100)) * item.quantity;
+      console.log(total);
 
       // Prepare the stock update in batch
       updateOperations.push({

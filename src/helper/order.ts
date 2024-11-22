@@ -1,7 +1,7 @@
 import { Product } from "@/Models/Product";
 import mongoose from "mongoose";
 
-export function calDiscount(price:number,disount:number){
+export function calDiscount(price:number,disount:number):number{
     return (price - (price * disount / 100))
 } 
 

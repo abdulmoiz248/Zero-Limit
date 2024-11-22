@@ -64,7 +64,7 @@ const Footer = () => {
       <div>
         <h2 className="text-2xl font-bold mb-4">Privacy Policy</h2>
         <p className="mb-4">
-          At Limit Zero, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information.
+          At Zero Limit , we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information.
         </p>
         <h3 className="text-xl font-semibold mb-2">Information We Collect</h3>
         <p className="mb-4">
@@ -84,7 +84,7 @@ const Footer = () => {
       <div>
         <h2 className="text-2xl font-bold mb-4">Terms of Service</h2>
         <p className="mb-4">
-          By using the Limit Zero website and services, you agree to comply with and be bound by the following terms and conditions of use.
+          By using the Zero Limit  website and services, you agree to comply with and be bound by the following terms and conditions of use.
         </p>
         <h3 className="text-xl font-semibold mb-2">1. Agreement to Terms</h3>
         <p className="mb-4">
@@ -92,11 +92,11 @@ const Footer = () => {
         </p>
         <h3 className="text-xl font-semibold mb-2">2. Use License</h3>
         <p className="mb-4">
-          Permission is granted to temporarily download one copy of the materials on Limit Zero&apos;s website for personal, non-commercial transitory viewing only.
+          Permission is granted to temporarily download one copy of the materials on  Zero Limit website for personal, non-commercial transitory viewing only.
         </p>
         <h3 className="text-xl font-semibold mb-2">3. Disclaimer</h3>
         <p>
-          The materials on Limit Zero&apos;s website are provided on an &apos;as is&apos; basis. Limit Zero makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties.
+          The materials on Zero Limit  website are provided on an &apos;as is&apos; basis.Zero Limit  makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties.
         </p>
         <h3 className="text-xl font-semibold mb-2">4. Return Policy</h3>
         <p>
@@ -135,7 +135,7 @@ const Footer = () => {
                <Image alt="logo" src='/images/Lion.JPG' width={100} height={100}/>
               </div>
               <span className="self-center text-2xl font-bold  text-black">
-                Limit Zero
+              Zero Limit 
               </span>
             </a>
             <p className="mt-4 text-sm text-gray-600">
@@ -178,7 +178,7 @@ const Footer = () => {
         >
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-sm text-gray-600 mb-4 md:mb-0">
-              ©2024 Limit Zero. All rights reserved.
+              ©2024 Zero Limit . All rights reserved.
             </div>
             <div className="flex flex-wrap justify-center space-x-4">
               <button

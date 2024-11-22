@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     
 
     await order.save();
-    await sendOrderPlacedEmail(formData.email);
+     await sendOrderPlacedEmail(formData.email);
 
     return NextResponse.json(
       {
