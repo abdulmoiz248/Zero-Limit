@@ -1,145 +1,57 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { Metadata } from 'next'
+import CategoryPageContent from './CategoryPageContent'
 import { Categories } from '@/Models/Categories'
 import { Product } from '@/Models/Product'
-import ProductCard from '@/components/ProductCard'
-import { motion } from 'framer-motion'
-import LionLoader from '@/components/LionLoader'
-import { Sparkles, Package } from 'lucide-react'
 
-export default function CategoryPage({ params }: { params: { id: string } }) {
-  const [category, setCategory] = useState<Categories | null>(null)
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(`/api/getCategories/${params.id}`);
-      
-      if (response.data.success) {
-        setCategory(response.data.category);
-
-        const res = await axios.get(`/api/get-cat-product/${params.id}`);
-        if (res.data.success) {
-          setProducts(res.data.products);
-        } else {
-          setError("Failed to load product data.");
-        }
-      } else {
-        // Retry fetching the category if the first attempt fails
-        const retryResponse = await axios.get(`/api/getCategories/${params.id}`);
-        if (retryResponse.data.success) {
-          setCategory(retryResponse.data.category);
-
-          const res = await axios.get(`/api/get-cat-product/${params.id}`);
-          if (res.data.success) {
-            setProducts(res.data.products);
-          } else {
-            setError("Failed to load product data.");
-          }
-        } else {
-          setError("Failed to load category data.");
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError("An error occurred while fetching data.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, [params.id]);
-
-  
-  if (loading) return <LionLoader />
-  if (error) return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen flex items-center justify-center bg-gray-100"
-    >
-      <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-        <Package className="w-16 h-16 text-red-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Oops!</h2>
-        <p className="text-gray-600">{error}</p>
-      </div>
-    </motion.div>
-  )
-  if (!category) return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen flex items-center justify-center bg-gray-100"
-    >
-      <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-        <Package className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Category Not Found</h2>
-        <p className="text-gray-600">We couldn&apos;t find the category you&apos;re looking for.</p>
-      </div>
-    </motion.div>
-  )
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pt-10"
-    >
-      <div className="container mx-auto px-4 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold mb-2 text-[#1b03a3]">
-            {category.name}
-          </h1>
-          <div className="flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-yellow-500 mr-2" />
-            <p className="text-lg text-gray-600">Explore our amazing products</p>
-          </div>
-        </motion.div>
-        {products.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="text-center text-gray-600 bg-white p-8 rounded-lg shadow-lg"
-          >
-            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-xl">No products available in this category.</p>
-            <p className="mt-2">Check back soon for new arrivals!</p>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-          >
-            {products.map((product: Product, index) => (
-              <motion.div
-                key={product._id as string}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-      </div>
-    </motion.div>
-  )
+type Props = {
+  params: { id: string }
 }
+
+async function getCategoryData(id: string): Promise<Categories> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getCategories/${id}`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch category')
+  const data = await res.json()
+  return data.category
+}
+
+async function getCategoryProducts(id: string): Promise<Product[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/get-cat-product/${id}`, { cache: 'no-store' })
+  if (!res.ok) throw new Error('Failed to fetch products')
+  const data = await res.json()
+  return data.products
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const category = await getCategoryData(params.id)
+
+  return {
+    title: `${category.name} | Zero Limit`,
+    description: `Explore our amazing ${category.name} products. Find the best deals and latest arrivals in our ${category.name} collection.`,
+    openGraph: {
+      title: `${category.name} - Zero Limit`,
+      description: `Discover our ${category.name} collection. Quality products and great deals await!`,
+      images: [category.link],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${category.name} | Zero Limit`,
+      description: `Shop the best ${category.name} products. Unbeatable quality and prices!`,
+      images: [category.link],
+    },
+    keywords: [`${category.name}`, 'products','zero limit','zero limit apparel' ,'shop', 'ecommerce', 'deals'],
+  }
+}
+
+export default async function CategoryPage({ params }: Props) {
+  try {
+    const [category, products] = await Promise.all([
+      getCategoryData(params.id),
+      getCategoryProducts(params.id)
+    ])
+    return <CategoryPageContent category={category} products={products} />
+  } catch (error) {
+    console.error("Error fetching data:", error)
+    return <div>Error loading category data. Please try again later.</div>
+  }
+}
+

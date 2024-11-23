@@ -13,9 +13,6 @@ import LionLoader from '@/components/LionLoader'
 import ProductModal from '@/components/ProductModal'
 import Description from '@/components/Description'
 
-
-
-
 export default function Component({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
