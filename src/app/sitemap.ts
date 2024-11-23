@@ -3,14 +3,14 @@ import { Product } from '@/Models/Product';
 import { MetadataRoute } from 'next'
 
 async function getProducts() {
-  const res = await fetch(`/api/fetch-products`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fetch-products`);
   if (!res.ok) return []
   const data = await res.json()
   return data.success ? data.products : []
 }
 
 async function getCategories() {
-  const res = await fetch(`/api/getAllCategories`)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getAllCategories`)
   if (!res.ok) return []
   const data = await res.json()
   return data.success ? data.category : []
