@@ -11,6 +11,7 @@ interface CategoryPageContentProps {
   products: Product[]
 }
 
+
 export default function CategoryPageContent({ category, products }: CategoryPageContentProps) {
   
   return (
