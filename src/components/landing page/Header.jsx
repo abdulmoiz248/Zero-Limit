@@ -56,7 +56,7 @@ export default function Header() {
               </Link>
             </div>
 
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className="hidden md:flex items-center space-x-8 mr-12">
               {menuItems.map((item) => (
                 <Link 
                   key={item.name}
@@ -75,7 +75,7 @@ export default function Header() {
                 className={`ml-4 ${scrollPosition > 50 ? 'text-gray-700' : 'text-gray-700'}`}
                 asChild
               >
-                <Link href="/Cart">
+                <Link href="/Cart" className=''>
                   <ShoppingBag className="h-5 w-5" />
                   <span className="sr-only">Cart</span>
                 </Link>
