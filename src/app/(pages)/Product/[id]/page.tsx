@@ -116,43 +116,61 @@ export default function Component({ params }: { params: { id: string } }) {
       `}</style>
     
     <Head>
-  <script
-    type="application/ld+json"
-    dangerouslySetInnerHTML={{
-      __html: JSON.stringify({
-        "@context": "http://schema.org",
-        "@type": "Product",
-        "name": product?.name,
-        "image": product?.link[0],
-        "description": product?.description,
-        "sku": product?._id,
-        "brand": {
-          "@type": "Brand",
-          "name": "Zero Limit"
-        },
-        "offers": {
-          "@type": "Offer",
-          "url": `https://www.zerolimitapparel.com/Product/${params.id}`,
-          "priceCurrency": "USD",
-          "price": discountedPrice,
-          "priceValidUntil": "2024-12-31",
-          "itemCondition": "http://schema.org/NewCondition",
-          "availability": "http://schema.org/InStock"
-        }
-      }),
-    }}
-  />
-  <title>{product?.name} - Zero Limit Apparel</title>
-  <meta name="description" content={product?.description} />
-  <meta name="keywords" content={`fearless, zero limit, clothing, fashion`} />
-  <meta property="og:title" content={`${product?.name} - Zero Limit Apparel`} />
-  <meta property="og:description" content={product?.description} />
-  <meta property="og:image" content={product?.link[0]} />
-  <meta property="og:url" content={`https://www.zerolimitapparel.com/Product/${params.id}`} />
-  <meta property="og:type" content="product" />
-  <meta property="og:site_name" content="Zero Limit Apparel" />
-  <meta name="robots" content="index, follow" />
-</Head>
+        <title>{product?.name} | Zero Limit </title>
+        <meta name="description" content={`${product?.description?.slice(0, 155)}...`} />
+        <meta name="keywords" content={`${product?.name}, fearless, zero limit, clothing, fashion, apparel`} />
+        
+        {/* OpenGraph metadata */}
+        <meta property="og:title" content={`${product?.name} | Zero Limit `} />
+        <meta property="og:description" content={`${product?.description?.slice(0, 155)}...`} />
+        <meta property="og:image" content={product?.link[0]} />
+        <meta property="og:url" content={`https://www.zerolimitapparel.com/Product/${params.id}`} />
+        <meta property="og:type" content="product" />
+        <meta property="og:site_name" content="Zero Limit" />
+
+        {/* Twitter Card metadata */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${product?.name} | Zero Limit `} />
+        <meta name="twitter:description" content={`${product?.description?.slice(0, 155)}...`} />
+        <meta name="twitter:image" content={product?.link[0]} />
+
+        {/* Canonical URL */}
+        <link rel="canonical" href={`https://www.zerolimitapparel.com/Product/${params.id}`} />
+
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Product",
+              "name": product?.name,
+              "image": product?.link,
+              "description": product?.description,
+              "sku": product?._id,
+              "mpn": product?._id,
+              "brand": {
+                "@type": "Brand",
+                "name": "Zero Limit"
+              },
+              "offers": {
+                "@type": "Offer",
+                "url": `https://www.zerolimitapparel.com/Product/${params.id}`,
+                "priceCurrency": "INR",
+                "price": discountedPrice?.toFixed(2),
+                "itemCondition": "https://schema.org/NewCondition",
+                "availability": "https://schema.org/InStock"
+              },
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": product?.ratings
+               
+              }
+            })
+          }}
+        />
+      </Head>
+
 
 
        <ProductModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} Product={product!} />
