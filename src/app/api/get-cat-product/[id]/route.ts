@@ -1,37 +1,54 @@
 import connect from "@/dbConfig/dbConfig";
-import ProductModel, { Product } from "@/Models/Product";
+import ProductModel from "@/Models/Product";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
     try {
-        await connect(); 
+        // Connect to the database
+        await connect();
 
-        const url = new URL(req.url); 
-        const categoryId = url.pathname.split('/').pop(); 
+        // Extract the categoryId from the URL
+        const url = new URL(req.url);
+        const categoryId = url.pathname.split('/').pop();
 
         if (!categoryId) {
-            return NextResponse.json({
-                message: "Category ID is required.",
-                success: false
-            }, { status: 400 });
+            return NextResponse.json(
+                {
+                    message: "Category ID is required.",
+                    success: false,
+                },
+                { status: 400 }
+            );
         }
 
-       
+        // Fetch products by categoryId
+        const products = await ProductModel.find({ categoryId }).lean();
 
-      
-      
-        const  products:Product[]=await ProductModel.find({ categoryId: categoryId})
-        
-        return NextResponse.json({
-            products,
-            success: true
-        }, { status: 200 });
+        if (products.length === 0) {
+            return NextResponse.json(
+                {
+                    message: "No products found for the given category.",
+                    success: false,
+                },
+                { status: 404 }
+            );
+        }
 
+        return NextResponse.json(
+            {
+                products,
+                success: true,
+            },
+            { status: 200 }
+        );
     } catch (error: unknown) {
-        console.log(error);
-        return NextResponse.json({
-            message: "Error loading category.",
-            success: false
-        }, { status: 500 });
+        console.error("Error fetching products:", error);
+        return NextResponse.json(
+            {
+                message: "An error occurred while fetching products.",
+                success: false,
+            },
+            { status: 500 }
+        );
     }
 }
