@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Product } from '@/Models/Product'
 import { addToCart } from '@/helper/cart'
-
+import { useMetaPixel } from "@/hooks/useMetaPixel";
 type ProductModalProps = {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
@@ -22,7 +22,7 @@ export default function ProductModal({ isOpen, setIsOpen, Product }: ProductModa
   const [sizes, setSizes] = useState<string[]>([])
   const [showSizeChart, setShowSizeChart] = useState(false)
   const [error, setError] = useState('')
-
+  const metaPixel = useMetaPixel()
   useEffect(() => {
     if (isOpen) {
       const availableSizes = Object.entries(Product.size)
@@ -44,7 +44,12 @@ export default function ProductModal({ isOpen, setIsOpen, Product }: ProductModa
       ...Product,
       size: { [size]: Product.size[size] as number },
     };
-
+    metaPixel.purchase({
+      currency: 'PKR',
+      value: cartProduct.price,
+      productName: cartProduct.name,
+      content_ids: [cartProduct._id],
+    })
     addToCart(cartProduct as Product, 1);
     toast.custom((t) => (
       <motion.div

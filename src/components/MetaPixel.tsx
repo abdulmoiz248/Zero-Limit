@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Script from 'next/script'
 
 export default function MetaPixel() {
@@ -18,7 +19,8 @@ export default function MetaPixel() {
         `}
       </Script>
       <noscript>
-        <img 
+        <Image
+        alt="meta ad"
           height="1" 
           width="1" 
           style={{ display: 'none' }}

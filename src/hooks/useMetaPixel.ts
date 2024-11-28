@@ -1,12 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 declare global {
   interface Window {
-    fbq: any
+    fbq?: (event: string, action: string, params?: Record<string, unknown>) => void;
   }
 }
 
-type StandardEvent = 
+type StandardEvent =
   | 'AddPaymentInfo'
   | 'AddToCart'
   | 'AddToWishlist'
@@ -23,37 +23,40 @@ type StandardEvent =
   | 'StartTrial'
   | 'SubmitApplication'
   | 'Subscribe'
-  | 'ViewContent'
+  | 'ViewContent';
 
 export const useMetaPixel = () => {
-  const trackEvent = (event: StandardEvent, params?: object) => {
-    if (window.fbq) {
-      window.fbq('track', event, params)
+  const trackEvent = (event: StandardEvent, params?: Record<string, unknown>) => {
+    if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
+      window.fbq('track', event, params);
+    } else {
+      console.warn(`Facebook Pixel is not initialized. Event '${event}' was not tracked.`);
     }
-  }
+  };
 
   useEffect(() => {
-    // This effect ensures that fbq is available
-  }, [])
+    if (typeof window === 'undefined' || typeof window.fbq !== 'function') {
+      console.warn('Facebook Pixel is not available.');
+    }
+  }, []);
 
   return {
-    addPaymentInfo: (params?: object) => trackEvent('AddPaymentInfo', params),
-    addToCart: (params?: object) => trackEvent('AddToCart', params),
-    addToWishlist: (params?: object) => trackEvent('AddToWishlist', params),
-    completeRegistration: (params?: object) => trackEvent('CompleteRegistration', params),
-    contact: (params?: object) => trackEvent('Contact', params),
-    customizeProduct: (params?: object) => trackEvent('CustomizeProduct', params),
-    donate: (params?: object) => trackEvent('Donate', params),
-    findLocation: (params?: object) => trackEvent('FindLocation', params),
-    initiateCheckout: (params?: object) => trackEvent('InitiateCheckout', params),
-    lead: (params?: object) => trackEvent('Lead', params),
-    purchase: (params?: object) => trackEvent('Purchase', params),
-    schedule: (params?: object) => trackEvent('Schedule', params),
-    search: (params?: object) => trackEvent('Search', params),
-    startTrial: (params?: object) => trackEvent('StartTrial', params),
-    submitApplication: (params?: object) => trackEvent('SubmitApplication', params),
-    subscribe: (params?: object) => trackEvent('Subscribe', params),
-    viewContent: (params?: object) => trackEvent('ViewContent', params),
-  }
-}
-
+    addPaymentInfo: (params?: Record<string, unknown>) => trackEvent('AddPaymentInfo', params),
+    addToCart: (params?: Record<string, unknown>) => trackEvent('AddToCart', params),
+    addToWishlist: (params?: Record<string, unknown>) => trackEvent('AddToWishlist', params),
+    completeRegistration: (params?: Record<string, unknown>) => trackEvent('CompleteRegistration', params),
+    contact: (params?: Record<string, unknown>) => trackEvent('Contact', params),
+    customizeProduct: (params?: Record<string, unknown>) => trackEvent('CustomizeProduct', params),
+    donate: (params?: Record<string, unknown>) => trackEvent('Donate', params),
+    findLocation: (params?: Record<string, unknown>) => trackEvent('FindLocation', params),
+    initiateCheckout: (params?: Record<string, unknown>) => trackEvent('InitiateCheckout', params),
+    lead: (params?: Record<string, unknown>) => trackEvent('Lead', params),
+    purchase: (params?: Record<string, unknown>) => trackEvent('Purchase', params),
+    schedule: (params?: Record<string, unknown>) => trackEvent('Schedule', params),
+    search: (params?: Record<string, unknown>) => trackEvent('Search', params),
+    startTrial: (params?: Record<string, unknown>) => trackEvent('StartTrial', params),
+    submitApplication: (params?: Record<string, unknown>) => trackEvent('SubmitApplication', params),
+    subscribe: (params?: Record<string, unknown>) => trackEvent('Subscribe', params),
+    viewContent: (params?: Record<string, unknown>) => trackEvent('ViewContent', params),
+  };
+};
