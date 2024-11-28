@@ -49,7 +49,7 @@ export default function EnhancedCustomerReviewPage({ params }: { params: { id: s
         if (res.data.success) {
           console.log(res.data.order);
           if (!res.data.order.rating) {
-            setUsername(res.data.order.name);
+            setUsername(res.data.order.email);
             const productsRes = await axios.post(`/api/order-products`, { products: res.data.order.products });
             setProducts(productsRes.data.products);
           } else {
