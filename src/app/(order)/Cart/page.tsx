@@ -100,7 +100,7 @@ export default function Component() {
                      {item.product.name} | {Object.keys(item.product.size)[0]}
                   </h2>
                     <div className="flex items-center space-x-2">
-                      <p className="text-lg font-semibold">Rs.{item.product.price}</p>
+                      <p className="text-lg font-semibold">Rs.{item.product.price.toFixed(0)}</p>
                       {item.product.discountPercent!=0 && item.product.discountPercent >0  && (
                         <span className="text-sm text-green-600 font-semibold">
                           ({item.product.discountPercent}% off)
@@ -135,7 +135,7 @@ export default function Component() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg font-semibold">Rs.{calculateItemTotal(item)}</p>
+                    <p className="text-lg font-semibold">Rs.{calculateItemTotal(item).toFixed(0)}</p>
                     <Button variant="ghost" size="icon" onClick={() => removeItem(item.product)} className="text-[#1b03a3] hover:text-[#1b03a3]/80">
                       <Trash2 className="h-5 w-5" />
                     </Button>
@@ -149,12 +149,12 @@ export default function Component() {
                 className="mt-8 p-6 bg-white rounded-lg shadow-md"
               >
                 <div className="space-y-2 mb-4">
-                  <p className="text-xl flex justify-between"><span>Subtotal:</span> <span>Rs.{subtotal}</span></p>
+                  <p className="text-xl flex justify-between"><span>Subtotal:</span> <span>Rs.{subtotal.toFixed(0)}</span></p>
                   <p className="text-xl flex justify-between items-center">
                     <span className="flex items-center"><Truck className="mr-2 h-5 w-5 text-[#1b03a3]" /> Delivery Fee:</span>
                     <span>Rs.{deliveryFee}</span>
                   </p>
-                  <p className="text-2xl font-bold flex justify-between"><span>Total:</span> <span>Rs.{total}</span></p>
+                  <p className="text-2xl font-bold flex justify-between"><span>Total:</span> <span>Rs.{total.toFixed(0)}</span></p>
                 </div>
                 
                   <Button 
