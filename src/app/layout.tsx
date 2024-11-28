@@ -7,6 +7,7 @@ import "./globals.css";
 
 import Header from "@/components/landing page/Header";
 import Footer from '@/components/landing page/Footer'
+import MetaPixel from '@/components/MetaPixel';
 
 
 export const metadata: Metadata = {
@@ -53,7 +54,7 @@ export default function RootLayout({
       <body>
         <Analytics/>
         <SpeedInsights />
-       
+        <MetaPixel/>
         <Header></Header>
         {children}
         <Footer/>

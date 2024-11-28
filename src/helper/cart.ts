@@ -1,4 +1,5 @@
 import { Product } from "@/Models/Product";
+import { useMetaPixel } from "@/hooks/useMetaPixel";
 import { CartItem } from "@/interfaces/interfaces";
 export function getStoredCart(): Record<string, CartItem> {
   try {
@@ -12,13 +13,23 @@ export function getStoredCart(): Record<string, CartItem> {
 
 
 export function addToCart(product: Product, quantity: number): void {
+  
   if (!product._id) {
     console.error("Product must have a valid ID.");
     return;
   }
-
+  const metaPixel = useMetaPixel()
   const cart = getStoredCart();
 
+
+  metaPixel.purchase({
+    currency: 'PKR',
+    value: product.price,
+    productName: product.name,
+    content_ids: [product._id],
+    num_items: 1,
+    order_id: 'ORDER67890'
+  })
   // Define the selected size and create a unique key based on product ID and size
   const productSize = product.size as Record<string, number>;
   const selectedSizeKey = Object.keys(productSize)[0];
