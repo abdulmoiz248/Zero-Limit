@@ -1,7 +1,9 @@
+'use client'
+
 import Image from 'next/image'
 import Script from 'next/script'
 
-export default function MetaPixel() {
+export default function MetaPixel({ pixelId }: { pixelId: string }) {
   return (
     <>
       <Script id="meta-pixel" strategy="afterInteractive">
@@ -12,19 +14,19 @@ export default function MetaPixel() {
           if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
           n.queue=[];t=b.createElement(e);t.async=!0;
           t.src=v;s=b.getElementsByTagName(e)[0];
-          s.parentNode.insertBefore(t,s)}(window,document,'script',
+          s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '1076737537104848'); 
+          fbq('init', '${pixelId}');
           fbq('track', 'PageView');
         `}
       </Script>
       <noscript>
         <Image
-        alt="meta ad"
           height="1" 
           width="1" 
           style={{ display: 'none' }}
-          src="https://www.facebook.com/tr?id=1076737537104848&ev=PageView&noscript=1"
+          src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
+          alt=""
         />
       </noscript>
     </>

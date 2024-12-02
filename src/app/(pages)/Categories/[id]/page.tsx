@@ -8,15 +8,26 @@ type Props = {
 }
 
 async function getCategoryData(id: string): Promise<Categories> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getCategories/${id}`, { cache: 'no-store' })
-  if (!res.ok) throw new Error('Failed to fetch category')
+  let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getCategories/${id}`, { cache: 'no-store' })
+  if (!res.ok) {
+     res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getCategories/${id}`, { cache: 'no-store' })
+     if (!res.ok) {
+    throw new Error('Failed to fetch category')
+  }
+   
+  }
   const data = await res.json()
   return data.category
 }
 
 async function getCategoryProducts(id: string): Promise<Product[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/get-cat-product/${id}`, { cache: 'no-store' })
-  if (!res.ok) throw new Error('Failed to fetch products')
+  let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/get-cat-product/${id}`, { cache: 'no-store' })
+  if (!res.ok) {
+     res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/get-cat-product/${id}`, { cache: 'no-store' })
+    if (!res.ok) {
+      throw new Error('Failed to fetch products')
+    }
+  }
   const data = await res.json()
   return data.products
 }

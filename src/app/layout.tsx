@@ -54,7 +54,7 @@ export default function RootLayout({
       <body>
         <Analytics/>
         <SpeedInsights />
-        <MetaPixel/>
+        <MetaPixel pixelId="1076737537104848" />
         <Header></Header>
         {children}
         <Footer/>

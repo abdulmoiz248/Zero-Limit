@@ -38,14 +38,15 @@ export function addToCart(product: Product, quantity: number): void {
     // Check if adding the quantity would exceed available stock
     if (availableStock >= cart[key].quantity + quantity) {
       cart[key].quantity += quantity;
+      
     } else {
       console.warn("Not enough stock available for this size.");
       cart[key].quantity = availableStock; // Set to maximum available if it exceeds
     }
 
     // Prevent negative quantities
-    if (cart[key].quantity < 0) {
-      cart[key].quantity = 0;
+    if (cart[key].quantity <= 0) {
+      removeFromCart(product);
     }
   } else {
     // Add a new item to the cart with the given size if it’s not already present

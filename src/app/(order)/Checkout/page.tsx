@@ -49,7 +49,8 @@ export default function LuxuryCheckoutPage() {
     
       const res1=await axios.post('/api/verify-products',{cart});
       if(res1.data.success){
-      const res=await axios.post('/api/order',{total:res1.data.total,formData, cart, paymentMethod})
+      const dis=Number(localStorage.getItem('couponCode')) || 0;  
+      const res=await axios.post('/api/order',{total:res1.data.total-dis,formData, cart, paymentMethod})
       if(res.data.success){
         localStorage.removeItem('cart');
       //  await axios.post('/api/sendmsg');
