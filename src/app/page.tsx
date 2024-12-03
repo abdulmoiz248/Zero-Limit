@@ -9,6 +9,8 @@ import axios from 'axios';
 import { Product } from '@/Models/Product';
 import { Toaster } from 'react-hot-toast';
 
+import CoverImage from '@/components/Cover';
+
 
 
 const CatCarousel = dynamic(() => import('@/components/landing page/CategoriesCarouse'), {
@@ -95,7 +97,7 @@ export default function Home() {
           >
             <CatCarousel categories={categories!} />
           </motion.div>
-       
+       <CoverImage/>
           <motion.div
             ref={manifestoRef}
             variants={animationVariants}
