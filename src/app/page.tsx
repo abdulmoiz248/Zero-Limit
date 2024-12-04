@@ -86,7 +86,7 @@ export default function Home() {
         <>
         <Toaster/>
           <BelowHeader />
-
+          <CoverImage/>
           <motion.div
             ref={catRef}
             variants={animationVariants}
@@ -97,7 +97,7 @@ export default function Home() {
           >
             <CatCarousel categories={categories!} />
           </motion.div>
-       <CoverImage/>
+     
           <motion.div
             ref={manifestoRef}
             variants={animationVariants}

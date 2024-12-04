@@ -1,10 +1,11 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
-export default function CoverImage() {
+export default function FashionShowcase() {
   return (
-    <div className="relative w-full bg-gradient-to-b from-neutral-900 to-neutral-800 py-8 md:py-12">
+    <div className="relative w-full bg-black py-12 md:py-16">
       <div className="container mx-auto px-4">
-        <div className="relative group cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition-transform duration-300 hover:scale-[1.02]">
+        <div className="relative group cursor-pointer overflow-hidden rounded-3xl shadow-2xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(27,3,163,0.3)]">
           <div className="relative w-full">
             <Image
               src="/images/cover.jpeg"
@@ -15,10 +16,23 @@ export default function CoverImage() {
               className="w-full h-auto"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
             />
+            <div className="absolute inset-0 bg-black bg-opacity-40 transition-opacity duration-300 group-hover:bg-opacity-30" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-6">
+              <div className="max-w-md p-6 backdrop-blur-md bg-white bg-opacity-10 rounded-xl border border-white border-opacity-20 transition-all duration-300 group-hover:bg-opacity-20">
+              
+                <Link href="/all-products" className="block w-full">
+                  <button className="w-full px-6 py-3 bg-[#1b03a3] text-white font-bold text-lg uppercase tracking-wider rounded-lg hover:bg-opacity-90 transition-colors duration-300">
+                    Shop Now
+                  </button>
+                </Link>
+              </div>
+              <div className="flex space-x-4">
+               
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   )
 }
-
