@@ -1,8 +1,8 @@
-import ProductModel, { Product } from "@/Models/Product";
-import connect from "@/dbConfig/dbConfig";
- 
-import { CartItem } from "@/interfaces/interfaces";
 import { NextResponse } from "next/server";
+import ProductModel from "@/Models/Product";
+import connect from "@/dbConfig/dbConfig";
+import { CartItem } from "@/interfaces/interfaces";
+
 
 export async function POST(req: Request) {
   try {
@@ -11,52 +11,50 @@ export async function POST(req: Request) {
     const { cart } = await req.json();
     const cartItems: CartItem[] = Object.values(cart);
 
-    // Gather product IDs for a batch query
-    const productIds = cartItems.map((item) => item.product._id);
+    // Gather product IDs and quantities for a single query
+    const productQueries = cartItems.map(item => ({
+      _id: item.product._id,
+      size: Object.keys(item.product.size)[0],
+      quantity: item.quantity
+    }));
 
-    // Fetch required products with stock in one go
-    const products = await ProductModel.find({ _id: { $in: productIds } }, "price quantity size");
+    // Fetch all required products in a single query
+    const products = await ProductModel.find(
+      { _id: { $in: productQueries.map(q => q._id) } },
+      "price quantity size discountPercent"
+    );
 
     let total = 0;
     const updateOperations = [];
+    const productMap = new Map(products.map(p => [p._id.toString(), p]));
 
-    // Mapping product quantities for quicker access
-    const productMap = new Map(products.map((p) => [p._id.toString(), p]));
-
-    for (const item of cartItems) {
-      const product:Product = productMap.get(item.product._id);
+    for (const query of productQueries) {
+      const product = productMap.get(query._id);
 
       if (!product) {
         return NextResponse.json(
-          { message: `Product ${item.product.name} not found`, success: false },
+          { message: `Product ${query._id} not found`, success: false },
           { status: 404 }
         );
       }
 
-      const [size, quantity] = Object.entries(item.product.size)[0];  // Get the first (and only) size and quantity pair
-      console.log(quantity);
-      // Check if there is enough stock for the selected size
-      if (product.size[size] < item.quantity) {
+      if (product.size[query.size] < query.quantity) {
         return NextResponse.json(
           {
-            message: `Not enough stock for ${item.product.name} size ${size}. Available: ${product.size[size]}`,
+            message: `Not enough stock for product ${query._id} size ${query.size}. Available: ${product.size[query.size]}`,
             success: false,
           },
           { status: 400 }
         );
       }
-      console.log(product); 
-      total +=  (item.product.price - (item.product.price * item.product.discountPercent / 100)) * item.quantity;
-      console.log(total);
 
-      // Prepare the stock update in batch
+      total += (product.price - (product.price * product.discountPercent / 100)) * query.quantity;
+
       updateOperations.push({
         updateOne: {
-          filter: { _id: item.product._id },
+          filter: { _id: query._id },
           update: { 
-            $inc: { 
-              [`size.${size}`]: -item.quantity, // Decrement the stock for the selected size
-            },
+            $inc: { [`size.${query.size}`]: -query.quantity },
           },
         },
       });
@@ -67,7 +65,6 @@ export async function POST(req: Request) {
       await ProductModel.bulkWrite(updateOperations);
     }
 
-    // Return the total amount and success response
     return NextResponse.json(
       {
         total,
@@ -85,3 +82,4 @@ export async function POST(req: Request) {
     );
   }
 }
+
