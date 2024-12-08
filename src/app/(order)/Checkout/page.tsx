@@ -13,6 +13,7 @@ import { getCart } from '@/helper/cart'
 import {  AnimatePresence } from 'framer-motion'
 import {  CheckCircle } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { CartItem } from '@/interfaces/interfaces'
 
 interface FormData {
   name: string;
@@ -45,25 +46,36 @@ export default function LuxuryCheckoutPage() {
     try {
       
       const cart = getCart();
-      
+      const cartItems: CartItem[] = Object.values(cart);
+      let total=0;
+      cartItems.forEach((cartItem:CartItem)=>{
+        total+= (cartItem.product.price - (cartItem.product.price * cartItem.product.discountPercent / 100)) *cartItem.quantity;
+      })
     
-      const res1=await axios.post('/api/verify-products',{cart});
-      if(res1.data.success){
       const dis=Number(localStorage.getItem('couponCode')) || 0;  
-      const res=await axios.post('/api/order',{total:res1.data.total-dis,formData, cart, paymentMethod})
+      const res=await axios.post('/api/order',{total:total-dis,formData, cart, paymentMethod})
+
+
       if(res.data.success){
         localStorage.removeItem('cart');
+        localStorage.removeItem('couponCode')
       //  await axios.post('/api/sendmsg');
         setShowContactPrompt(false);
         setShowSuccessModal(true)
      
       }else{
+        const res1=await axios.post('/api/order',{total:total-dis,formData, cart, paymentMethod})
+        if(res1.data.success){
+          localStorage.removeItem('cart');
+        //  await axios.post('/api/sendmsg');
+          setShowContactPrompt(false);
+          setShowSuccessModal(true)
+       
+        }else{
+          setError(res.data.message);
+        }
         setError(res.data.message);
       }
-    }else{
-      setError(res1.data.message);
-    }
-      
         
     } catch (error: unknown) {
       let errorMessage = "Network Error please try again";  // Default message
