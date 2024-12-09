@@ -10,7 +10,7 @@ const HomePage = () => {
      
       <div
   style={{ backgroundImage: 'url(/images/front.jpeg)' }}
-  className="md:w-1/2 w-full bg-cover bg-center text-black p-8 md:p-12 flex flex-col justify-center items-center md:items-start flex-grow"
+  className="md:w-1/2 w-full  bg-cover text-black p-8 md:p-12 flex flex-col justify-center items-center md:items-start flex-grow"
   onClick={()=>router.push('/all-products')}
 >
      </div>

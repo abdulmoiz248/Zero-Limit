@@ -10,6 +10,7 @@ import Footer from '@/components/landing page/Footer'
 import MetaPixel from '@/components/MetaPixel';
 
 
+
 export const metadata: Metadata = {
   title: "Zero Limit - Unleash Your Fearless Style",
   description:
@@ -55,6 +56,7 @@ export default function RootLayout({
         <Analytics/>
         <SpeedInsights />
         <MetaPixel pixelId="1076737537104848" />
+        
         <Header></Header>
         {children}
         <Footer/>

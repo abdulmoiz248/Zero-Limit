@@ -12,6 +12,7 @@ export interface Product extends Document {
   ratings: number;
   numReviews: number;
   size: Record<string, number>; // Defines an object with size keys and quantity values
+  unisex: boolean;
 }
 
 const ProductSchema = new Schema<Product>({
@@ -19,6 +20,10 @@ const ProductSchema = new Schema<Product>({
     type: Map, // Use a Map to store size and quantity pairs
     of: Number,
     required: true,
+  },
+  unisex:{
+    type:Boolean,
+    default: false,
   },
   name: {
     type: String,

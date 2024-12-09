@@ -12,6 +12,10 @@ import LionLoader from '@/components/LionLoader'
 
 import ProductModal from '@/components/ProductModal'
 import Description from '@/components/Description'
+import StableCarousel from '@/components/landing page/Featured';
+import axios from 'axios';
+import Link from 'next/link';
+import Steps from '@/components/Steps';
 
 export default function Component({ params }: { params: { id: string } }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -19,7 +23,7 @@ export default function Component({ params }: { params: { id: string } }) {
  
   const fullscreenRef = useRef<HTMLDivElement>(null)
   const [product, setProduct] = useState<Product>()
-
+  const [products, setProducts] = useState<Product[]>()
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -44,6 +48,22 @@ export default function Component({ params }: { params: { id: string } }) {
       } finally {
         setLoading(false)
       }
+      
+    }
+
+    const fetchFeature = async () => {
+      try {
+        const res = await axios.get(`/api/featured`)
+        if (res.data.success) {
+         
+            setProducts(res.data.products) 
+        }
+      } catch (error) {
+        console.error("Error fetching product", error)
+      } finally {
+        setLoading(false)
+      }
+      
     }
 
     const storedProduct = localStorage.getItem('product')
@@ -52,6 +72,7 @@ export default function Component({ params }: { params: { id: string } }) {
         const parsedProduct: Product = JSON.parse(storedProduct)
         if (parsedProduct._id !== params.id) {
           fetchProduct()
+          fetchFeature();
           return
         }
         setProduct(parsedProduct)
@@ -63,6 +84,8 @@ export default function Component({ params }: { params: { id: string } }) {
     } else {
       fetchProduct()
     }
+    fetchFeature();
+
   }, [params.id])
 
   const handleCartToggle = (e: React.MouseEvent) => {
@@ -171,8 +194,6 @@ export default function Component({ params }: { params: { id: string } }) {
         />
       </Head>
 
-
-
        <ProductModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} Product={product!} />
       <Card className="max-w-7xl mx-auto shadow-lg">
         <CardContent className="p-6">
@@ -225,8 +246,17 @@ export default function Component({ params }: { params: { id: string } }) {
                 className="text-4xl font-bold text-gray-900"
               >
                 {product?.name}
+
               </motion.h1>
-              
+              <div className="mt-4 flex items-center justify-between">
+       
+        {product?.unisex && (
+          <span className="bg-purple-100 text-purple-800 text-l font-medium mr-2 px-2.5 py-0.5 rounded">
+            Unisex
+          </span>
+        )}
+      </div>
+
               {/* Expandable Description */}
              <Description description={product?.description}/>
               
@@ -254,6 +284,7 @@ export default function Component({ params }: { params: { id: string } }) {
                 <span className="text-lg font-semibold">{product?.ratings}/5</span>
               </motion.div>
   
+            
               <motion.button
                 onClick={handleCartToggle}
                 whileHover={{ scale: 1.05 }}
@@ -266,7 +297,17 @@ export default function Component({ params }: { params: { id: string } }) {
                 { 'Add to Cart'}
               </motion.button>
           
-             
+              <motion.button
+            
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                 <Link  className='bold border-2 mt-10 border-black p-2 rounded'
+        href="#reviews" >
+          Read Reviews
+        </Link>
+              </motion.button>
+            
             </div>
           </div>
 
@@ -307,7 +348,11 @@ export default function Component({ params }: { params: { id: string } }) {
           </AnimatePresence>
         </CardContent>
       </Card>
-      <Reviews productId={params.id} />
+      <Steps/>
+    {products &&   <StableCarousel featuredProducts={products!}/>}
+   <div id="reviews" >
+   <Reviews productId={params.id} />
+   </div>
     </div>
   )
 }

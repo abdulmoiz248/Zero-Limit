@@ -1,39 +1,67 @@
-'use client'
+'use client';
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
-import BelowHeader from '@/components/landing page/BelowHeader';
 import LionLoader from '@/components/LionLoader';
 import axios from 'axios';
 import { Product } from '@/Models/Product';
 import { Toaster } from 'react-hot-toast';
 
-import CoverImage from '@/components/Cover';
+const BelowHeader = dynamic(() => import('@/components/landing page/BelowHeader'), {
+  ssr: false,
+  loading: () => <LionLoader />,
+});
 
+const CoverImage = dynamic(() => import('@/components/landing page/Cover'), {
+  ssr: false,
+  loading: () => <LionLoader />,
+});
 
+const UnisexClothingSection = dynamic(() => import('@/components/landing page/UniSex'), {
+  ssr: false,
+  loading: () => <LionLoader />,
+});
+
+const CustomerReviews = dynamic(() => import('@/components/landing page/ReviewLanding'), {
+  ssr: false,
+  loading: () => <LionLoader />,
+});
+
+const PremiumCertificate = dynamic(() => import('@/components/landing page/PremiumCertificate'), {
+  ssr: false,
+  loading: () => <LionLoader />,
+});
+
+const ManufacturingTimeline = dynamic(() => import('@/components/landing page/TimeLine'), {
+  ssr: false,
+  loading: () => <LionLoader />,
+});
+
+const OfferSection = dynamic(() => import('@/components/landing page/OfferSection'), {
+  ssr: false,
+  loading: () => <LionLoader />,
+});
 
 const CatCarousel = dynamic(() => import('@/components/landing page/CategoriesCarouse'), {
   ssr: false,
-  loading: () => <LionLoader/>,
+  loading: () => <LionLoader />,
 });
 
 const LimitZeroManifesto = dynamic(() => import('@/components/landing page/AboutUs'), {
   ssr: false,
-  loading: () => <LionLoader/>,
+  loading: () => <LionLoader />,
 });
 
 const StableCarousel = dynamic(() => import('@/components/landing page/Featured'), {
   ssr: false,
-  loading: () => <LionLoader/>,
+  loading: () => <LionLoader />,
 });
 
 const JoinUs = dynamic(() => import('@/components/landing page/JoinUs'), {
   ssr: false,
-  loading: () => <LionLoader/>
+  loading: () => <LionLoader />,
 });
-
-
 
 const animationVariants = {
   hidden: { opacity: 0, y: 50 },
@@ -54,6 +82,14 @@ export default function Home() {
   const { ref: manifestoRef, inView: isManifestoInView } = useLazyInView();
   const { ref: featuredRef, inView: isFeaturedInView } = useLazyInView();
   const { ref: joinUsRef, inView: isJoinUsInView } = useLazyInView();
+  const { ref: belowHeaderRef, inView: isBelowHeaderInView } = useLazyInView();
+  const { ref: coverImageRef, inView: isCoverImageInView } = useLazyInView();
+  const { ref: unisexRef, inView: isUnisexInView } = useLazyInView();
+  const { ref: reviewsRef, inView: isReviewsInView } = useLazyInView();
+  const { ref: premiumCertRef, inView: isPremiumCertInView } = useLazyInView();
+  const { ref: timelineRef, inView: isTimelineInView } = useLazyInView();
+  const { ref: offerRef, inView: isOfferInView } = useLazyInView();
+
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState();
@@ -66,7 +102,6 @@ export default function Home() {
           setLoading(false);
           setProducts(res.data.products);
           setCategories(res.data.categories);
-          
           // Scroll to the top once the loading is done
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -84,29 +119,82 @@ export default function Home() {
         <LionLoader />
       ) : (
         <>
-        <Toaster/>
-          <BelowHeader />
-          <CoverImage/>
+          <Toaster />
+          <motion.div
+            ref={belowHeaderRef}
+            variants={animationVariants}
+            initial="hidden"
+            animate={isBelowHeaderInView ? 'visible' : 'hidden'}
+            transition={{ duration: 0.5 }}
+            className="overflow-hidden"
+          >
+            <BelowHeader />
+          </motion.div>
+
+          <motion.div
+            ref={premiumCertRef}
+            variants={animationVariants}
+            initial="hidden"
+            animate={isPremiumCertInView ? 'visible' : 'hidden'}
+            transition={{ duration: 0.5 }}
+            className="overflow-hidden"
+          >
+            <PremiumCertificate />
+          </motion.div>
+
+          <motion.div
+            ref={coverImageRef}
+            variants={animationVariants}
+            initial="hidden"
+            animate={isCoverImageInView ? 'visible' : 'hidden'}
+            transition={{ duration: 0.5 }}
+            className="overflow-hidden"
+          >
+            <CoverImage />
+          </motion.div>
+
+          <motion.div
+            ref={offerRef}
+            variants={animationVariants}
+            initial="hidden"
+            animate={isOfferInView ? 'visible' : 'hidden'}
+            transition={{ duration: 0.5 }}
+            className="overflow-hidden"
+          >
+            <OfferSection />
+          </motion.div>
+
+          <motion.div
+            ref={unisexRef}
+            variants={animationVariants}
+            initial="hidden"
+            animate={isUnisexInView ? 'visible' : 'hidden'}
+            transition={{ duration: 0.5 }}
+            className="overflow-hidden"
+          >
+            <UnisexClothingSection />
+          </motion.div>
+
           <motion.div
             ref={catRef}
             variants={animationVariants}
             initial="hidden"
-            animate={isCatInView ? 'visible' : 'hidden'}
+            animate={isCatInView ? 'visible' : 'visible'}
             transition={{ duration: 0.5 }}
             className="overflow-hidden"
           >
             <CatCarousel categories={categories!} />
           </motion.div>
-     
+
           <motion.div
-            ref={manifestoRef}
+            ref={reviewsRef}
             variants={animationVariants}
             initial="hidden"
-            animate={isManifestoInView ? 'visible' : 'hidden'}
+            animate={isReviewsInView ? 'visible' : 'hidden'}
             transition={{ duration: 0.5 }}
             className="overflow-hidden"
           >
-            <LimitZeroManifesto />
+            <CustomerReviews />
           </motion.div>
 
           <motion.div
@@ -121,6 +209,28 @@ export default function Home() {
           </motion.div>
 
           <motion.div
+            ref={manifestoRef}
+            variants={animationVariants}
+            initial="hidden"
+            animate={isManifestoInView ? 'visible' : 'hidden'}
+            transition={{ duration: 0.5 }}
+            className="overflow-hidden"
+          >
+            <LimitZeroManifesto />
+          </motion.div>
+
+          <motion.div
+            ref={timelineRef}
+            variants={animationVariants}
+            initial="hidden"
+            animate={isTimelineInView ? 'visible' : 'hidden'}
+            transition={{ duration: 0.5 }}
+            className="overflow-hidden"
+          >
+            <ManufacturingTimeline />
+          </motion.div>
+
+          <motion.div
             ref={joinUsRef}
             variants={animationVariants}
             initial="hidden"
@@ -130,8 +240,6 @@ export default function Home() {
           >
             <JoinUs />
           </motion.div>
-
-         
         </>
       )}
     </>

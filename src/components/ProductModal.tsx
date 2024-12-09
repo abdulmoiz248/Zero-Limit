@@ -31,7 +31,7 @@ export default function ProductModal({ isOpen, setIsOpen, Product }: ProductModa
       setSize('');
       setError('');
     }
-  }, [isOpen, Product.size]);
+  }, [isOpen, Product]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -49,6 +49,8 @@ export default function ProductModal({ isOpen, setIsOpen, Product }: ProductModa
     }
     
     addToCart(cartProduct as Product, 1);
+
+
     toast.custom((t) => (
       <motion.div
         initial={{ opacity: 0, y: 50 }}
@@ -57,6 +59,7 @@ export default function ProductModal({ isOpen, setIsOpen, Product }: ProductModa
         transition={{ duration: 0.3 }}
         className="max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5"
       >
+        
         <div className="flex-1 w-0 p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0 pt-0.5">
