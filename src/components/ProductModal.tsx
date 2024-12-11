@@ -122,9 +122,7 @@ export default function ProductModal({ isOpen, setIsOpen, Product }: ProductModa
 
   return (
     <>
-      <script>
-  fbq('track', 'AddToCart');
-      </script>
+    
       <AnimatePresence>
         {isOpen && (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
