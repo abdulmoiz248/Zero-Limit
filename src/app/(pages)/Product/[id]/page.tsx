@@ -42,6 +42,15 @@ export default function Component({ params }: { params: { id: string } }) {
             setProduct(data.product)
             localStorage.setItem('product', JSON.stringify(data.product))
           }
+        }else{
+          const res1 = await fetch(`/api/getProduct/${params.id}`)
+        if (res1.ok) {
+          const data = await res1.json()
+          if (data.success) {
+            setProduct(data.product)
+            localStorage.setItem('product', JSON.stringify(data.product))
+          }
+        } 
         }
       } catch (error) {
         console.error("Error fetching product", error)
