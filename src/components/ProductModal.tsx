@@ -46,6 +46,8 @@ export default function ProductModal({ isOpen, setIsOpen, Product }: ProductModa
   
     if (typeof window !== 'undefined' && window.fbq) {
       window.fbq('track', 'Add to Cart', {name:Product.name as string});
+     
+ 
     }
     
     addToCart(cartProduct as Product, 1);
@@ -120,6 +122,9 @@ export default function ProductModal({ isOpen, setIsOpen, Product }: ProductModa
 
   return (
     <>
+      <script>
+  fbq('track', 'AddToCart');
+      </script>
       <AnimatePresence>
         {isOpen && (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
