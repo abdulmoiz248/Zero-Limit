@@ -1,6 +1,7 @@
 // app/components/MetaPixel.tsx
 'use client';
 
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Script from 'next/script';
 import { useEffect } from 'react';
@@ -39,7 +40,7 @@ const MetaPixel = ({ pixelId }: MetaPixelProps) => {
       </Script>
       {/* Meta Pixel Noscript Code */}
       <noscript>
-        <img
+        <Image
           height="1"
           width="1"
           style={{ display: 'none' }}
