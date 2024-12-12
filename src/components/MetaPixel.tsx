@@ -1,12 +1,29 @@
-'use client'
+// app/components/MetaPixel.tsx
+'use client';
 
-import Image from 'next/image'
-import Script from 'next/script'
+import { usePathname } from 'next/navigation';
+import Script from 'next/script';
+import { useEffect } from 'react';
 
-export default function MetaPixel({ pixelId }: { pixelId: string }) {
+interface MetaPixelProps {
+  pixelId: string;
+}
+
+const MetaPixel = ({ pixelId }: MetaPixelProps) => {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname ) {
+      if (typeof window !== 'undefined' && window.fbq) {
+        window.fbq('track', 'PageView');
+      }
+    }
+  }, [pathname]);
+
   return (
     <>
-      <Script id="meta-pixel" strategy="afterInteractive">
+      {/* Meta Pixel Base Code */}
+      <Script id="meta-pixel-script" strategy="afterInteractive">
         {`
           !function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -20,16 +37,18 @@ export default function MetaPixel({ pixelId }: { pixelId: string }) {
           fbq('track', 'PageView');
         `}
       </Script>
+      {/* Meta Pixel Noscript Code */}
       <noscript>
-        <Image
-          height="1" 
-          width="1" 
+        <img
+          height="1"
+          width="1"
           style={{ display: 'none' }}
           src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
           alt=""
         />
       </noscript>
     </>
-  )
-}
+  );
+};
 
+export default MetaPixel;
