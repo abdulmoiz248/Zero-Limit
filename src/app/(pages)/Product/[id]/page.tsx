@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, Star,  X } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
-
+import { NextSeo } from 'next-seo';
 import { Card, CardContent } from "@/components/ui/card"
 import { Product } from '@/Models/Product'
 import Reviews from '@/components/Review'
@@ -203,6 +203,25 @@ export default function Component({ params }: { params: { id: string } }) {
         />
       </Head>
 
+
+      <NextSeo
+        title={product?.name}
+        description={product?.description}
+        canonical={`https://www.zerolimitapparel.com/Products/${product?._id}`}
+        openGraph={{
+          url: `https://www.zerolimitapparel.com/Products/${product?._id}`,
+          title: product?.name,
+          description: product?.description,
+          images: [
+            {
+              url: `https://www.zerolimitapparel.com/${product?.link[0]}`,
+              width: 800,
+              height: 600,
+              alt: 'Fearless',
+            },
+          ],
+        }}
+      />
        <ProductModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} Product={product!} />
       <Card className="max-w-7xl mx-auto shadow-lg">
         <CardContent className="p-6">
