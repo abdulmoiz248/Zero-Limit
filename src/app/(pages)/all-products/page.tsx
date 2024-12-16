@@ -1,5 +1,5 @@
 'use client';
-import { NextSeo } from 'next-seo';
+// import { NextSeo } from 'next-seo';
 import { useState, useEffect, useCallback } from 'react';
 import { Product } from '@/Models/Product';
 import ProductCard from '@/components/ProductCard';
@@ -77,7 +77,7 @@ export default function ProductCatalog() {
   return (
 
     <div className="container mx-auto px-4 py-8 pt-20">
-      <NextSeo
+      {/* <NextSeo
         title="All Products - Zero Limit"
         description="Explore our complete collection of bold and fearless apparel. Find the perfect styles to match your fearless personality."
         canonical="https://www.zerolimitapparel.com/all-products"
@@ -88,7 +88,7 @@ export default function ProductCatalog() {
             'Explore our complete collection of bold and fearless apparel. Find the perfect styles to match your fearless personality.',
           images: [
             {
-              url: 'https://www.zerolimitapparel.com/images/LION.JPG', // Replace with a relevant banner image URL
+              url: 'https://www.zerolimitapparel.com/images/cover.jpeg', // Replace with a relevant banner image URL
               width: 1200,
               height: 630,
               alt: 'Zero Limit All Products',
@@ -98,7 +98,7 @@ export default function ProductCatalog() {
         twitter={{
           cardType: 'summary_large_image',
         }}
-      />
+      /> */}
       <h1 className="text-4xl font-bold mb-8 text-center text-[#1b03a3]">Fearless Collection Vol 1</h1>
 
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
