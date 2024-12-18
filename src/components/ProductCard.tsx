@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import { Product } from '@/Models/Product'
 import ProductModal from './ProductModal'
 import { Button } from '@/components/ui/button'
-
+import { Badge } from "@/components/ui/badge"
 interface ProductCardProps {
   product: Product
 }
@@ -75,6 +75,13 @@ export default function ProductCard({ product }: ProductCardProps) {
               </motion.div>
             ))}
           </AnimatePresence>
+         {
+          product.unisex && 
+          <Badge className="absolute top-2 right-2 rounded-full px-4 py-1 bg-[#000000] text-white shadow-lg hover:shadow-xl transition-shadow">
+          Unisex
+        </Badge>
+         }
+
           {product.discountPercent > 0 && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
