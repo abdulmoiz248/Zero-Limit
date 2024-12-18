@@ -29,7 +29,7 @@ export async function sendOrderDeliveredEmail(toEmail: string, orderID: string) 
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+       await transporter.sendMail(mailOptions);
         console.log('Order delivered email sent successfully');
     } catch (error) {
         console.error('Error sending order delivered email:', error);

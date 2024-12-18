@@ -52,6 +52,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+      <meta name="p:domain_verify" content="c3d587d1ac28faa925d66bd2405ae0a4"/>
+      </head>
       <body>
         <Analytics/>
         <SpeedInsights />
