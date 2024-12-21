@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, SortAsc, SortDesc, Star, Percent } from 'lucide-react';
 import axios from 'axios';
+import DiscountSection from '@/components/DiscountSection';
 
 async function fetchAllProducts() {
   const res = await axios.get('/api/fetch-products');
@@ -99,6 +100,7 @@ export default function ProductCatalog() {
           cardType: 'summary_large_image',
         }}
       /> */}
+      <DiscountSection/>
       <h1 className="text-4xl font-bold mb-8 text-center text-[#1b03a3]">Fearless Collection Vol 1</h1>
 
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">

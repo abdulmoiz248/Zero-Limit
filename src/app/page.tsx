@@ -7,6 +7,8 @@ import LionLoader from '@/components/LionLoader';
 import axios from 'axios';
 import { Product } from '@/Models/Product';
 import { Toaster } from 'react-hot-toast';
+import BoundaryBreakingBanner from '@/components/BreakingBoundary';
+import EnhancedHotProductShowcase from '@/components/HotSelling';
 
 const BelowHeader = dynamic(() => import('@/components/landing page/BelowHeader'), {
   ssr: false,
@@ -131,6 +133,8 @@ export default function Home() {
             <BelowHeader />
           </motion.div>
 
+         <BoundaryBreakingBanner/>
+         <EnhancedHotProductShowcase/>
           <motion.div
             ref={premiumCertRef}
             variants={animationVariants}

@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 
 
 const messages = [
-  "Welcome to Zero Limit"," Unleash Your Fearless Style!"
-  ,"Upto 40% off"
+  "Welcome to Zero Limit"," Unleash Your Fearless Style!","Year End Sale Live Now"
+  ,"Upto 50% off"
 ];
 
 export default function TopBar({ scrollPosition }: { scrollPosition: number }) {
