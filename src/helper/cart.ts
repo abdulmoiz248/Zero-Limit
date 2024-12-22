@@ -10,6 +10,32 @@ export function getStoredCart(): Record<string, CartItem> {
     return {};
   }
 }
+async function addToCartDb(productId: string, size: string) {
+  const customerId = localStorage.getItem("customerId") || generateGuestId();
+
+  try {
+    const response = await fetch("/api/cart/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ customerId, productId, size }),
+    });
+
+    if (response.ok) {
+      console.log("Add to Cart logged successfully");
+    } else {
+      console.error("Failed to log Add to Cart");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+function generateGuestId() {
+  const guestId = `guest_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+  localStorage.setItem("customerId", guestId);
+  return guestId;
+}
+
 
 
 export function addToCart(product: Product, quantity: number): void {
@@ -27,7 +53,7 @@ export function addToCart(product: Product, quantity: number): void {
   const productSize = product.size as Record<string, number>;
   const selectedSizeKey = Object.keys(productSize)[0];
   const key = product._id + selectedSizeKey;
-  
+      
   console.log("Product:", product);
   console.log("Key:", key);
 
@@ -54,6 +80,7 @@ export function addToCart(product: Product, quantity: number): void {
   }
 
   localStorage.setItem('cart', JSON.stringify(cart));
+  addToCartDb(product.name, selectedSizeKey);
 }
 
 
