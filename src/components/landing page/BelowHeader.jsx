@@ -1,6 +1,7 @@
 import React from "react";
 import Card from "./ZeroCard"; // Assuming the Card component is in the same directory
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const HomePage = () => {
   const router=useRouter();
@@ -9,11 +10,16 @@ const HomePage = () => {
       {/* Left Section */}
      
       <div
-  style={{ backgroundImage: 'url(/images/front.jpeg)' }}
-  className="md:w-1/2 w-full  bg-cover text-black p-8 md:p-12 flex flex-col justify-center items-center md:items-start flex-grow"
-  onClick={()=>router.push('/all-products')}
->
-     </div>
+      onClick={()=>router.push('/all-products')}
+      className="md:w-1/2 w-full h-[50vh] md:h-screen relative">
+          <Image
+            src="/images/car.jpeg"
+            alt="Car"
+            layout="fill"
+            objectFit="cover"
+            priority
+          />
+        </div>
 
 
 
