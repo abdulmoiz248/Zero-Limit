@@ -44,6 +44,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     ...productUrls,
     ...categoryUrls,
+     {
+      url: 'https://www.zerolimitapparel.com/all-products',
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 1,
+    },
+    {
+      url: 'https://www.zerolimitapparel.com/Cart',
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 1,
+    },
   ]
 }
 
