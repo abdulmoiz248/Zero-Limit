@@ -188,7 +188,7 @@ export default function Component({ params }: { params: { id: string } }) {
               "offers": {
                 "@type": "Offer",
                 "url": `https://www.zerolimitapparel.com/Product/${params.id}`,
-                "priceCurrency": "INR",
+                "priceCurrency": "PKR",
                 "price": discountedPrice?.toFixed(2),
                 "itemCondition": "https://schema.org/NewCondition",
                 "availability": "https://schema.org/InStock"
