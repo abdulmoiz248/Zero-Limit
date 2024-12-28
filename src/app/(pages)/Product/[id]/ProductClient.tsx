@@ -26,10 +26,12 @@ export default function ProductClient({ initialProduct, params }: ProductClientP
   const fullscreenRef = useRef<HTMLDivElement>(null)
   const [product, setProduct] = useState<Product>(initialProduct)
   const [products, setProducts] = useState<Product[]>()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
+    setLoading(false)
+    setProduct(initialProduct);
     const fetchFeature = async () => {
       try {
         const res = await axios.get(`/api/featured`)
