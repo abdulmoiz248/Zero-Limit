@@ -1,5 +1,5 @@
 'use client'
-import Head from 'next/head';
+// import Head from 'next/head';
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, Star,  X } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
