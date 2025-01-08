@@ -156,7 +156,7 @@ export default function Component({ params }: { params: { id: string } }) {
         <meta property="og:title" content={`${product?.name} | Zero Limit `} />
         <meta property="og:description" content={`${product?.description?.slice(0, 155)}...`} />
         <meta property="og:image" content={product?.link[0]} />
-        <meta property="og:url" content={`https://www.zerolimitapparel.com/Product/${params.id}`} />
+        <meta property="og:url" content={`${process.env.NEXT_PUBLIC_API_URL}/Product/${params.id}`} />
         <meta property="og:type" content="product" />
         <meta property="og:site_name" content="Zero Limit" />
 
@@ -167,7 +167,7 @@ export default function Component({ params }: { params: { id: string } }) {
         <meta name="twitter:image" content={product?.link[0]} />
 
         {/* Canonical URL */}
-        <link rel="canonical" href={`https://www.zerolimitapparel.com/Product/${params.id}`} />
+        <link rel="canonical" href={`${process.env.NEXT_PUBLIC_API_URL}/Product/${params.id}`} />
 
         {/* Structured Data */}
         <script
@@ -187,7 +187,7 @@ export default function Component({ params }: { params: { id: string } }) {
               },
               "offers": {
                 "@type": "Offer",
-                "url": `https://www.zerolimitapparel.com/Product/${params.id}`,
+                "url": `${process.env.NEXT_PUBLIC_API_URL}/Product/${params.id}`,
                 "priceCurrency": "PKR",
                 "price": discountedPrice?.toFixed(2),
                 "itemCondition": "https://schema.org/NewCondition",
@@ -207,14 +207,14 @@ export default function Component({ params }: { params: { id: string } }) {
       <NextSeo
         title={product?.name}
         description={product?.description}
-        canonical={`https://www.zerolimitapparel.com/Products/${product?._id}`}
+        canonical={`${process.env.NEXT_PUBLIC_API_URL}/Products/${product?._id}`}
         openGraph={{
-          url: `https://www.zerolimitapparel.com/Products/${product?._id}`,
+          url: `${process.env.NEXT_PUBLIC_API_URL}/Products/${product?._id}`,
           title: product?.name,
           description: product?.description,
           images: [
             {
-              url: `https://www.zerolimitapparel.com/${product?.link[0]}`,
+              url: `${process.env.NEXT_PUBLIC_API_URL}/${product?.link[0]}`,
               width: 800,
               height: 600,
               alt: 'Fearless',

@@ -20,15 +20,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getProducts()
   const categories = await getCategories()
 
+
   const productUrls = products.map((product:Product) => ({
-    url: `https://www.zerolimitapparel.com/Product/${product._id}`,
+    url: `${process.env.NEXT_PUBLIC_API_URL}/Product/${product._id}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: 0.8,
   }))
 
   const categoryUrls = categories.map((category: Categories) => ({
-  url: `https://www.zerolimitapparel.com/Categories/${category._id}`,
+  url: `${process.env.NEXT_PUBLIC_API_URL}/Categories/${category._id}`,
   lastModified: new Date(),
   changeFrequency: 'weekly' as const,
   priority: 0.9,
@@ -37,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: 'https://www.zerolimitapparel.com',
+      url: `${process.env.NEXT_PUBLIC_API_URL}`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
@@ -45,13 +46,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...productUrls,
     ...categoryUrls,
      {
-      url: 'https://www.zerolimitapparel.com/all-products',
+      url: `${process.env.NEXT_PUBLIC_API_URL}/all-products`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
     },
     {
-      url: 'https://www.zerolimitapparel.com/Cart',
+      url: `${process.env.NEXT_PUBLIC_API_URL}/Cart`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,

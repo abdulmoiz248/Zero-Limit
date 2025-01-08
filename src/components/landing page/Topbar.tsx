@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 
 const messages = [
-  "Welcome to Zero Limit"," Unleash Your Fearless Style!","Year End Sale Live Now"
+  "Welcome to Zero Limit"," Unleash Your Fearless Style!","Clearance Sale Live Now"
   ,"Upto 50% off"
 ];
 

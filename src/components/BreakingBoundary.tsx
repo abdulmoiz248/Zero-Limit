@@ -20,10 +20,10 @@ const BoundaryBreakingBanner: React.FC = () => {
       {/* Main Content */}
       <div className="relative z-10 text-center px-6 md:px-12 py-8 lg:py-12">
         <h1 className="text-6xl md:text-8xl font-extrabold text-black mb-6 leading-tight">
-          Fearless<br /> Year-End Sale
+          Fearless<br /> Clearance Sale
         </h1>
         <p className="text-2xl md:text-4xl font-semibold mb-8 tracking-wide text-black opacity-90">
-          Save up to <span className="text-indigo-500">50% OFF</span> on All Items
+          Save upto <span className="text-indigo-500">50% OFF</span> on All Items
         </p>
         <button
           className="relative overflow-hidden bg-indigo-600 text-white px-10 py-5 rounded-full font-bold text-lg md:text-xl transition-all duration-300 transform hover:scale-110"

@@ -13,7 +13,7 @@ const DiscountSection: React.FC = () => {
           </h2>
           <div className="space-x-2 text-center py-2 lg:py-0 mt-4 lg:mt-0">
             <span className="text-lg sm:text-xl text-white uppercase tracking-widest font-semibold">
-              Year End Sale
+              Clearance Sale
             </span>
           </div>
         </div>

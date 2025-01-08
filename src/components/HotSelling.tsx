@@ -12,7 +12,7 @@ const product = {
   name: "Zero Limit Co-ord Set",
   description: "Unleash your fearless style with the Zero Limit Special Sweat and Trouser Set. Combining bold aesthetics with premium comfort, this matching set features iconic Zero Limit branding on a sleek sweatshirt and ultra-soft trousers. Perfect for workouts, casual outings, or lounging, it offers warmth, durability, and effortless style—making a confident statement wherever you go.",
   price: 6999,
-  discountedPrice: 3849,
+  discountedPrice: 3500,
   images: [
     "/products/set-1.jpeg", "/products/z-1.jpeg",
   ],

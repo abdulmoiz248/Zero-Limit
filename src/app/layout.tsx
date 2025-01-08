@@ -21,10 +21,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Zero Limit - Unleash Your Fearless Style",
     description: "Explore bold and boundary-breaking clothing that redefines fashion.",
-    url: "https://www.zerolimitapparel.com",
+    url:`${process.env.NEXT_PUBLIC_API_URL}`,
     images: [
       {
-        url: "https://www.zerolimitapparel.com/images/Lion.JPG",  // Adjust to the actual filename in public folder
+        url: `${process.env.NEXT_PUBLIC_API_URL}/images/Lion.JPG`,  // Adjust to the actual filename in public folder
         width: 1200,
         height: 630,
         alt: "Zero Limit Clothing",
